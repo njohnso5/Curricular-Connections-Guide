@@ -1,0 +1,33 @@
+:root {
+  --hover-color: #eee;
+}
+
+#programTable {
+  max-height: 60vh;
+}
+
+.themeList > .tag {
+  margin: 1px 2px;
+}
+
+#showingManage {
+  display: flex;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.showing {
+  background-color: #eee;
+
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.programDisplayEntry:hover {
+  background-color: var(--hover-color);
+  cursor: pointer;
+}
+
+.programDisplayLabel {
+  font-weight: bold;
+}

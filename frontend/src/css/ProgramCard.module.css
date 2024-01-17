@@ -1,0 +1,59 @@
+.programTitle {
+  margin: 0px;
+  padding: 0px;
+  font-weight: 600;
+}
+
+.cardBody {
+  padding: 10px;
+  min-height: 310px;
+}
+
+.programShowings {
+  color: gray;
+  font-weight: 300;
+}
+
+.themeList > .tag {
+  margin: 1px 2px;
+  font-size: 0.8em;
+}
+
+.themeList {
+  overflow-x: hidden;
+  white-space: nowrap;
+}
+
+.viewMore {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  margin-top: 15px;
+  border-radius: 6px;
+  color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.viewMore:hover {
+  color: white;
+  background-color: #0d6efd;
+}
+
+.descriptionHeader {
+  font-size: 1em;
+  margin-top: 15px;
+  font-weight: 400;
+}
+
+.description {
+  color: gray;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Limit to two lines */
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  /* Set the height to the line height multiplied by the number of lines */
+  max-height: 4.3em; /* Adjust according to your font size and line height */
+}

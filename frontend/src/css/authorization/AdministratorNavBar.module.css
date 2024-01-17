@@ -1,0 +1,17 @@
+#username_label {
+    margin: 0px;
+}
+
+.user_drop_down {
+    padding: 5px 5px;
+    border-radius: 5px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.menu_option {
+    font-weight: 500;
+}
+
+.dropdown {
+    border-radius: 15px;
+}

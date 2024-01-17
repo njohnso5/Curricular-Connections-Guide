@@ -1,0 +1,35 @@
+.programDescription {
+  text-align: center;
+}
+
+.programLabel {
+  font-weight: bold;
+}
+
+.modal-title {
+  text-align: center;
+}
+
+.table > tbody > tr:nth-child(odd):hover {
+  background-color: var(--hover-color);
+  cursor: pointer;
+}
+
+.table > tbody > tr:nth-child(even):hover {
+  background-color: var(--hover-color);
+  cursor: pointer;
+}
+
+.delete-button-wrapper {
+  margin-left: auto;
+}
+
+.outer-button-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.dateInfo { width: 30em; max-width: 100%; }
+.dateInfo p { display: inline-block; max-width: 50%; }
+.dateInfo p:nth-child(1) { float:left; }
+.dateInfo p:nth-child(2) { float:right; }

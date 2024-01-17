@@ -1,0 +1,19 @@
+:root {
+  /* --hover-color: lightgrey; */
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+#app-body {
+    display: block;
+}

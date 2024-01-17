@@ -1,0 +1,57 @@
+.tableHeader {
+    display: flex;
+    justify-content: flex-end;
+    align-items: stretch;
+    gap: 25px;
+}
+
+.searchBar {
+    width: 300px;
+    border-radius: 25px;
+}
+
+@media only screen and (max-width: 400px) {
+    .searchBar {
+        width: 125px;
+    }
+}
+
+.rounded {
+    border-radius: 25px;
+}
+
+.centerMiddle {
+    vertical-align: middle;
+}
+
+#containerFluid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#centerMiddle {
+    vertical-align: middle;
+}
+
+#tableResponsive {
+    flex-grow: 2;
+    max-height: 60vh;
+}
+
+#actionContainer {
+    display: flex;
+    gap: 15px;
+}
+
+.gray {
+    color: gray;
+}
+
+i {
+    margin-right: 15px;
+}
+
+#pagination {
+    justify-content: flex-end;
+}

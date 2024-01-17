@@ -1,0 +1,12 @@
+#user-menu {
+  padding-right: 15px;
+
+  display: flex;
+  justify-content: flex-end;
+}
+
+#user-menu #profile-name {
+  padding: 3px 20px;
+
+  font-weight: bold;
+}

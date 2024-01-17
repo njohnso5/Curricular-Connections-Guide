@@ -1,0 +1,12 @@
+/*
+  Overrides for NCSU's default css
+ */
+
+/*
+  Fixes alignment of modal close button
+ */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}

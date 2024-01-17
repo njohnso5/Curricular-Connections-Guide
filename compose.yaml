@@ -1,0 +1,62 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker compose reference guide at
+# https://docs.docker.com/compose/compose-file/
+version: '3.8'
+
+# Here the instructions define your application as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+services:
+
+  # create database container
+  # https://blog.christian-schou.dk/creating-and-running-a-mysql-database-with-docker-compose/ 
+  db:
+    container_name: database
+    image: mysql:8.0
+    command: --default-authentication-plugin=caching_sha2_password
+    restart: always
+    env_file:
+      - .env
+    hostname: database
+    ports:
+    - "3333:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+    volumes:
+      - mysql_database:/var/lib/mysql
+  api:
+    container_name: api
+    ports:
+     - '8080:80'
+    build:
+      context: ./backend
+    env_file:
+      - .env 
+    volumes:
+      - "./backend:/app/api"
+    depends_on:
+      db:
+        condition: service_healthy
+  app:
+    container_name: app
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes: 
+     - ./frontend/src:/app/src
+  proxy:
+    container_name: proxy
+    image: dockerhub.csc.ncsu.edu/ignacioxd/apacheshib-proxy
+    volumes:
+      - "./backend/shib-header-vars.conf:/etc/apache2/conf-enabled/shib-header-vars.conf"
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - LOGIN_PATH=/admin # Make it so that all requests to the frontend are authenticated
+volumes:
+  mysql_database:
