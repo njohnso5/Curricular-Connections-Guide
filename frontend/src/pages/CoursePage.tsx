@@ -3,7 +3,7 @@ import CourseService from "../services/CourseServices.tsx"
 import SemesterService from '../services/SemesterService';
 import "../css/CoursePage.css"
 import { Course, SemesterForm } from "../CourseModels/courseModels.tsx";
-import { Modal, ModalButton, ModalNewSemesterBody, DeleteSemesterModalButton, DeleteSemesterBody } from "../components/Modal.tsx";
+import { Modal, ModalButton, ModalNewSemesterBody, DeleteSemesterModalButton, DeleteSemesterBody, ModalAddCourseBody, ModalEditCourseBody, ModalDeleteCourseBody } from "../components/Modal.tsx";
 import CourseModal from './Program/CourseModal.tsx';
 
 interface TableBodyRowsProps {
@@ -16,7 +16,6 @@ const NewSemesterTab: React.FC = () => {
 
     const [id, setId] = useState<number | null>(null);
     const [semesters, setSemesters] = useState<SemesterForm[] | null>();
-
 
     useEffect(() => {
 
@@ -35,7 +34,10 @@ const NewSemesterTab: React.FC = () => {
 
     const handleClick = (id: number) => {
         setId(id);
+    
     };
+
+
 
 
     return (
@@ -45,7 +47,7 @@ const NewSemesterTab: React.FC = () => {
                     <ModalButton modalTarget="uploadModal" buttonMessage="Add a semester" />
                     <Modal modalTarget="uploadModal" modalTitle="CREATE A NEW SEMESTER" modalBody={<ModalNewSemesterBody handleUpload={handleSemesterUpload} />} />
                     {semesters ? semesters.map((semester) => (
-                        <button type="button" className="btn btn-default" value={semester.id} onClick={() => handleClick(semester.id)}>{semester.period.period} {semester.year}</button>
+                        <button type="button" className={`btn btn-default ${id === semester.id ? 'selected' : ''}`} value={semester.id} onClick={() => handleClick(semester.id)}>{semester.period.period} {semester.year}</button>
                     )) : null}
                 </div>
                 <div className="delete-button-wrapper">
@@ -53,18 +55,29 @@ const NewSemesterTab: React.FC = () => {
                     <Modal modalTarget="DeleteSemesterModal" modalTitle="DELETE A SEMESTER" modalBody={<DeleteSemesterBody />} />
                 </div>
             </div>
-            {id !== null && <TableBodyRows id={id} />}
+            {id !== null && <TableBodyRows id={id}/>}
         </div >
     )
 }
 
-const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id }) => {
+const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
     const [course, setCourse] = useState<Course | undefined>(undefined);
     const [courseId, setCourseId] = useState<number | null>(null);
     const [courses, setCourses] = useState<Course[] | null>();
     const [courseTitle, setCourseTitle] = useState<string | undefined>();
+    /** The ids of the courses that are selected */
+    const [selectedCourseIds, setSelectedCourseIds] = useState([]);
+    /** Whether all courses are selected */
+    const [selectedAll, setSelectedAll] = useState(false);
 
+
+    
     useEffect(() => {
+        
+        // Set selected all to false when the id changes, so the radio and checkboxes are unchecked
+        setSelectedAll(false);
+        setSelectedCourseIds([]);
+
         SemesterService.getCourses(id)
             .then((response) => {
                 setCourses((prevCourses) => {
@@ -74,11 +87,14 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id }) => {
             });
     }, [id]);
 
+
     const handleClick = (courseId: number) => {
         setCourseId(courseId);
+        
     };
 
     const setCourseType = (courseId: number) => {
+
         if (courses) {
             courses.forEach((course) => {
                 if (course.id === courseId) {
@@ -97,6 +113,36 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id }) => {
             });
         }
     };
+    /**
+     * Handle the click event for the checkbox in the table header
+     */
+    const handleSelectedAll = () => {
+        setSelectedAll(!selectedAll);
+        if (selectedAll) {
+            // If all courses are selected, then unselect all courses
+            setSelectedCourseIds([]);
+        } else {
+            setSelectedCourseIds(courses.map(course => course.id));
+        }
+    }
+    /**
+     * Handle the click event for the checkbox in the table body
+     * @param e event object
+     * @param courseId id of the course
+     */
+    const handleClickCheckbox = (e: React.MouseEvent, courseId: number) => {
+
+        // This stops the event from propagating to the parent element
+        e.stopPropagation();
+        if (selectedCourseIds.includes(courseId)) {
+            setSelectedCourseIds(selectedCourseIds.filter((id: number) => id !== courseId));
+        } else {
+            setSelectedCourseIds([...selectedCourseIds, courseId]);
+        }
+        
+    }
+    
+
 
 
     return (
@@ -104,21 +150,49 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id }) => {
             <table className="table">
                 <thead>
                     <tr>
+                        <th><input type="radio" class="radio"
+                            checked={selectedAll}
+                            onClick={() => {handleSelectedAll()}}
+                        onChange={()=> {}}></input></th>
                         <th scope="col">Course Subject & Number</th>
                         <th scope="col">Course Title</th>
                         <th scope="col">Tags</th>
                     </tr>
                 </thead>
                 <tbody>
+                    
                     {courses && courses.map((course) => (
-                        <tr key={course.id} value={course.id} onClick={() => { handleClick(course.id); setCourseTitleClick(course.id); setCourseType(course.id) }} data-toggle="modal" data-target="#courseInfoDisplay">
-                            <th scope="row">{course.subject.subject} {course.catalog_number}</th>
+                        
+                        <tr key={course.id} value={course.id} data-toggle="modal" data-target="#courseInfoDisplay">
+                            <th onClick={(e) => {handleClickCheckbox(e, course.id)}}>
+                                <input type="checkbox" 
+                                className="round-checkbox"
+                                checked={selectedCourseIds.includes(course.id)}
+                                onChange={() => {}}
+                                />
+                            </th>
+                            <td onClick={() => { handleClick(course.id); setCourseTitleClick(course.id); setCourseType(course.id) }}>{course.subject.subject} {course.catalog_number}</td>
                             <td>{course.title_long}</td>
                             <td>{course.catalog_number}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+            <div className="btn-group justify-content-between d-flex justify-content-end" role="toolbar" >
+                <div>
+                    <ModalButton modalTarget="addCourseModal" buttonMessage="Add a course" />
+                    <Modal modalTarget="addCourseModal" modalTitle="ADD A COURSE" modalBody={<ModalAddCourseBody />} />
+                </div>
+                <div>
+                    <ModalButton modalTarget="editCourseModal" buttonMessage="Edit course" />
+                    <Modal modalTarget="editCourseModal" modalTitle="EDIT A COURSE" modalBody={<ModalEditCourseBody />} />
+                </div>
+                <div>
+                    <ModalButton modalTarget="deleteCourseModal" buttonMessage="Delete course" />
+                    <Modal modalTarget="deleteCourseModal" modalTitle="DELETE A COURSE" modalBody={<ModalDeleteCourseBody courseIds={selectedCourseIds} />} />
+                </div>
+
+            </div>
             <div>
                 <nav aria-label="...">
                     <ul class="pagination">
@@ -140,7 +214,7 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id }) => {
                 </nav>
             </div>
             {course && (<Modal modalTarget="courseInfoDisplay" modalTitle={courseTitle} modalBody={<ShowClassInfo course={course} />} />)}
-        </div >
+        </div>
     );
 
 };

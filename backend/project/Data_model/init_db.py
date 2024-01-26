@@ -23,7 +23,8 @@ def create_admins(*args, **kwargs):
         Administrator(unity_id="msabrams", role_id=1),
         Administrator(unity_id="arosas2", role_id=1),
         Administrator(unity_id="acsawyer", role_id=1),
-        Administrator(unity_id="deflower", role_id=1)
+        Administrator(unity_id="deflower", role_id=1),
+        Administrator(unity_id="xce", role_id=1)
     ])
     db.session.commit()
     

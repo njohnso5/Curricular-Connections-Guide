@@ -22,6 +22,7 @@ interface ModalButtonProps {
   buttonMessage: string;
 }
 
+
 const ModalButton: React.FC<ModalButtonProps> = ({ modalTarget, buttonMessage }) => {
   return (
       <button type="button" className="btn btn-primary" data-toggle="modal" data-target={"#" + modalTarget}>
@@ -185,6 +186,7 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
 
 
 const Modal: React.FC<ModalProps> = ({ modalTarget, modalTitle, modalBody }) => {
+
   return (
       <div className="modal fade" id={modalTarget} tabIndex="-1" role="dialog" aria-labelledby={modalTarget} aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered" role="document">
@@ -203,11 +205,140 @@ const Modal: React.FC<ModalProps> = ({ modalTarget, modalTitle, modalBody }) => 
       </div>
   );
 };
+/**
+ * This is the modal that displays when you click the "add a course button on the courses page"
+ * It will show a form that allows you to add a course to the database
+ * enter course ID, description short, title, description long, subject, catalog number, instructors, and emails. 
+ * @returns 
+ */
+const ModalAddCourseBody: React.FC = () => {
+  return (
+    <React.Fragment>
+      <form>
+        <div className="form-group">
+          <label htmlFor="exampleFormControlFile1">Enter course ID</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="exampleFormControlFile1">Enter course subject</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+          <label htmlFor="exampleFormControlFile1">Enter course catalog number</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="exampleFormControlFile1">Enter course title</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="exampleFormControlFile1">Enter course description short</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="exampleFormControlFile1">Enter course description long</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+        </div>
+        
+        <div className="form-group">
+          <label htmlFor="exampleFormControlFile1">Enter course instructors</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="exampleFormControlFile1">Enter course emails</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+        </div>
 
+        <button type="button" className="btn btn-primary">Save changes</button>
+      </form>
+    </React.Fragment>
+  )
+
+}
+
+const ModalEditCourseBody: React.FC = () => {
+  return (
+    <React.Fragment>
+      <form>
+        <div className="form-group">
+          <label htmlFor="exampleFormControlFile1">Enter course ID</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="exampleFormControlFile1">Enter course subject</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+          <label htmlFor="exampleFormControlFile1">Enter course catalog number</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="exampleFormControlFile1">Enter course title</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="exampleFormControlFile1">Enter course description short</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="exampleFormControlFile1">Enter course description long</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+        </div>
+        
+        <div className="form-group">
+          <label htmlFor="exampleFormControlFile1">Enter course instructors</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="exampleFormControlFile1">Enter course emails</label>
+          <input type="text" className="form-control" id="exampleFormControlFile1" />
+        </div>
+
+        <button type="button" className="btn btn-primary">Save changes</button>
+        <button type="button" className="btn btn-danger">Cancel</button>
+      </form>
+    </React.Fragment>
+  )
+}
+
+const ModalDeleteCourseBody: React.FC<{ courseIds: number [] }> = ({ courseIds }) => {
+  const handleDelete = () => {
+    console.log("inside handle delete function");
+    console.log(courseIds);
+    if (courseIds !== null && courseIds.length > 0) {
+      // Call the CourseService or your API function to delete the selected course
+      CourseService.removeCourses(courseIds)
+        .then(() => {
+          // Handle successful deletion (e.g., refresh the list of courses)
+          // setCourses((prevCourses) =>
+          //   prevCourses ? prevCourses.filter((course) => course.id !== courseId) : null
+          // );
+          // setSelectedCourseId(null);
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.error('Error deleting course:', error);
+        });
+    } else {
+      // Return no courses selected error to the frontend
+      alert("No courses selected");
+
+    }
+  }
+  return (
+    <React.Fragment>
+      <form>
+        <div>
+          <label htmlFor="exampleFormControlFile1">Are you sure you want to delete this course?</label>
+        </div>
+        <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={handleDelete}>Yes</button>
+      </form>
+    </React.Fragment>
+  )
+}
 export {
   Modal,
   ModalButton,
   ModalNewSemesterBody,
   DeleteSemesterModalButton,
-  DeleteSemesterBody
+  DeleteSemesterBody,
+  ModalAddCourseBody,
+  ModalEditCourseBody,
+  ModalDeleteCourseBody
 }
