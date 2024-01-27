@@ -142,10 +142,10 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
         
     }
     
-
+    /**
+     * Update the courses list after a course is added, edited, or deleted
+     */
     const updateCoursesList = () => {
-        // Implement the logic to fetch or update the courses list
-        // Example:
         SemesterService.getCourses(id)
             .then((response) => {
                 setCourses((prevCourses) => {

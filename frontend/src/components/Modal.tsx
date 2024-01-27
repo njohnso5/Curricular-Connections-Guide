@@ -297,6 +297,14 @@ const ModalEditCourseBody: React.FC = () => {
   )
 }
 
+/**
+ * This modal will handel the deletion of a course from the database
+ * This is the modal that displays when you click the "delete a course" button on the courses page"
+ * It will show a form that allows you to delete a course from the database
+ * @param courseIds courseIds is an array of course ids that will be deleted
+ * @param updateCoursesList updateCoursesList is a call back function that will update the list of courses after a course is deleted
+ * @returns html form that will be displayed in the modal
+ */
 const ModalDeleteCourseBody: React.FC<{ courseIds: number []; updateCoursesList: ()=> void }> = ({ courseIds, updateCoursesList }) => {
   const handleDelete = () => {
     console.log("inside handle delete function");
