@@ -59,12 +59,12 @@ const DeleteSemesterBody: React.FC = () => {
       SemesterService.removeSemester(selectedSemesterId)
         .then(() => {
           // Handle successful deletion (e.g., refresh the list of semesters)
-          setSemesters((prevSemesters) =>
+          setSemesters((prevSemesters: SemesterForm[] | null) =>
             prevSemesters ? prevSemesters.filter((semester) => semester.id !== selectedSemesterId) : null
           );
           setSelectedSemesterId(null);
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.error('Error deleting semester:', error);
         });
     }
@@ -297,7 +297,7 @@ const ModalEditCourseBody: React.FC = () => {
   )
 }
 
-const ModalDeleteCourseBody: React.FC<{ courseIds: number [] }> = ({ courseIds }) => {
+const ModalDeleteCourseBody: React.FC<{ courseIds: number []; updateCoursesList: ()=> void }> = ({ courseIds, updateCoursesList }) => {
   const handleDelete = () => {
     console.log("inside handle delete function");
     console.log(courseIds);
@@ -306,11 +306,7 @@ const ModalDeleteCourseBody: React.FC<{ courseIds: number [] }> = ({ courseIds }
       CourseService.removeCourses(courseIds)
         .then(() => {
           // Handle successful deletion (e.g., refresh the list of courses)
-          // setCourses((prevCourses) =>
-          //   prevCourses ? prevCourses.filter((course) => course.id !== courseId) : null
-          // );
-          // setSelectedCourseId(null);
-          window.location.reload();
+          updateCoursesList();
         })
         .catch((error) => {
           console.error('Error deleting course:', error);

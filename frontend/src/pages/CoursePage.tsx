@@ -143,6 +143,17 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
     }
     
 
+    const updateCoursesList = () => {
+        // Implement the logic to fetch or update the courses list
+        // Example:
+        SemesterService.getCourses(id)
+            .then((response) => {
+                setCourses((prevCourses) => {
+                    console.log(prevCourses);
+                    return response.data;
+                });
+            });
+      };
 
 
     return (
@@ -189,7 +200,7 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
                 </div>
                 <div>
                     <ModalButton modalTarget="deleteCourseModal" buttonMessage="Delete course" />
-                    <Modal modalTarget="deleteCourseModal" modalTitle="DELETE A COURSE" modalBody={<ModalDeleteCourseBody courseIds={selectedCourseIds} />} />
+                    <Modal modalTarget="deleteCourseModal" modalTitle="DELETE A COURSE" modalBody={<ModalDeleteCourseBody courseIds={selectedCourseIds} updateCoursesList={updateCoursesList} />} />
                 </div>
 
             </div>
