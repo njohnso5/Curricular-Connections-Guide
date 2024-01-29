@@ -2,7 +2,7 @@ import '../css/Modal.css'
 import SemesterService from '../services/SemesterService';
 import PeriodService from '../services/PeriodService';
 import CourseService from '../services/CourseServices';
-import { SemesterForm, Course } from '../CourseModels/courseModels';
+import { SemesterForm, Course, CourseForm } from '../CourseModels/courseModels';
 import React, { useState, useEffect } from 'react';
 import CourseTable from '../pages/CoursePage';
 import { AxiosResponse } from 'axios';
@@ -212,6 +212,19 @@ const Modal: React.FC<ModalProps> = ({ modalTarget, modalTitle, modalBody }) => 
  * @returns 
  */
 const ModalAddCourseBody: React.FC = () => {
+
+  const handleAdd = (event: React.FormEvent) => {
+    const [courseData, setCourseData] = useState<CourseForm>({
+      id: -1,
+      year: 2024,
+      active: false,
+      period_id: -1,
+      catalog: null
+    });
+    const formData = new FormData();
+    formData.append('course_id', courseData.id.toString());
+    formData.append('subject', courseData.id.toString());
+  }
   return (
     <React.Fragment>
       <form>
@@ -247,7 +260,7 @@ const ModalAddCourseBody: React.FC = () => {
           <input type="text" className="form-control" id="exampleFormControlFile1" />
         </div>
 
-        <button type="button" className="btn btn-primary">Save changes</button>
+        <button type="button" className="btn btn-primary" onClick={handleAdd}>Save changes</button>
       </form>
     </React.Fragment>
   )

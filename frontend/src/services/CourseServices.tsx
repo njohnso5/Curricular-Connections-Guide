@@ -7,6 +7,10 @@ class CourseService {
     return axios.get(API_URL);
   }
 
+  addCourse (courseForm: FormData) {
+    return axios.post(API_URL, courseForm, {headers: { "Content-Type": "multipart/form-data" }});
+  }
+
   /**
    * Remove a list of courses
    */
