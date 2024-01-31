@@ -217,13 +217,13 @@ const ModalAddCourseBody: React.FC = () => {
       <form>
         <div className="form-group">
           <label htmlFor="exampleFormControlFile1">Enter course ID</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
+          <input type="number" className="form-control" id="exampleFormControlFile1" />
         </div>
         <div className="form-group">
           <label htmlFor="exampleFormControlFile1">Enter course subject</label>
           <input type="text" className="form-control" id="exampleFormControlFile1" />
           <label htmlFor="exampleFormControlFile1">Enter course catalog number</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
+          <input type="number" className="form-control" id="exampleFormControlFile1" />
         </div>
         <div className="form-group">
           <label htmlFor="exampleFormControlFile1">Enter course title</label>

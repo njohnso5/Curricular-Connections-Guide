@@ -10,3 +10,7 @@
   justify-content: space-between;
   align-items: flex-start;
 }
+
+.form-group {
+  margin-bottom: 0;
+}
