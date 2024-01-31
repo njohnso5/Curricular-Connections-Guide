@@ -23,6 +23,17 @@ export type Course = {
     title_short: string;
 }
 
+export type CourseForm = {
+    id:number;
+    title_long: string;
+    title_short: string;
+    description: string;
+    subject_id:number;
+    catalog_number:number;
+    semester_id: number;
+    faculty: Faculty[];
+}
+
 export type CourseInfo = {
     title: string;  
     description: string;
