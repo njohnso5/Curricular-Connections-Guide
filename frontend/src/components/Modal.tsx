@@ -124,7 +124,7 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
     if (semesterData.catalog) {
       formData.append('catalog', semesterData.catalog);
     }
-
+    console.log(formData);
     SemesterService.createSemester(formData)
       .then((_response: AxiosResponse<SemesterForm>) => {
         props.handleUpload(_response.data);
@@ -211,56 +211,104 @@ const Modal: React.FC<ModalProps> = ({ modalTarget, modalTitle, modalBody }) => 
  * enter course ID, description short, title, description long, subject, catalog number, instructors, and emails. 
  * @returns 
  */
-const ModalAddCourseBody: React.FC = () => {
+const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, updateCoursesList }) => {
+  const [courseData, setCourseData] = useState<CourseForm>({
+    // id:number;
+    // title_short: string;
+    // title_long: string;
+    // description: string;
+    // subject: string;
+    // catalog_number:number;
+    // faculty: string;
+    // email: string;
+    // semester_id: number;
+    // 
+    id: null,
+    title_short: "",
+    title_long: "",
+    description: "",
+    subject: "",
+    catalog_number: null,
+    faculty: "",
+    emails: "",
+    semester_id: semesterId
+  });
 
-  const handleAdd = (event: React.FormEvent) => {
-    const [courseData, setCourseData] = useState<CourseForm>({
-      id: -1,
-      year: 2024,
-      active: false,
-      period_id: -1,
-      catalog: null
-    });
+  const handleSubmit = (event: React.FormEvent) => {
+    console.log("inside handle add function");
+    console.log(courseData);
+    console.log(semesterId);
+    event.preventDefault();
+
     const formData = new FormData();
-    formData.append('course_id', courseData.id.toString());
-    formData.append('subject', courseData.id.toString());
+    // formData.append('id', courseData.id.toString());
+    formData.append('title_short', courseData.title_short.toString());
+    formData.append('title_long', courseData.title_long.toString());
+    formData.append('description', courseData.description.toString());
+    formData.append('subject', courseData.subject.toString());
+    formData.append('catalog_number', courseData.catalog_number.toString());
+    formData.append('faculty', courseData.faculty.toString());
+    formData.append('emails', courseData.emails.toString());
+    formData.append('semester_id', semesterId.toString());
+
+    console.log(formData);
+    CourseService.addCourse(formData)
+      .then(() => {
+        updateCoursesList();
+
+        // Clear the form after adding the course
+        setCourseData({
+          id: null,
+          title_short: "",
+          title_long: "",
+          description: "",
+          subject: "",
+          catalog_number: null,
+          faculty: "",
+          emails: "",
+          semester_id: semesterId
+        });
+      })
+      .catch((error) => {
+        console.error('Error adding course:', error);
+      });
   }
   return (
     <React.Fragment>
-      <form>
+      <form id="new-course-info">
         <div className="form-group">
-          <label htmlFor="exampleFormControlFile1">Enter course ID</label>
-          <input type="number" className="form-control" id="exampleFormControlFile1" />
+          <label>Enter course ID</label>
+          <input type="number" className="form-control" value={courseData.id || ""} onChange={(e) => setCourseData({ ...courseData, id: parseInt(e.target.value) })} />
         </div>
         <div className="form-group">
-          <label htmlFor="exampleFormControlFile1">Enter course subject</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
-          <label htmlFor="exampleFormControlFile1">Enter course catalog number</label>
-          <input type="number" className="form-control" id="exampleFormControlFile1" />
+          <label>Enter course subject</label>
+          <input type="text" className="form-control" value={courseData.subject} onChange={(e) => setCourseData({ ...courseData, subject: e.target.value })} />
+          <label>Enter course catalog number</label>
+          <input type="number" className="form-control" value={courseData.catalog_number || ""} onChange={(e) => setCourseData({ ...courseData, catalog_number: parseInt(e.target.value) })} />
         </div>
         <div className="form-group">
-          <label htmlFor="exampleFormControlFile1">Enter course title</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
+          <label>Enter course title short</label>
+          <input type="text" className="form-control" value={courseData.title_short} onChange={(e) => setCourseData({ ...courseData, title_short: e.target.value })} />
         </div>
         <div className="form-group">
-          <label htmlFor="exampleFormControlFile1">Enter course description short</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
+          <label>Enter course title long </label>
+          <input type="text" className="form-control" value={courseData.title_long} onChange={(e) => setCourseData({ ...courseData, title_long: e.target.value })} />
         </div>
         <div className="form-group">
-          <label htmlFor="exampleFormControlFile1">Enter course description long</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
+          <label>Enter course description</label>
+          <input type="text" className="form-control" value={courseData.description} onChange={(e) => setCourseData({ ...courseData, description: e.target.value })} />
         </div>
         
         <div className="form-group">
-          <label htmlFor="exampleFormControlFile1">Enter course instructors</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
+          <label>Enter course instructors</label>
+          <input type="text" className="form-control" value={courseData.faculty} onChange={(e) => setCourseData({ ...courseData, faculty: e.target.value })} />
         </div>
         <div className="form-group">
-          <label htmlFor="exampleFormControlFile1">Enter course emails</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
+          <label>Enter course emails</label>
+          <input type="text" className="form-control" value={courseData.emails} onChange={(e) => setCourseData({ ...courseData, emails: e.target.value })} />
         </div>
 
-        <button type="button" className="btn btn-primary" onClick={handleAdd}>Save changes</button>
+        <button type="submit" className="btn btn-primary" data-dismiss="modal" onClick={handleSubmit}>Add Course</button>
       </form>
     </React.Fragment>
   )
@@ -320,6 +368,7 @@ const ModalEditCourseBody: React.FC = () => {
  */
 const ModalDeleteCourseBody: React.FC<{ courseIds: number []; updateCoursesList: ()=> void }> = ({ courseIds, updateCoursesList }) => {
   const handleDelete = () => {
+
     console.log("inside handle delete function");
     console.log(courseIds);
     if (courseIds !== null && courseIds.length > 0) {
@@ -344,7 +393,7 @@ const ModalDeleteCourseBody: React.FC<{ courseIds: number []; updateCoursesList:
         <div>
           <label htmlFor="exampleFormControlFile1">Are you sure you want to delete this course?</label>
         </div>
-        <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={handleDelete}>Yes</button>
+        <button type="submit" className="btn btn-danger" data-dismiss="modal" onClick={handleDelete}>Yes</button>
       </form>
     </React.Fragment>
   )

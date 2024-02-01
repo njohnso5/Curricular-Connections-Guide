@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { CourseForm } from '../CourseModels/courseModels';
 
 const API_URL = "/api/v1/courses/";
 
@@ -7,8 +8,13 @@ class CourseService {
     return axios.get(API_URL);
   }
 
+  /**
+   * 
+   * @param courseForm a Json object
+   * @returns 
+   */
   addCourse (courseForm: FormData) {
-    return axios.post(API_URL, courseForm, {headers: { "Content-Type": "multipart/form-data" }});
+    return axios.post(API_URL, courseForm, { headers: { "Content-Type": "multipart/form-data" }})
   }
 
   /**

@@ -153,6 +153,9 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
                     return response.data;
                 });
             });
+
+        // Update the selected courses
+        setSelectedCourseIds([]);
       };
 
 
@@ -192,7 +195,7 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
             <div className="btn-group justify-content-between d-flex justify-content-end" role="toolbar" >
                 <div>
                     <ModalButton modalTarget="addCourseModal" buttonMessage="Add a course" />
-                    <Modal modalTarget="addCourseModal" modalTitle="ADD A COURSE" modalBody={<ModalAddCourseBody />} />
+                    <Modal modalTarget="addCourseModal" modalTitle="ADD A COURSE" modalBody={<ModalAddCourseBody  semesterId={id} updateCoursesList={updateCoursesList}/>} />
                 </div>
                 <div>
                     <ModalButton modalTarget="editCourseModal" buttonMessage="Edit course" />

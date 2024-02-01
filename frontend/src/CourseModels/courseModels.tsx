@@ -23,15 +23,19 @@ export type Course = {
     title_short: string;
 }
 
+/**
+ * This is the format of the data that is sent to the server when adding a course
+ */
 export type CourseForm = {
-    id:number;
-    title_long: string;
+    id: number | null;
     title_short: string;
+    title_long: string;
     description: string;
-    subject_id:number;
+    subject: string;
     catalog_number:number;
+    faculty: string;
+    email: string;
     semester_id: number;
-    faculty: Faculty[];
 }
 
 export type CourseInfo = {
