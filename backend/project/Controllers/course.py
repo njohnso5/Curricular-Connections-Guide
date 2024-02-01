@@ -75,7 +75,7 @@ class CourseList(MethodView):
             faculty_list.append(db_faculty)
 
             course.faculty = faculty_list
-
+        # Finish building the course object and add it to the db
         try:
             course_dao.insert_course(course)
             theme_dao.classify_course(course, commit=True)

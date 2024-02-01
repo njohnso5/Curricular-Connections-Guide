@@ -149,7 +149,7 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
         SemesterService.getCourses(id)
             .then((response) => {
                 setCourses((prevCourses) => {
-                    console.log(prevCourses);
+                    // console.log(prevCourses);
                     return response.data;
                 });
             });

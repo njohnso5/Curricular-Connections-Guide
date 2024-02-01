@@ -208,8 +208,8 @@ const Modal: React.FC<ModalProps> = ({ modalTarget, modalTitle, modalBody }) => 
 /**
  * This is the modal that displays when you click the "add a course button on the courses page"
  * It will show a form that allows you to add a course to the database
- * enter course ID, description short, title, description long, subject, catalog number, instructors, and emails. 
- * @returns 
+ * enter course ID, title_short, title_long, description, subject, catalog_number, faculty, and emails. 
+ * @returns html form that will be displayed in the modal
  */
 const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, updateCoursesList }) => {
   const [courseData, setCourseData] = useState<CourseForm>({
@@ -235,9 +235,9 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
   });
 
   const handleSubmit = (event: React.FormEvent) => {
-    console.log("inside handle add function");
-    console.log(courseData);
-    console.log(semesterId);
+    // console.log("inside handle add function");
+    // console.log(courseData);
+    // console.log(semesterId);
     event.preventDefault();
 
     const formData = new FormData();
@@ -251,7 +251,7 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
     formData.append('emails', courseData.emails.toString());
     formData.append('semester_id', semesterId.toString());
 
-    console.log(formData);
+    // console.log(formData);
     CourseService.addCourse(formData)
       .then(() => {
         updateCoursesList();
@@ -369,8 +369,8 @@ const ModalEditCourseBody: React.FC = () => {
 const ModalDeleteCourseBody: React.FC<{ courseIds: number []; updateCoursesList: ()=> void }> = ({ courseIds, updateCoursesList }) => {
   const handleDelete = () => {
 
-    console.log("inside handle delete function");
-    console.log(courseIds);
+    // console.log("inside handle delete function");
+    // console.log(courseIds);
     if (courseIds !== null && courseIds.length > 0) {
       // Call the CourseService or your API function to delete the selected course
       CourseService.removeCourses(courseIds)
