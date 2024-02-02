@@ -87,6 +87,23 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
       console.log("There was an error finding the program you want to delete. Try refreshing the page.")
     }
   }
+  // Handles the Update button functionality from the Modal-footer module
+  function handleUpdate(event: any) {
+    event.preventDefault();
+    if (program) {
+      // Call the updateProgram method from ProgramService
+      ProgramService.updateProgram(program) // Gives updateProgram all of the ProgramData
+      .then(() => {
+        updatePrograms((prev: ProgramData[]) => prev.filter(item => item !== program));
+        window.$("#programDisplay").modal("hide");
+      })
+      .catch(() => {
+        console.error("Error deleting program")
+      });
+    } else {
+      console.log("There was an error finding the program you want to update. Try refreshing the page.")
+    }
+  }
   
   if (program == null) {
     return (
@@ -142,6 +159,7 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
           }) : <p>No showings at this time</p>}
         </div>
         <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" onClick={handleUpdate}>Update Program</button>
           <button type="button" className="btn btn-secondary" onClick={handleDelete}>Delete Program</button>
           <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>

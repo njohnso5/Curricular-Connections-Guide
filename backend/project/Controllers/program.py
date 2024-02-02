@@ -92,7 +92,6 @@ class HandleProgram(MethodView):
         except SQLAlchemyError:
             abort(422, message="An SQL error occured during the operation")
 
-
 # Route to retrieve Departments that the frontend is allowed to use
 @program_router.route("/departments/")
 class GetDepartments(MethodView):
