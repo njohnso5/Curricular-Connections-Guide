@@ -20,12 +20,13 @@ interface ModalProps {
 interface ModalButtonProps {
   modalTarget: string;
   buttonMessage: string;
+  disabled?:boolean;
 }
 
 
-const ModalButton: React.FC<ModalButtonProps> = ({ modalTarget, buttonMessage }) => {
+const ModalButton: React.FC<ModalButtonProps> = ({ modalTarget, buttonMessage, disabled = false }) => {
   return (
-      <button type="button" className="btn btn-primary" data-toggle="modal" data-target={"#" + modalTarget}>
+      <button disabled={disabled} type="button" className="btn btn-primary" data-toggle="modal" data-target={"#" + modalTarget}>
         {buttonMessage}
       </button>
   );
