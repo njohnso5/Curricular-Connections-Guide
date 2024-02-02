@@ -202,7 +202,7 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
                     <Modal modalTarget="editCourseModal" modalTitle="EDIT A COURSE" modalBody={<ModalEditCourseBody />} />
                 </div>
                 <div>
-                    <ModalButton modalTarget="deleteCourseModal" buttonMessage="Delete course" />
+                    <ModalButton disabled={selectedCourseIds.length < 1} modalTarget="deleteCourseModal" buttonMessage="Delete course" />
                     <Modal modalTarget="deleteCourseModal" modalTitle="DELETE A COURSE" modalBody={<ModalDeleteCourseBody courseIds={selectedCourseIds} updateCoursesList={updateCoursesList} />} />
                 </div>
 
