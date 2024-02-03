@@ -316,44 +316,88 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
 
 }
 
-const ModalEditCourseBody: React.FC = () => {
+const ModalEditCourseBody: React.FC< { course: Course, updateCoursesList: ()=> void }> = ({ course, updateCoursesList }) => {
+
+  const [localCourse, setLocalCourse] = useState<Course | undefined>(undefined);
+  const [faculty, setFaculty] = useState<string>('');
+  const [emails, setEmails] = useState<string>('');
+
+  const updateForm = () => {
+    setLocalCourse(undefined);
+    updateCoursesList();
+  }
+  useEffect(() => {
+    setLocalCourse(course);
+    if (course) {
+      setFaculty(course.faculty.map(faculty => faculty.name).join(';'));
+      setEmails(course.faculty.map(faculty => faculty.email).join(';'));
+    }
+
+
+
+  }, [course]);
+  if(!localCourse) {
+    return null;
+  }
+  const submitForm = () => {
+    if (localCourse) {
+      const formData = new FormData();
+      formData.append('course_id', localCourse.id.toString());
+      formData.append('title_short', localCourse.title_short.toString());
+      formData.append('title_long', localCourse.title_long.toString());
+      formData.append('description', localCourse.description.toString());
+      formData.append('subject', localCourse.subject.subject.toString());
+      formData.append('catalog_number', localCourse.catalog_number.toString());
+      formData.append('faculty', faculty.toString());
+      formData.append('emails', emails.toString());
+      formData.append('semester_id', localCourse.semester_id.toString());
+
+      CourseService.updateCourse(formData)
+        .then(() => {
+          updateForm();
+        })
+        .catch((error) => {
+          window.alert('Please enter valid course information');
+        });
+
+    }
+  }
   return (
     <React.Fragment>
-      <form>
+      <form id="edit-course-info">
         <div className="form-group">
-          <label htmlFor="exampleFormControlFile1">Enter course ID</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
+          <label>Enter course ID</label>
+          <input type="number" className="form-control" value={localCourse.id} onChange={(e) => setLocalCourse({ ...localCourse, id: parseInt(e.target.value) })} />
         </div>
         <div className="form-group">
-          <label htmlFor="exampleFormControlFile1">Enter course subject</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
-          <label htmlFor="exampleFormControlFile1">Enter course catalog number</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
+          <label>Enter course subject</label>
+          <input type="text" className="form-control" value={localCourse.subject.subject} onChange={(e) => setLocalCourse({ ...localCourse, subject: {subject: e.target.value, id: localCourse.subject.id}})} />
+          <label>Enter course catalog number</label>
+          <input type="number" className="form-control" value={localCourse.catalog_number} onChange={(e) => setLocalCourse({ ...localCourse, catalog_number: parseInt(e.target.value) })} />
         </div>
         <div className="form-group">
-          <label htmlFor="exampleFormControlFile1">Enter course title</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
+          <label>Enter course title short</label>
+          <input type="text" className="form-control" value={localCourse.title_short} onChange={(e) => setLocalCourse({ ...localCourse, title_short: e.target.value })} />
         </div>
         <div className="form-group">
-          <label htmlFor="exampleFormControlFile1">Enter course description short</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
+          <label>Enter course title long </label>
+          <input type="text" className="form-control" value={localCourse.title_long} onChange={(e) => setLocalCourse({ ...localCourse, title_long: e.target.value })} />
         </div>
         <div className="form-group">
-          <label htmlFor="exampleFormControlFile1">Enter course description long</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
+          <label>Enter course description</label>
+          <input type="text" className="form-control" value={localCourse.description} onChange={(e) => setLocalCourse({ ...localCourse, description: e.target.value })} />
+        </div>
+        <div className="form-group">
+          <label>Enter course instructors</label>
+          <input type="text" className="form-control" value={faculty} onChange={(e) => setFaculty(e.target.value)} />
+        </div>
+        <div className="form-group">
+          <label>Enter course emails</label>
+          <input type="text" className="form-control" value={emails} onChange={(e) => setEmails(e.target.value)} />
         </div>
         
-        <div className="form-group">
-          <label htmlFor="exampleFormControlFile1">Enter course instructors</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
-        </div>
-        <div className="form-group">
-          <label htmlFor="exampleFormControlFile1">Enter course emails</label>
-          <input type="text" className="form-control" id="exampleFormControlFile1" />
-        </div>
-
-        <button type="button" className="btn btn-primary">Save changes</button>
-        <button type="button" className="btn btn-danger">Cancel</button>
+        <button type="submit" className="btn btn-primary" data-dismiss="modal" onClick={submitForm}>Save Changes</button>
+        <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={updateForm}>Cancel</button>
       </form>
     </React.Fragment>
   )

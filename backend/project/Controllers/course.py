@@ -70,6 +70,7 @@ class CourseList(MethodView):
             if db_faculty is None:
                 db_faculty = Faculty()
                 db_faculty.email = email
+                db_faculty.name = course_data.get("faculty").split(";")[course_data.get("emails").split(";").index(email)]
                 faculty_dao.insert_faculty(db_faculty)
             
             faculty_list.append(db_faculty)
@@ -85,6 +86,58 @@ class CourseList(MethodView):
             abort(500, message="Course object not part of session")
 
         return course
+
+    @course_controller.arguments(CoursePostSchema, location="form")
+    @course_controller.response(200, CourseSchema)
+    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
+    def put(self, course_data):
+        print(course_data)
+        emails = course_data.get("emails").split(";")
+        names = course_data.get("faculty").split(";")
+        if len(emails) != len(names):
+            abort(500, message="Emails and names do not match")
+        course = course_dao.get_by_id(course_data.get("course_id"))
+        course.title_short = course_data.get("title_short")
+        course.title_long = course_data.get("title_long")
+        course.description = course_data.get("description")
+        
+        if course_data.get("subject") != course.subject.subject:
+            db_subject = subject_dao.get_subject_by_name(subject_dao.Subject.subject==course_data.get("subject"))
+            if db_subject is None:
+                db_subject = Subject()
+                db_subject.subject = course_data.get("subject")
+                subject_dao.insert(db_subject)
+                 
+            course.subject_id = db_subject.id
+        course.catalog_number = course_data.get("catalog_number")
+        
+        # Check if the faculty has been updated
+        faculty_list = []
+
+        for email in emails:
+            if pandas.isna(email):
+                continue
+            # Risk of updating faculty email, it will create a new faculty with the same name
+            db_faculty = faculty_dao.get_faculty_by_name(faculty_dao.Faculty.email==email)
+            if db_faculty is None:
+                db_faculty = Faculty()
+                db_faculty.email = email
+                db_faculty.name = names[emails.index(email)]
+                faculty_dao.insert_faculty(db_faculty)
+            else:
+                db_faculty.name = names[emails.index(email)]
+                faculty_dao.update_faculty(db_faculty)
+            faculty_list.append(db_faculty)
+
+
+        try:
+            course_dao.update_course(course)
+            theme_dao.classify_course(course, commit=True)
+        except SQLAlchemyError:
+            abort(500, message="An error occured updating the course")
+        except ArgumentError:
+            abort(500, message="Course object not part of session")
+
 
 # Define a method for handling an array of courses by id
 #   /**

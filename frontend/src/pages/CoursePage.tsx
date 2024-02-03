@@ -94,7 +94,6 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
     };
 
     const setCourseType = (courseId: number) => {
-
         if (courses) {
             courses.forEach((course) => {
                 if (course.id === courseId) {
@@ -102,6 +101,7 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
                 }
             });
         }
+
     }
 
     const setCourseTitleClick = (courseId: number) => {
@@ -134,11 +134,17 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
 
         // This stops the event from propagating to the parent element
         e.stopPropagation();
+        // If the course is already selected, then unselect it
         if (selectedCourseIds.includes(courseId)) {
             setSelectedCourseIds(selectedCourseIds.filter((id: number) => id !== courseId));
         } else {
+            // If the course is not selected, then select it
             setSelectedCourseIds([...selectedCourseIds, courseId]);
+            // Set the course type to the newly selected course
+            setCourseType(courseId);
+            
         }
+        console.log(course);
         
     }
     
@@ -199,7 +205,7 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
                 </div>
                 <div>
                     <ModalButton disabled={selectedCourseIds.length !== 1} modalTarget="editCourseModal" buttonMessage="Edit course" />
-                    <Modal modalTarget="editCourseModal" modalTitle="EDIT A COURSE" modalBody={<ModalEditCourseBody />} />
+                    <Modal modalTarget="editCourseModal" modalTitle="EDIT A COURSE" modalBody={<ModalEditCourseBody course={course} updateCoursesList={updateCoursesList} />} />
                 </div>
                 <div>
                     <ModalButton disabled={selectedCourseIds.length < 1} modalTarget="deleteCourseModal" buttonMessage="Delete course" />

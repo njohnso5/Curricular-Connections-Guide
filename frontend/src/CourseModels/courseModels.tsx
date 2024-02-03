@@ -3,6 +3,7 @@ import { Theme } from "../models/programModels";
 // set a type Course that contains all the data relevant to a course for displaying in rows for table
 export type Faculty = {
     id: number;
+    name: string;
     email: string;
 }
 

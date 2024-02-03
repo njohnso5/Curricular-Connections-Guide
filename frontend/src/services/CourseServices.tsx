@@ -17,6 +17,11 @@ class CourseService {
     return axios.post(API_URL, courseForm, { headers: { "Content-Type": "multipart/form-data" }})
   }
 
+  updateCourse (courseForm: FormData) {
+    console.log(courseForm);
+    console.log('In updateCourse api call');
+    return axios.put(API_URL, courseForm, { headers: { "Content-Type": "multipart/form-data" }})
+  }
   /**
    * Remove a list of courses
    */
