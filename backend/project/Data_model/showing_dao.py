@@ -11,9 +11,7 @@ def get_all() -> list[Showing] or None:
 
 # Function to retrieve a showing by its ID from the database
 def get_by_id(id: int) -> Showing or None:
-    return Showing.query.get_or_404(
-        id, description="No showing found with the given ID."
-    )
+    return Showing.query.get(id)
 
 # Function to insert a new showing into the database
 def insert(show: Showing):

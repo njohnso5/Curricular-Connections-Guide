@@ -72,16 +72,30 @@ function listShowingDates(showings: Showing[]) {
 
 const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
 
-  const [newProgram, setNewProgram] = useState<ProgramData | undefined>(program);
+  const [newProgram, setNewProgram] = useState<ProgramData>(program);
   // Handles the Update button functionality from the Modal-footer module
-  window.$("#programDisplay").modal("hide");
+  useEffect(() => {
+    setNewProgram(program);
+
+  }, [program]);
+  if(!newProgram) {
+    return null;
+  }
   function handleUpdate(event: any) {
     event.preventDefault();
-    if (program) {
+    if (newProgram) {
+      const formData = new FormData();
+      formData.append('id', newProgram.id.toString());
+      formData.append('title', newProgram.title.toString());
+      formData.append('department', newProgram.department.toString());
+      formData.append('description', newProgram.description.toString());
+      formData.append('link', newProgram.link.toString());
+      formData.append('showings', JSON.stringify(newProgram.showings));
+      console.log(JSON.stringify(newProgram.showings));
       // Call the updateProgram method from ProgramService
-      ProgramService.updateProgram(newProgram) // Gives updateProgram all of the ProgramData
+      ProgramService.updateProgram(formData) // Gives updateProgram all of the ProgramData
       .then(() => {
-        updatePrograms((prev: ProgramData[]) => prev.filter(item => item !== newProgram));
+        //updatePrograms((prev: ProgramData[]) => prev.filter(item => item !== newProgram));
         window.$("#editProgramModal").modal("hide");
       })
       .catch(() => {
@@ -91,12 +105,35 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       console.log("There was an error finding the program you want to update. Try refreshing the page.")
     }
   }
-  function handleEditChange(event: any)  {
+
+  function handleShowingChange(event: any, index: number) {
+    const updatedShowings = [...newProgram.showings];
     const {name, value} = event.target;
-    console.log(name);
-    setNewProgram((newProgram) =>({...newProgram, [name]: value}));
-    console.log(newProgram);
+    updatedShowings[index] = {...updatedShowings[index], [name]: value};
+    setNewProgram((newProgram) => ({...newProgram, showings: updatedShowings}));
   }
+
+  const addShowing = (event: any) => {
+    event.preventDefault();
+    const newShowing: ProgramFormShowing = {
+      datetime : "",
+      location : "",
+      price: ""
+    };
+
+    setNewProgram({
+      ...newProgram,
+      showings: [...newProgram.showings, newShowing]
+    });
+  }
+
+  const removeShowing = (event: any) => {
+    event.preventDefault();
+    const updatedShowings = [...newProgram.showings];
+    updatedShowings.pop();
+    setNewProgram({...newProgram, showings: updatedShowings});
+  }
+
   return (
     <React.Fragment>
     <form id="edit-program">
@@ -107,7 +144,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       </div>
       <div className="form-group align-items-center gap-1">
         <span>Title</span>
-        <input type="text" className="form-control" name="title" value={newProgram.title} onChange={handleEditChange}  required/>
+        <input type="text" className="form-control" name="title" value={newProgram.title} onChange={(e) => setNewProgram({ ...newProgram, title: e.target.value})}  required/>
       </div>
       <div className="form-group align-items-center gap-1">
         <span>Department</span>
@@ -150,8 +187,8 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
           );
       })} 
       <div id={styles.showingManage}>
-        <button className="btn" ><span className="fa-solid fa-plus"></span></button>
-        <button className="btn" ><span className="fa-solid fa-minus"></span></button>
+        <button className="btn" onClick={addShowing}><span className="fa-solid fa-plus"></span></button>
+        <button className="btn" onClick={removeShowing}><span className="fa-solid fa-minus"></span></button>
       </div>
       <div className="modal-footer">
         <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
