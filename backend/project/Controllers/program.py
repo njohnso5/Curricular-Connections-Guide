@@ -91,25 +91,7 @@ class HandleProgram(MethodView):
             return new_prg
         except SQLAlchemyError:
             abort(422, message="An SQL error occured during the operation")
-
-# Route to retrieve Departments that the frontend is allowed to use
-@program_router.route("/departments/")
-class GetDepartments(MethodView):
-    @program_router.response(200, DepartmentListSchema)
-    def get(self):
-        # Get a list of department values and return as response
-        return {"departments": prog_dao.get_departments()}
-
-
-# Define a class for handling specific program IDs
-@program_router.route("/<int:programid>/")
-class HandleProgramID(MethodView):
-    # Define a method to handle GET requests for a specific program ID
-    @program_router.response(200, ProgramSchema)
-    def get(self, programid):
-        res = prog_dao.get_by_id(programid)
-        return res
-
+    
     # Define a method to handle PUT requests for a specific program ID
     @program_router.arguments(ProgramPutSchema)
     @program_router.response(200, ProgramSchema)
@@ -144,6 +126,25 @@ class HandleProgramID(MethodView):
             return result
         except SQLAlchemyError:
             abort(422)
+
+# Route to retrieve Departments that the frontend is allowed to use
+@program_router.route("/departments/")
+class GetDepartments(MethodView):
+    @program_router.response(200, DepartmentListSchema)
+    def get(self):
+        # Get a list of department values and return as response
+        return {"departments": prog_dao.get_departments()}
+
+
+# Define a class for handling specific program IDs
+@program_router.route("/<int:programid>/")
+class HandleProgramID(MethodView):
+    # Define a method to handle GET requests for a specific program ID
+    @program_router.response(200, ProgramSchema)
+    def get(self, programid):
+        res = prog_dao.get_by_id(programid)
+        return res
+
 
     # Define a method to handle DELETE requests for a specific program ID
     @program_router.response(200)

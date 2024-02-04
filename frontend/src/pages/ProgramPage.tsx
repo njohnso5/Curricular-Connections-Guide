@@ -73,6 +73,7 @@ function listShowingDates(showings: Showing[]) {
 
 const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
   // Handles the Update button functionality from the Modal-footer module
+  window.$("#programDisplay").modal("hide");
   function handleUpdate(event: any) {
     event.preventDefault();
     if (program) {
@@ -80,7 +81,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       ProgramService.updateProgram(program) // Gives updateProgram all of the ProgramData
       .then(() => {
         updatePrograms((prev: ProgramData[]) => prev.filter(item => item !== program));
-        window.$("#programDisplay").modal("hide");
+        window.$("#editProgramModal").modal("hide");
       })
       .catch(() => {
         console.error("Error deleting program")
@@ -94,16 +95,16 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
     <form onSubmit={handleUpdate}>
       <div className="form-group align-items-center gap-1">
         <span>Image</span>
-        <img className="img-fluid" src={filePreview} />
-        <input id="image-input" type="file" className="form-control" name="image" onChange={handleImageSelect} required/>
+        <img className="img-fluid"  />
+        <input id="image-input" type="file" className="form-control" name="image"  required/>
       </div>
       <div className="form-group align-items-center gap-1">
         <span>Title</span>
-        <input type="text" className="form-control" name="title" placeholder="Title" value={programData.title} onChange={handleChange} required/>
+        <input type="text" className="form-control" name="title" placeholder="Title"  required/>
       </div>
       <div className="form-group align-items-center gap-1">
         <span>Department</span>
-        <select className="custom-select" name="department" value={programData.department} onChange={handleChange} required>
+        <select className="custom-select" name="department"  required>
           <option value=""></option>
           <option value="Crafts Center">Craft's Center</option>
           <option value="Department of Performing Arts & Technology">Department of Performing Arts & Technology</option>
@@ -114,14 +115,14 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       </div>
       <div className="form-group align-items-center gap-1">
         <span>Description</span>
-        <textarea className="form-control" name="description" placeholder="Enter details about the program..." value={programData.description} onChange={handleChange} required></textarea>
+        <textarea className="form-control" name="description" placeholder="Enter details about the program..."  required></textarea>
       </div>
       <div className="form-group align-items-center gap-1">
         <span>Link</span>
-        <input type="text" className="form-control" name="link" placeholder="Link" value={programData.link} onChange={handleChange} />
+        <input type="text" className="form-control" name="link" placeholder="Link"  />
       </div>
       <h5>Showings</h5>
-      {programData.showings.map((showing, index) => {
+      {/* {programData.showings.map((showing, index) => {
         return (
           // Must be wrapped in a div so that each entry group can
           // be contained in an object with a unique key
@@ -140,18 +141,18 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
             </div>
           </div>
           );
-      })}
+      })} */}
       <div id={styles.showingManage}>
-        <button className="btn" onClick={addShowing}><span className="fa-solid fa-plus"></span></button>
-        <button className="btn" onClick={removeShowing}><span className="fa-solid fa-minus"></span></button>
+        <button className="btn" ><span className="fa-solid fa-plus"></span></button>
+        <button className="btn" ><span className="fa-solid fa-minus"></span></button>
       </div>
       <div className="modal-footer">
         <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" className="btn btn-primary">Submit</button>
+        <button type="submit" className="btn btn-primary" onClick={handleUpdate}>Submit</button>
       </div>
     </form>
   );
-}
+ }
 
 const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
     function handleDelete(event: any) {
