@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import ProgramService from "../services/programs-services";
 import { Modal, ModalButton } from "../components/Modal";
 import { Showing, Theme, ProgramData, ProgramFormShowing, ProgramForm } from "../models/programModels";
-
 import styles from "../css/ProgramPage.module.css";
 
 const TimeTabBar: React.FC<{updatePrograms: Function}> = ({updatePrograms}) => {
@@ -72,15 +71,17 @@ function listShowingDates(showings: Showing[]) {
 }
 
 const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
+
+  const [newProgram, setNewProgram] = useState<ProgramData | undefined>(program);
   // Handles the Update button functionality from the Modal-footer module
   window.$("#programDisplay").modal("hide");
   function handleUpdate(event: any) {
     event.preventDefault();
     if (program) {
       // Call the updateProgram method from ProgramService
-      ProgramService.updateProgram(program) // Gives updateProgram all of the ProgramData
+      ProgramService.updateProgram(newProgram) // Gives updateProgram all of the ProgramData
       .then(() => {
-        updatePrograms((prev: ProgramData[]) => prev.filter(item => item !== program));
+        updatePrograms((prev: ProgramData[]) => prev.filter(item => item !== newProgram));
         window.$("#editProgramModal").modal("hide");
       })
       .catch(() => {
@@ -90,21 +91,27 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       console.log("There was an error finding the program you want to update. Try refreshing the page.")
     }
   }
-
+  function handleEditChange(event: any)  {
+    const {name, value} = event.target;
+    console.log(name);
+    setNewProgram((newProgram) =>({...newProgram, [name]: value}));
+    console.log(newProgram);
+  }
   return (
-    <form onSubmit={handleUpdate}>
+    <React.Fragment>
+    <form id="edit-program">
       <div className="form-group align-items-center gap-1">
         <span>Image</span>
         <img className="img-fluid"  />
-        <input id="image-input" type="file" className="form-control" name="image"  required/>
+        <input id="image-input" type="file" className="form-control" name="image" />
       </div>
       <div className="form-group align-items-center gap-1">
         <span>Title</span>
-        <input type="text" className="form-control" name="title" placeholder="Title"  required/>
+        <input type="text" className="form-control" name="title" value={newProgram.title} onChange={handleEditChange}  required/>
       </div>
       <div className="form-group align-items-center gap-1">
         <span>Department</span>
-        <select className="custom-select" name="department"  required>
+        <select className="custom-select" name="department" value={newProgram.department} onChange={(e) => setNewProgram({ ...newProgram, department: e.target.value})} required>
           <option value=""></option>
           <option value="Crafts Center">Craft's Center</option>
           <option value="Department of Performing Arts & Technology">Department of Performing Arts & Technology</option>
@@ -115,14 +122,14 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       </div>
       <div className="form-group align-items-center gap-1">
         <span>Description</span>
-        <textarea className="form-control" name="description" placeholder="Enter details about the program..."  required></textarea>
+        <textarea className="form-control" name="description" placeholder="Enter details about the program..." value={newProgram.description}  onChange={(e) => setNewProgram({ ...newProgram, description: e.target.value})} required></textarea>
       </div>
       <div className="form-group align-items-center gap-1">
         <span>Link</span>
-        <input type="text" className="form-control" name="link" placeholder="Link"  />
+        <input type="text" className="form-control" name="link" placeholder="Link" value={newProgram.link} onChange={(e) => setNewProgram({ ...newProgram, link: e.target.value})} />
       </div>
       <h5>Showings</h5>
-      {/* {programData.showings.map((showing, index) => {
+       {newProgram.showings.map((showing, index) => {
         return (
           // Must be wrapped in a div so that each entry group can
           // be contained in an object with a unique key
@@ -141,7 +148,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
             </div>
           </div>
           );
-      })} */}
+      })} 
       <div id={styles.showingManage}>
         <button className="btn" ><span className="fa-solid fa-plus"></span></button>
         <button className="btn" ><span className="fa-solid fa-minus"></span></button>
@@ -151,8 +158,9 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
         <button type="submit" className="btn btn-primary" onClick={handleUpdate}>Submit</button>
       </div>
     </form>
-  );
- }
+    </React.Fragment>
+  )
+}
 
 const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
     function handleDelete(event: any) {
@@ -232,7 +240,7 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
         </div>
       </>);
   }
-};
+}
 
 const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Function}> = ({programs, updatePrograms}) => {
   const [currentProgram, setCurrentProgram] = useState<ProgramData | undefined>(undefined);
