@@ -10,3 +10,15 @@
   justify-content: space-between;
   align-items: flex-start;
 }
+
+.form-group {
+  margin-bottom: 0;
+}
+#new-course-info .btn-primary {
+  margin-top: 10px;
+}
+
+#edit-course-info .btn {
+  margin-top: 10px;
+  margin-right: 30px;
+}
