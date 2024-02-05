@@ -47,6 +47,16 @@
     width: 150px;
 }
 
+.floatMiddle {
+    margin-right: 32%;
+    margin-left: 32%;
+}
+
+.floatMiddleText {
+    margin-right: 20%;
+    margin-left: 20%;
+}
+
 .searchField {
     height: '38px';
     width: '300px';
