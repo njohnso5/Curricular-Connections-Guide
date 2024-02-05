@@ -71,7 +71,7 @@ function listShowingDates(showings: Showing[]) {
 }
 
 const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
-
+  const [filePreview, setFilePreview] = useState();
   const [newProgram, setNewProgram] = useState<ProgramData>(program);
   // Handles the Update button functionality from the Modal-footer module
   useEffect(() => {
@@ -91,15 +91,18 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       formData.append('description', newProgram.description.toString());
       formData.append('link', newProgram.link.toString());
       formData.append('showings', JSON.stringify(newProgram.showings));
-      console.log(JSON.stringify(newProgram.showings));
+      if (newProgram.image) {
+        formData.append('image', newProgram.image);
+      }
       // Call the updateProgram method from ProgramService
       ProgramService.updateProgram(formData) // Gives updateProgram all of the ProgramData
       .then(() => {
-        //updatePrograms((prev: ProgramData[]) => prev.filter(item => item !== newProgram));
         window.$("#editProgramModal").modal("hide");
+        window.$("#programDisplay").modal("hide");
+        updatePrograms((prev: ProgramData[]) => [...prev.filter(item => item !== program), newProgram]);
       })
       .catch(() => {
-        console.error("Error deleting program")
+        console.error("Error editing program")
       });
     } else {
       console.log("There was an error finding the program you want to update. Try refreshing the page.")
@@ -134,13 +137,18 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
     setNewProgram({...newProgram, showings: updatedShowings});
   }
 
+  function handleImageSelect(event: any) {
+    newProgram.image = event.target.files[0];
+    setFilePreview(URL.createObjectURL(event.target.files[0]));
+  }
+
   return (
     <React.Fragment>
     <form id="edit-program">
       <div className="form-group align-items-center gap-1">
         <span>Image</span>
-        <img className="img-fluid"  />
-        <input id="image-input" type="file" className="form-control" name="image" />
+        <img className="img-fluid" src={filePreview} />
+        <input id="image-input" type="file" className="form-control" name="image" onChange={handleImageSelect} />
       </div>
       <div className="form-group align-items-center gap-1">
         <span>Title</span>
@@ -271,7 +279,7 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
         </div>
         <div className="modal-footer">
           <ModalButton modalTarget="editProgramModal" buttonMessage="Edit program" />
-          <Modal modalTarget="editProgramModal" modalTitle="EDIT A PROGRAM" modalBody={<ModalEditProgramBody program={program} />} />
+          <Modal modalTarget="editProgramModal" modalTitle="EDIT A PROGRAM" modalBody={<ModalEditProgramBody program={program} updatePrograms={updatePrograms} />} />
           <button type="button" className="btn btn-secondary" onClick={handleDelete}>Delete Program</button>
           <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>

@@ -101,15 +101,25 @@ class HandleProgram(MethodView):
             programid = program_data["id"]
             # Extract showings from program data
             showings: dict = json.loads(program_data.pop("showings"))
+            # Upload program image if provided
+            if "image" in request.files:
+                filename = upload_file(request.files["image"], IMAGE_DIR)
+                program_data["image_filename"] = filename
 
             # Update the program without modifying showings yet
-            result = prog_dao.update(program_data, programid)
             program = prog_dao.get_by_id(programid)
-            print(showings[0])
+            result = prog_dao.update(program_data, programid)
+            if len(program.showings) > len(showings):
+                flag = True
+                for sho in program.showings:
+                    for show in showings:
+                        if (show.get("id") == sho.id):
+                            flag = False
+                    if flag:
+                        show_dao.delete(sho.id)
+                    flag = True
             # Parse each showing in the request data and check their states
-            for show in showings:
-                print(show)
-                
+            for show in showings: 
                 db_show = show_dao.get_by_id(show.get("id"))
                 if db_show is None:
                     dt = show.pop(
