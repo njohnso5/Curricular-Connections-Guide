@@ -40,10 +40,11 @@ const SearchPage: React.FC = () => {
             </nav>
             <div className={`container-fluid rounded-1`}>
                 <h1 className={`${styles.floatMiddle}`}>Curricular Connections Guide</h1>
-                <h3 className={`${styles.floatMiddleText}`}>
+                <p className={`${styles.floatMiddleText}`}>
                     NC State University has many courses that relate to the events offered through the NC State arts program. The guide below will allow you to search for
                     programs based off department, theme, calendar date, and name.
-                </h3>
+                </p>
+                <hr></hr>
                 <SearchNavBar setResults={setResults}/>
                 <div className="row">
                     {displayResults(results)}

@@ -23,6 +23,12 @@ class ProgramService {
     return axios.delete(API_URL + id + "/");
   }
 
+  // Handles the update program API behavior
+  updateProgram (program: FormData) {
+    // program.id
+    return axios.put(API_URL, program, {headers: { "Content-Type": "multipart/form-data" }});
+  }
+
   uploadProgram (programform: FormData) {
     return axios.post(API_URL, programform, {headers: { "Content-Type": "multipart/form-data" }});
   }

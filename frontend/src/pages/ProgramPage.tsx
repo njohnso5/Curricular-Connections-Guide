@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import ProgramService from "../services/programs-services";
 import { Modal, ModalButton } from "../components/Modal";
 import { Showing, Theme, ProgramData, ProgramFormShowing, ProgramForm } from "../models/programModels";
-
 import styles from "../css/ProgramPage.module.css";
 
 const TimeTabBar: React.FC<{updatePrograms: Function}> = ({updatePrograms}) => {
@@ -71,22 +70,159 @@ function listShowingDates(showings: Showing[]) {
   return dateString;
 }
 
-const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
-  function handleDelete(event: any) {
+const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
+  const [filePreview, setFilePreview] = useState();
+  const [newProgram, setNewProgram] = useState<ProgramData>(program);
+  // Handles the Update button functionality from the Modal-footer module
+  useEffect(() => {
+    setNewProgram(program);
+
+  }, [program]);
+  if(!newProgram) {
+    return null;
+  }
+  function handleUpdate(event: any) {
     event.preventDefault();
-    if (program) {
-      ProgramService.deleteProgram(program.id)
+    if (newProgram) {
+      const formData = new FormData();
+      formData.append('id', newProgram.id.toString());
+      formData.append('title', newProgram.title.toString());
+      formData.append('department', newProgram.department.toString());
+      formData.append('description', newProgram.description.toString());
+      formData.append('link', newProgram.link.toString());
+      formData.append('showings', JSON.stringify(newProgram.showings));
+      if (newProgram.image) {
+        formData.append('image', newProgram.image);
+      }
+      // Call the updateProgram method from ProgramService
+      ProgramService.updateProgram(formData) // Gives updateProgram all of the ProgramData
       .then(() => {
-        updatePrograms((prev: ProgramData[]) => prev.filter(item => item !== program));
+        window.$("#editProgramModal").modal("hide");
         window.$("#programDisplay").modal("hide");
+        updatePrograms((prev: ProgramData[]) => [...prev.filter(item => item !== program), newProgram]);
       })
       .catch(() => {
-        console.error("Error deleting program")
+        console.error("Error editing program")
       });
     } else {
-      console.log("There was an error finding the program you want to delete. Try refreshing the page.")
+      console.log("There was an error finding the program you want to update. Try refreshing the page.")
     }
   }
+
+  function handleShowingChange(event: any, index: number) {
+    const updatedShowings = [...newProgram.showings];
+    const {name, value} = event.target;
+    updatedShowings[index] = {...updatedShowings[index], [name]: value};
+    setNewProgram((newProgram) => ({...newProgram, showings: updatedShowings}));
+  }
+
+  const addShowing = (event: any) => {
+    event.preventDefault();
+    const newShowing: ProgramFormShowing = {
+      datetime : "",
+      location : "",
+      price: ""
+    };
+
+    setNewProgram({
+      ...newProgram,
+      showings: [...newProgram.showings, newShowing]
+    });
+  }
+
+  const removeShowing = (event: any) => {
+    event.preventDefault();
+    const updatedShowings = [...newProgram.showings];
+    updatedShowings.pop();
+    setNewProgram({...newProgram, showings: updatedShowings});
+  }
+
+  function handleImageSelect(event: any) {
+    newProgram.image = event.target.files[0];
+    setFilePreview(URL.createObjectURL(event.target.files[0]));
+  }
+
+  return (
+    <React.Fragment>
+    <form id="edit-program">
+      <div className="form-group align-items-center gap-1">
+        <span>Image</span>
+        <img className="img-fluid" src={filePreview} />
+        <input id="image-input" type="file" className="form-control" name="image" onChange={handleImageSelect} />
+      </div>
+      <div className="form-group align-items-center gap-1">
+        <span>Title</span>
+        <input type="text" className="form-control" name="title" value={newProgram.title} onChange={(e) => setNewProgram({ ...newProgram, title: e.target.value})}  required/>
+      </div>
+      <div className="form-group align-items-center gap-1">
+        <span>Department</span>
+        <select className="custom-select" name="department" value={newProgram.department} onChange={(e) => setNewProgram({ ...newProgram, department: e.target.value})} required>
+          <option value=""></option>
+          <option value="Crafts Center">Craft's Center</option>
+          <option value="Department of Performing Arts & Technology">Department of Performing Arts & Technology</option>
+          <option value="Gregg Museum of Art & Design">Gregg Museum of Art & Design</option>
+          <option value="NC State LIVE performing artist series">NC State LIVE performing artist series</option>
+          <option value="University Theatre">University Theatre</option>
+        </select>
+      </div>
+      <div className="form-group align-items-center gap-1">
+        <span>Description</span>
+        <textarea className="form-control" name="description" placeholder="Enter details about the program..." value={newProgram.description}  onChange={(e) => setNewProgram({ ...newProgram, description: e.target.value})} required></textarea>
+      </div>
+      <div className="form-group align-items-center gap-1">
+        <span>Link</span>
+        <input type="text" className="form-control" name="link" placeholder="Link" value={newProgram.link} onChange={(e) => setNewProgram({ ...newProgram, link: e.target.value})} />
+      </div>
+      <h5>Showings</h5>
+       {newProgram.showings.map((showing, index) => {
+        return (
+          // Must be wrapped in a div so that each entry group can
+          // be contained in an object with a unique key
+          <div className={styles.showing} key={index}>
+            <div className="form-group">
+              <span>Date & Time</span>
+              <input type="datetime-local" className="form-control" name="datetime" value={showing.datetime} onChange={(event) => handleShowingChange(event, index)} required/>
+            </div>
+            <div className="form-group">
+              <span>Location</span>
+              <input type="text" className="form-control" name="location" placeholder="Location" value={showing.location} onChange={(event) => handleShowingChange(event, index)} required/>
+            </div>
+            <div className="form-group">
+              <span>Price</span>
+              <input type="text" className="form-control" name="price" placeholder="Price" value={showing.price} onChange={(event) => handleShowingChange(event, index)} required/>
+            </div>
+          </div>
+          );
+      })} 
+      <div id={styles.showingManage}>
+        <button className="btn" onClick={addShowing}><span className="fa-solid fa-plus"></span></button>
+        <button className="btn" onClick={removeShowing}><span className="fa-solid fa-minus"></span></button>
+      </div>
+      <div className="modal-footer">
+        <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" className="btn btn-primary" onClick={handleUpdate}>Submit</button>
+      </div>
+    </form>
+    </React.Fragment>
+  )
+}
+
+const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
+    function handleDelete(event: any) {
+      event.preventDefault();
+      if (program) {
+        ProgramService.deleteProgram(program.id)
+        .then(() => {
+          updatePrograms((prev: ProgramData[]) => prev.filter(item => item !== program));
+          window.$("#programDisplay").modal("hide");
+        })
+        .catch(() => {
+          console.error("Error deleting program")
+        });
+      } else {
+        console.log("There was an error finding the program you want to delete. Try refreshing the page.")
+      }
+    }
   
   if (program == null) {
     return (
@@ -142,12 +278,14 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
           }) : <p>No showings at this time</p>}
         </div>
         <div className="modal-footer">
+          <ModalButton modalTarget="editProgramModal" buttonMessage="Edit program" />
+          <Modal modalTarget="editProgramModal" modalTitle="EDIT A PROGRAM" modalBody={<ModalEditProgramBody program={program} updatePrograms={updatePrograms} />} />
           <button type="button" className="btn btn-secondary" onClick={handleDelete}>Delete Program</button>
           <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
       </>);
   }
-};
+}
 
 const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Function}> = ({programs, updatePrograms}) => {
   const [currentProgram, setCurrentProgram] = useState<ProgramData | undefined>(undefined);
