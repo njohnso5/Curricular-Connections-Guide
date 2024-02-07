@@ -1,5 +1,7 @@
 from flask import Flask
 import pytest
+import sys
+sys.path.append(".") # Adds higher directory to python modules path.
 from app import create_app, db 
 
 
