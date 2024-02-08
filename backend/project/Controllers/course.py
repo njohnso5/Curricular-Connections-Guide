@@ -91,7 +91,7 @@ class CourseList(MethodView):
     @course_controller.response(200, CourseSchema)
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def put(self, course_data):
-        print(course_data)
+        # print(course_data)
         emails = course_data.get("emails").split(";")
         names = course_data.get("faculty").split(";")
         if len(emails) != len(names):
