@@ -3,8 +3,8 @@ import SemesterService from '../services/SemesterService';
 import PeriodService from '../services/PeriodService';
 import CourseService from '../services/CourseServices';
 import themesService from '../services/themes-service';
-import { SemesterForm, Course } from '../CourseModels/courseModels';
 import { Theme } from '../models/programModels';
+import { SemesterForm, Course, CourseForm } from '../CourseModels/courseModels';
 import React, { useState, useEffect } from 'react';
 import CourseTable from '../pages/CoursePage';
 import { AxiosResponse } from 'axios';
@@ -22,11 +22,13 @@ interface ModalProps {
 interface ModalButtonProps {
   modalTarget: string;
   buttonMessage: string;
+  disabled?:boolean;
 }
 
-const ModalButton: React.FC<ModalButtonProps> = ({ modalTarget, buttonMessage }) => {
+
+const ModalButton: React.FC<ModalButtonProps> = ({ modalTarget, buttonMessage, disabled = false }) => {
   return (
-      <button type="button" className="btn btn-primary" data-toggle="modal" data-target={"#" + modalTarget}>
+      <button disabled={disabled} type="button" className="btn btn-primary" data-toggle="modal" data-target={"#" + modalTarget}>
         {buttonMessage}
       </button>
   );
@@ -68,12 +70,12 @@ const DeleteSemesterBody: React.FC = () => {
       SemesterService.removeSemester(selectedSemesterId)
         .then(() => {
           // Handle successful deletion (e.g., refresh the list of semesters)
-          setSemesters((prevSemesters) =>
+          setSemesters((prevSemesters: SemesterForm[] | null) =>
             prevSemesters ? prevSemesters.filter((semester) => semester.id !== selectedSemesterId) : null
           );
           setSelectedSemesterId(null);
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.error('Error deleting semester:', error);
         });
     }
@@ -182,7 +184,7 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
     if (semesterData.catalog) {
       formData.append('catalog', semesterData.catalog);
     }
-
+    console.log(formData);
     SemesterService.createSemester(formData)
       .then((_response: AxiosResponse<SemesterForm>) => {
         props.handleUpload(_response.data);
@@ -290,6 +292,7 @@ const ModalNewThemeBody: React.FC<ModalNewThemeBodyProps> =(props) => {
 
 
 const Modal: React.FC<ModalProps> = ({ modalTarget, modalTitle, modalBody }) => {
+
   return (
       <div className="modal fade" id={modalTarget} tabIndex="-1" role="dialog" aria-labelledby={modalTarget} aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered" role="document">
@@ -308,7 +311,243 @@ const Modal: React.FC<ModalProps> = ({ modalTarget, modalTitle, modalBody }) => 
       </div>
   );
 };
+/**
+ * This is the modal that displays when you click the "add a course button on the courses page"
+ * It will show a form that allows you to add a course to the database
+ * enter course ID, title_short, title_long, description, subject, catalog_number, faculty, and emails. 
+ * @returns html form that will be displayed in the modal
+ */
+const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, updateCoursesList }) => {
+  const [courseData, setCourseData] = useState<CourseForm>({
+    // id:number;
+    // title_short: string;
+    // title_long: string;
+    // description: string;
+    // subject: string;
+    // catalog_number:number;
+    // faculty: string;
+    // email: string;
+    // semester_id: number;
+    // 
+    id: null,
+    title_short: "",
+    title_long: "",
+    description: "",
+    subject: "",
+    catalog_number: null,
+    faculty: "",
+    emails: "",
+    semester_id: semesterId
+  });
 
+  const handleSubmit = (event: React.FormEvent) => {
+    // console.log("inside handle add function");
+    // console.log(courseData);
+    // console.log(semesterId);
+    event.preventDefault();
+
+    const formData = new FormData();
+    // formData.append('id', courseData.id.toString());
+    formData.append('title_short', courseData.title_short.toString());
+    formData.append('title_long', courseData.title_long.toString());
+    formData.append('description', courseData.description.toString());
+    formData.append('subject', courseData.subject.toString());
+    formData.append('catalog_number', courseData.catalog_number.toString());
+    formData.append('faculty', courseData.faculty.toString());
+    formData.append('emails', courseData.emails.toString());
+    formData.append('semester_id', semesterId.toString());
+
+    // console.log(formData);
+    CourseService.addCourse(formData)
+      .then(() => {
+        updateCoursesList();
+
+        // Clear the form after adding the course
+        setCourseData({
+          id: null,
+          title_short: "",
+          title_long: "",
+          description: "",
+          subject: "",
+          catalog_number: null,
+          faculty: "",
+          emails: "",
+          semester_id: semesterId
+        });
+      })
+      .catch((error) => {
+        console.error('Error adding course:', error);
+      });
+  }
+  return (
+    <React.Fragment>
+      <form id="new-course-info">
+        <div className="form-group">
+          <label>Enter course ID</label>
+          <input type="number" className="form-control" value={courseData.id || ""} onChange={(e) => setCourseData({ ...courseData, id: parseInt(e.target.value) })} />
+        </div>
+        <div className="form-group">
+          <label>Enter course subject</label>
+          <input type="text" className="form-control" value={courseData.subject} onChange={(e) => setCourseData({ ...courseData, subject: e.target.value })} />
+          <label>Enter course catalog number</label>
+          <input type="number" className="form-control" value={courseData.catalog_number || ""} onChange={(e) => setCourseData({ ...courseData, catalog_number: parseInt(e.target.value) })} />
+        </div>
+        <div className="form-group">
+          <label>Enter course title short</label>
+          <input type="text" className="form-control" value={courseData.title_short} onChange={(e) => setCourseData({ ...courseData, title_short: e.target.value })} />
+        </div>
+        <div className="form-group">
+          <label>Enter course title long </label>
+          <input type="text" className="form-control" value={courseData.title_long} onChange={(e) => setCourseData({ ...courseData, title_long: e.target.value })} />
+        </div>
+        <div className="form-group">
+          <label>Enter course description</label>
+          <input type="text" className="form-control" value={courseData.description} onChange={(e) => setCourseData({ ...courseData, description: e.target.value })} />
+        </div>
+        
+        <div className="form-group">
+          <label>Enter course instructors</label>
+          <input type="text" className="form-control" value={courseData.faculty} onChange={(e) => setCourseData({ ...courseData, faculty: e.target.value })} />
+        </div>
+        <div className="form-group">
+          <label>Enter course emails</label>
+          <input type="text" className="form-control" value={courseData.emails} onChange={(e) => setCourseData({ ...courseData, emails: e.target.value })} />
+        </div>
+
+        <button type="submit" className="btn btn-primary" data-dismiss="modal" onClick={handleSubmit}>Add Course</button>
+      </form>
+    </React.Fragment>
+  )
+
+}
+
+const ModalEditCourseBody: React.FC< { course: Course, updateCoursesList: ()=> void }> = ({ course, updateCoursesList }) => {
+
+  const [localCourse, setLocalCourse] = useState<Course | undefined>(undefined);
+  const [faculty, setFaculty] = useState<string>('');
+  const [emails, setEmails] = useState<string>('');
+
+  const updateForm = () => {
+    setLocalCourse(undefined);
+    updateCoursesList();
+  }
+  useEffect(() => {
+    setLocalCourse(course);
+    if (course) {
+      setFaculty(course.faculty.map(faculty => faculty.name).join(';'));
+      setEmails(course.faculty.map(faculty => faculty.email).join(';'));
+    }
+
+
+
+  }, [course]);
+  if(!localCourse) {
+    return null;
+  }
+  const submitForm = () => {
+    if (localCourse) {
+      const formData = new FormData();
+      formData.append('course_id', localCourse.id.toString());
+      formData.append('title_short', localCourse.title_short.toString());
+      formData.append('title_long', localCourse.title_long.toString());
+      formData.append('description', localCourse.description.toString());
+      formData.append('subject', localCourse.subject.subject.toString());
+      formData.append('catalog_number', localCourse.catalog_number.toString());
+      formData.append('faculty', faculty.toString());
+      formData.append('emails', emails.toString());
+      formData.append('semester_id', localCourse.semester_id.toString());
+
+      CourseService.updateCourse(formData)
+        .then(() => {
+          updateForm();
+        })
+        .catch((error) => {
+          window.alert('Please enter valid course information');
+        });
+
+    }
+  }
+  return (
+    <React.Fragment>
+      <form id="edit-course-info">
+        <div className="form-group">
+          <label>Enter course ID</label>
+          <input type="number" className="form-control" value={localCourse.id} onChange={(e) => setLocalCourse({ ...localCourse, id: parseInt(e.target.value) })} />
+        </div>
+        <div className="form-group">
+          <label>Enter course subject</label>
+          <input type="text" className="form-control" value={localCourse.subject.subject} onChange={(e) => setLocalCourse({ ...localCourse, subject: {subject: e.target.value, id: localCourse.subject.id}})} />
+          <label>Enter course catalog number</label>
+          <input type="number" className="form-control" value={localCourse.catalog_number} onChange={(e) => setLocalCourse({ ...localCourse, catalog_number: parseInt(e.target.value) })} />
+        </div>
+        <div className="form-group">
+          <label>Enter course title short</label>
+          <input type="text" className="form-control" value={localCourse.title_short} onChange={(e) => setLocalCourse({ ...localCourse, title_short: e.target.value })} />
+        </div>
+        <div className="form-group">
+          <label>Enter course title long </label>
+          <input type="text" className="form-control" value={localCourse.title_long} onChange={(e) => setLocalCourse({ ...localCourse, title_long: e.target.value })} />
+        </div>
+        <div className="form-group">
+          <label>Enter course description</label>
+          <input type="text" className="form-control" value={localCourse.description} onChange={(e) => setLocalCourse({ ...localCourse, description: e.target.value })} />
+        </div>
+        <div className="form-group">
+          <label>Enter course instructors</label>
+          <input type="text" className="form-control" value={faculty} onChange={(e) => setFaculty(e.target.value)} />
+        </div>
+        <div className="form-group">
+          <label>Enter course emails</label>
+          <input type="text" className="form-control" value={emails} onChange={(e) => setEmails(e.target.value)} />
+        </div>
+        
+        <button type="submit" className="btn btn-primary" data-dismiss="modal" onClick={submitForm}>Save Changes</button>
+        <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={updateForm}>Cancel</button>
+      </form>
+    </React.Fragment>
+  )
+}
+
+/**
+ * This modal will handel the deletion of a course from the database
+ * This is the modal that displays when you click the "delete a course" button on the courses page"
+ * It will show a form that allows you to delete a course from the database
+ * @param courseIds courseIds is an array of course ids that will be deleted
+ * @param updateCoursesList updateCoursesList is a call back function that will update the list of courses after a course is deleted
+ * @returns html form that will be displayed in the modal
+ */
+const ModalDeleteCourseBody: React.FC<{ courseIds: number []; updateCoursesList: ()=> void }> = ({ courseIds, updateCoursesList }) => {
+  const handleDelete = () => {
+
+    // console.log("inside handle delete function");
+    // console.log(courseIds);
+    if (courseIds !== null && courseIds.length > 0) {
+      // Call the CourseService or your API function to delete the selected course
+      CourseService.removeCourses(courseIds)
+        .then(() => {
+          // Handle successful deletion (e.g., refresh the list of courses)
+          updateCoursesList();
+        })
+        .catch((error) => {
+          console.error('Error deleting course:', error);
+        });
+    } else {
+      // Return no courses selected error to the frontend
+      alert("No courses selected");
+
+    }
+  }
+  return (
+    <React.Fragment>
+      <form>
+        <div>
+          <label htmlFor="exampleFormControlFile1">Are you sure you want to delete this course?</label>
+        </div>
+        <button type="submit" className="btn btn-danger" data-dismiss="modal" onClick={handleDelete}>Yes</button>
+      </form>
+    </React.Fragment>
+  )
+}
 export {
   Modal,
   ModalButton,
@@ -318,4 +557,7 @@ export {
   DeleteThemeBody,
   ModalNewThemeBody,
   DeleteThemeModalButton
+  ModalAddCourseBody,
+  ModalEditCourseBody,
+  ModalDeleteCourseBody
 }

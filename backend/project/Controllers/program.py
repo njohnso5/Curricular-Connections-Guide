@@ -91,7 +91,52 @@ class HandleProgram(MethodView):
             return new_prg
         except SQLAlchemyError:
             abort(422, message="An SQL error occured during the operation")
+    
+    # Define a method to handle PUT requests for a specific program ID
+    @program_router.arguments(ProgramPostSchema, location="form")
+    @program_router.response(200, ProgramSchema)
+    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
+    def put(self, program_data: dict):
+        try:
+            programid = program_data["id"]
+            # Extract showings from program data
+            showings: dict = json.loads(program_data.pop("showings"))
+            # Upload program image if provided
+            if "image" in request.files:
+                filename = upload_file(request.files["image"], IMAGE_DIR)
+                program_data["image_filename"] = filename
 
+            # Update the program without modifying showings yet
+            program = prog_dao.get_by_id(programid)
+            result = prog_dao.update(program_data, programid)
+            if len(program.showings) > len(showings):
+                flag = True
+                for sho in program.showings:
+                    for show in showings:
+                        if (show.get("id") == sho.id):
+                            flag = False
+                    if flag:
+                        show_dao.delete(sho.id)
+                    flag = True
+            # Parse each showing in the request data and check their states
+            for show in showings: 
+                db_show = show_dao.get_by_id(show.get("id"))
+                if db_show is None:
+                    dt = show.pop(
+                        "datetime"
+                    )  # Remove the datetime string as it must be parsed first
+                    new_show = show_dao.Showing(**show)
+                    new_show.datetime = parser.parse(dt)
+                    show_dao.add_show_to_program(new_show, programid)
+                # Update an existing showing
+                elif db_show != None:
+                    id = show.pop("id")
+                    show_dao.update(show, id)
+            theme_dao.classify_program(program, commit=True)
+
+            return result
+        except SQLAlchemyError:
+            abort(422)
 
 # Route to retrieve Departments that the frontend is allowed to use
 @program_router.route("/departments/")
@@ -111,40 +156,6 @@ class HandleProgramID(MethodView):
         res = prog_dao.get_by_id(programid)
         return res
 
-    # Define a method to handle PUT requests for a specific program ID
-    @program_router.arguments(ProgramPutSchema)
-    @program_router.response(200, ProgramSchema)
-    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
-    def put(self, program_data: dict, programid):
-        try:
-            # Extract showings from program data
-            showings: list[dict] = program_data.pop("showings")
-
-            # Update the program without modifying showings yet
-            result = prog_dao.update(program_data, programid)
-
-            # Parse each showing in the request data and check their states
-            for show in showings:
-                # Grab this showing's state if it is set
-                state = show.pop("state") if show.get("state") else None
-
-                # Add a new showing to the program
-                if state == "new":
-                    dt = show.pop(
-                        "datetime"
-                    )  # Remove the datetime string as it must be parsed first
-                    new_show = show_dao.Showing(**show)
-                    new_show.datetime = parser.parse(dt)
-                    show_dao.add_show_to_program(new_show, programid)
-
-                # Update an existing showing
-                elif state == "modified":
-                    id = show.pop("id")
-                    show_dao.update(show, id)
-
-            return result
-        except SQLAlchemyError:
-            abort(422)
 
     # Define a method to handle DELETE requests for a specific program ID
     @program_router.response(200)

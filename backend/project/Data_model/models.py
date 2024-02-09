@@ -171,5 +171,6 @@ class User(db.Model):
 class Faculty(db.Model):
     _table_name__ = "faculty"
     id: Mapped[int] = mapped_column(Integer, nullable=False, primary_key=True)
+    name: Mapped[String] = mapped_column(String(100), nullable=False)
     email: Mapped[String] = mapped_column(String(100), nullable=False)
     

@@ -76,7 +76,7 @@ class SemesterList(MethodView):
             course.subject_id = db_subject.id
             course.semester_id = semester.id 
             course.catalog_number = df.iloc[i, 1 + 4]
-            
+            names = str(df.iloc[i, 1 + 5]).split(";")
             emails = str(df.iloc[i, 1 + 6])
             
             faculty_list = []
@@ -93,6 +93,7 @@ class SemesterList(MethodView):
                 if db_faculty is None:
                     db_faculty = Faculty()
                     db_faculty.email = email
+                    db_faculty.name = names[emails_string.index(email)]
                     faculty_dao.insert_faculty(db_faculty)
                 faculty_list.append(db_faculty)                
                 
@@ -150,6 +151,7 @@ class SemesterCourseList(MethodView):
     @semester_controller.response(200, CourseSchema(many=True))
     def get(self, semester_id):
         semester: Semester = dao.get_by_id(semester_id)
+        # print(semester.courses)
         return semester.courses
 
 
