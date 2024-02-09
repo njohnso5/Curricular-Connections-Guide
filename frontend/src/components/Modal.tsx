@@ -2,7 +2,9 @@ import '../css/Modal.css'
 import SemesterService from '../services/SemesterService';
 import PeriodService from '../services/PeriodService';
 import CourseService from '../services/CourseServices';
+import themesService from '../services/themes-service';
 import { SemesterForm, Course } from '../CourseModels/courseModels';
+import { Theme } from '../models/programModels';
 import React, { useState, useEffect } from 'react';
 import CourseTable from '../pages/CoursePage';
 import { AxiosResponse } from 'axios';
@@ -31,6 +33,14 @@ const ModalButton: React.FC<ModalButtonProps> = ({ modalTarget, buttonMessage })
 }
 
 const DeleteSemesterModalButton: React.FC<ModalButtonProps> = ({ modalTarget, buttonMessage }) => {
+  return (
+      <button type="button" className="btn btn-primary" data-toggle="modal" data-target={"#" + modalTarget}>
+        {buttonMessage}
+      </button>
+  );
+}
+
+const DeleteThemeModalButton: React.FC<ModalButtonProps> = ({modalTarget, buttonMessage}) => {
   return (
       <button type="button" className="btn btn-primary" data-toggle="modal" data-target={"#" + modalTarget}>
         {buttonMessage}
@@ -92,6 +102,55 @@ const DeleteSemesterBody: React.FC = () => {
       </div>
     </form>
   )
+}
+
+const DeleteThemeBody: React.FC = () => {
+  const [selectedThemeId, setSelectedThemeId] = useState<Number | null>(null);
+  const [themes, setThemes] = useState<Theme[] | null>();
+
+  useEffect(() => {
+    themesService.getTags().then((response) => {setThemes(response.data)});
+  }, []);
+
+  const handleDelete = () => {
+    console.log("inside handle delete function");
+    console.log(selectedThemeId);
+
+    if(selectedThemeId != null) {
+      themesService.removeTheme(selectedThemeId)
+        .then(() => {
+          setThemes((prevThemes) => prevThemes ? prevThemes.filter((theme) => theme.id !== selectedThemeId) : null);
+        })
+        .catch((error) => {
+          console.log("Error deleting theme", error);
+        });
+    }
+  };
+
+  return (
+    <form>
+      <div className="row">
+        <div className="col-md-6">
+          <div className="dropdown">
+            <label className="chooseSeason">Theme : </label>
+            <select className="chooseSeason" value={selectedThemeId || ''}
+              onChange={(e) => setSelectedThemeId(parseInt(e.target.value, 10))}>
+              <option className="dropdown-item"></option>
+              {themes ? themes.map((theme) => (
+                <option className="dropdown-item" key={theme.themeId} value={theme.id} name="ThemeId">{theme.name}</option>
+              )) : null}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div className="col-md-6">
+        <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={handleDelete}>
+          Delete Theme
+        </button>
+      </div>
+    </form>
+  )
+
 }
 
 
@@ -183,6 +242,52 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
   );
 }
 
+interface ModalNewThemeBodyProps {
+  handleUpload: (theme: Theme) => void;
+}
+
+const ModalNewThemeBody: React.FC<ModalNewThemeBodyProps> =(props) => {
+  const[themeData, setThemeData] = useState<Theme>({
+    id: -1,
+    name: null
+  });
+
+  function handleSubmit(event: React.FormEvent) {
+    // do this with axios
+    event.preventDefault();
+
+    const formData = new FormData();
+    formData.append('name', themeData.name.toString());
+
+    themesService.createTheme(formData)
+      .then((_response: AxiosResponse<Theme>) => {
+        props.handleUpload(_response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  return (
+    <div>
+      <form id="new-theme-info" method="POST" action="/themes/" onSubmit={handleSubmit}>
+        <div className="row">
+          <div className="col-md-6">
+            <div className="input-group input-group-sm mb-3">
+              <div className="input-group-prepend">
+                <span className="input-group-text" id="inputGroup-sizing-sm">Name</span>
+              </div>
+              <input type="text" className="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value={themeData.name}
+                onChange={(e) => setThemeData({ ...themeData, name: String(e.target.value) })} />
+            </div>
+          </div>
+        </div>
+        <button type="submit" className="btn btn-primary">Save changes</button>
+      </form>
+    </div>
+  );
+}
+
 
 const Modal: React.FC<ModalProps> = ({ modalTarget, modalTitle, modalBody }) => {
   return (
@@ -209,5 +314,8 @@ export {
   ModalButton,
   ModalNewSemesterBody,
   DeleteSemesterModalButton,
-  DeleteSemesterBody
+  DeleteSemesterBody,
+  DeleteThemeBody,
+  ModalNewThemeBody,
+  DeleteThemeModalButton
 }
