@@ -207,7 +207,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
   )
 }
 
-const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
+const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function, showEditProgramBody: ()=> void}> = ({program, updatePrograms, showEditProgramBody}) => {
     function handleDelete(event: any) {
       event.preventDefault();
       if (program) {
@@ -223,7 +223,10 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
         console.log("There was an error finding the program you want to delete. Try refreshing the page.")
       }
     }
-  
+    function closeProgramDisplay() {
+      console.log("closeProgramDisplay");
+      showEditProgramBody();
+    }
   if (program == null) {
     return (
     <>
@@ -278,8 +281,8 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
           }) : <p>No showings at this time</p>}
         </div>
         <div className="modal-footer">
-          <ModalButton modalTarget="editProgramModal" buttonMessage="Edit program" />
-          <Modal modalTarget="editProgramModal" modalTitle="EDIT A PROGRAM" modalBody={<ModalEditProgramBody program={program} updatePrograms={updatePrograms} />} />
+          <button type="button" className="btn btn-secondary" onClick={closeProgramDisplay}> Edit Program </button>
+          
           <button type="button" className="btn btn-secondary" onClick={handleDelete}>Delete Program</button>
           <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
@@ -309,7 +312,13 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
 
     return undefined;
   }
-
+  function showEditProgramBody() {
+    console.log("showEditProgramBody");
+    // Hide the programDisplay modal
+    window.$("#programDisplay").modal("hide");
+    // Show the editProgramModal
+    window.$("#editProgramModal").modal("show");
+  }
   return (
     <>
       <div className="table-responsive" id={styles.programTable}>
@@ -343,7 +352,8 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
           </tbody>
         </table>
       </div>
-      <Modal modalTarget="programDisplay" modalTitle={currentProgram?.title} modalBody={<ProgramDisplayModalBody program={findProgramById(currentProgram?.id)} updatePrograms={updatePrograms} />} />
+      <Modal modalTarget="programDisplay" modalTitle={currentProgram?.title} modalBody={<ProgramDisplayModalBody program={findProgramById(currentProgram?.id)} updatePrograms={updatePrograms} showEditProgramBody={showEditProgramBody} />} />
+      <Modal modalTarget="editProgramModal" modalTitle="Edit Program" modalBody={<ModalEditProgramBody program={currentProgram} updatePrograms={updatePrograms} />} />
     </>
   );
 }

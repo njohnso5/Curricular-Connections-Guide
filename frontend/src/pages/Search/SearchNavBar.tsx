@@ -148,8 +148,16 @@ const SearchNavBar: React.FC<{setResults: Function}> = ({setResults}) => {
     }
 
     function handleSearch() {
+        console.log(selectedTags);
         searchQuery.departments = selectedTags.filter(tag => tag.type == "departments").map(tag => tag.name);
         searchQuery.themes = selectedTags.filter(tag => tag.type == "themes").map(tag => tag.name);
+        
+        // date{
+        //     "name": "Fri Feb 09 2024",
+        //     "type": "date"
+        // }
+        searchQuery.dates = selectedTags.filter(tag => tag.type == "date").map(tag => tag.name);
+        console.log(searchQuery);
         SearchService.getSearchResults(searchQuery)
         .then(response => {
             setResults(response.data);

@@ -2,7 +2,7 @@ interface SearchQuery {
   title?: string;
   departments?: string[];
   themes?: string[];
-  date?: string[];
+  dates?: string[];
 }
 
 export type {
