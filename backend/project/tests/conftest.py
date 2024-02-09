@@ -3,6 +3,8 @@ import pytest
 import sys
 sys.path.append(".") # Adds higher directory to python modules path.
 from app import create_app, db 
+# docker exec -it <container_name_or_id> bash
+
 
 
 @pytest.fixture()
