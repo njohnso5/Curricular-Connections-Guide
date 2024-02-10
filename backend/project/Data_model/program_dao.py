@@ -79,7 +79,7 @@ def search(**kwargs) -> list[Program]:
     title: str = kwargs.get("title")
     dates: list[str] = kwargs.get("dates")
     departments: list[str] = kwargs.get("departments")
-
+    searchByRange: bool = kwargs.get("searchByRange")
     filters: list[BinaryExpression[bool]] = [] # A list of SQLAlchemy filter expressions
     themes_subquery = None
 
@@ -101,8 +101,26 @@ def search(**kwargs) -> list[Program]:
 
     # Filter by dates if specified
     if dates:
-        parsed_dates = [parser.parse(d).date() for d in dates]
-        filters.append(func.date(Showing.datetime).in_(parsed_dates))
+        # If there are two dates, parse them into datetime objects and filter by the range
+        if searchByRange:
+            parsed_dates = [parser.parse(d).date() for d in dates]
+            filters.append(
+                Program.showings.any(
+                    func.date(Showing.datetime).between(parsed_dates[0], parsed_dates[1])
+                )
+            )
+
+        else:
+            # Otherwise, parse the dates and filter by the list of dates
+            parsed_dates = [parser.parse(d).date() for d in dates]
+
+            # Only use year, month, and day in the showing of datetime to compare
+            # This is because the time of the showing is not relevant to the search
+            filters.append(
+                Program.showings.any(
+                    func.date(Showing.datetime).in_(parsed_dates)
+                )
+            )
 
     # Combine the filters to function as an OR statement in SQL
     crit_query = db.session.query(Program).filter(or_(*filters))
