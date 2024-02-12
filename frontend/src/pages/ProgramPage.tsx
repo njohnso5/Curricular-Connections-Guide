@@ -97,8 +97,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       // Call the updateProgram method from ProgramService
       ProgramService.updateProgram(formData) // Gives updateProgram all of the ProgramData
       .then(() => {
-        window.$("#editProgramModal").modal("hide");
-        window.$("#programDisplay").modal("hide");
+
         updatePrograms((prev: ProgramData[]) => [...prev.filter(item => item !== program), newProgram]);
       })
       .catch(() => {
@@ -144,65 +143,67 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
 
   return (
     <React.Fragment>
-    <form id="edit-program">
-      <div className="form-group align-items-center gap-1">
-        <span>Image</span>
-        <img className="img-fluid" src={filePreview} />
-        <input id="image-input" type="file" className="form-control" name="image" onChange={handleImageSelect} />
-      </div>
-      <div className="form-group align-items-center gap-1">
-        <span>Title</span>
-        <input type="text" className="form-control" name="title" value={newProgram.title} onChange={(e) => setNewProgram({ ...newProgram, title: e.target.value})}  required/>
-      </div>
-      <div className="form-group align-items-center gap-1">
-        <span>Department</span>
-        <select className="custom-select" name="department" value={newProgram.department} onChange={(e) => setNewProgram({ ...newProgram, department: e.target.value})} required>
-          <option value=""></option>
-          <option value="Crafts Center">Craft's Center</option>
-          <option value="Department of Performing Arts & Technology">Department of Performing Arts & Technology</option>
-          <option value="Gregg Museum of Art & Design">Gregg Museum of Art & Design</option>
-          <option value="NC State LIVE performing artist series">NC State LIVE performing artist series</option>
-          <option value="University Theatre">University Theatre</option>
-        </select>
-      </div>
-      <div className="form-group align-items-center gap-1">
-        <span>Description</span>
-        <textarea className="form-control" name="description" placeholder="Enter details about the program..." value={newProgram.description}  onChange={(e) => setNewProgram({ ...newProgram, description: e.target.value})} required></textarea>
-      </div>
-      <div className="form-group align-items-center gap-1">
-        <span>Link</span>
-        <input type="text" className="form-control" name="link" placeholder="Link" value={newProgram.link} onChange={(e) => setNewProgram({ ...newProgram, link: e.target.value})} />
-      </div>
-      <h5>Showings</h5>
-       {newProgram.showings.map((showing, index) => {
-        return (
-          // Must be wrapped in a div so that each entry group can
-          // be contained in an object with a unique key
-          <div className={styles.showing} key={index}>
-            <div className="form-group">
-              <span>Date & Time</span>
-              <input type="datetime-local" className="form-control" name="datetime" value={showing.datetime} onChange={(event) => handleShowingChange(event, index)} required/>
+      <>
+      <form id="edit-program" className="modal-body">
+        <div className="form-group align-items-center gap-1">
+          <span>Image</span>
+          <img className="img-fluid" src={`/api/v1/program/${program.id}/image/`} />
+          <input id="image-input" type="file" className="form-control" name="image" onChange={handleImageSelect} />
+        </div>
+        <div className="form-group align-items-center gap-1">
+          <span>Title</span>
+          <input type="text" className="form-control" name="title" value={newProgram.title} onChange={(e) => setNewProgram({ ...newProgram, title: e.target.value})}  required/>
+        </div>
+        <div className="form-group align-items-center gap-1">
+          <span>Department</span>
+          <select className="custom-select" name="department" value={newProgram.department} onChange={(e) => setNewProgram({ ...newProgram, department: e.target.value})} required>
+            <option value=""></option>
+            <option value="Crafts Center">Craft's Center</option>
+            <option value="Department of Performing Arts & Technology">Department of Performing Arts & Technology</option>
+            <option value="Gregg Museum of Art & Design">Gregg Museum of Art & Design</option>
+            <option value="NC State LIVE performing artist series">NC State LIVE performing artist series</option>
+            <option value="University Theatre">University Theatre</option>
+          </select>
+        </div>
+        <div className="form-group align-items-center gap-1">
+          <span>Description</span>
+          <textarea className="form-control" name="description" placeholder="Enter details about the program..." value={newProgram.description}  onChange={(e) => setNewProgram({ ...newProgram, description: e.target.value})} required></textarea>
+        </div>
+        <div className="form-group align-items-center gap-1">
+          <span>Link</span>
+          <input type="text" className="form-control" name="link" placeholder="Link" value={newProgram.link} onChange={(e) => setNewProgram({ ...newProgram, link: e.target.value})} />
+        </div>
+        <h5>Showings</h5>
+        {newProgram.showings.map((showing, index) => {
+          return (
+            // Must be wrapped in a div so that each entry group can
+            // be contained in an object with a unique key
+            <div className={styles.showing} key={index}>
+              <div className="form-group">
+                <span>Date & Time</span>
+                <input type="datetime-local" className="form-control" name="datetime" value={showing.datetime} onChange={(event) => handleShowingChange(event, index)} required/>
+              </div>
+              <div className="form-group">
+                <span>Location</span>
+                <input type="text" className="form-control" name="location" placeholder="Location" value={showing.location} onChange={(event) => handleShowingChange(event, index)} required/>
+              </div>
+              <div className="form-group">
+                <span>Price</span>
+                <input type="text" className="form-control" name="price" placeholder="Price" value={showing.price} onChange={(event) => handleShowingChange(event, index)} required/>
+              </div>
             </div>
-            <div className="form-group">
-              <span>Location</span>
-              <input type="text" className="form-control" name="location" placeholder="Location" value={showing.location} onChange={(event) => handleShowingChange(event, index)} required/>
-            </div>
-            <div className="form-group">
-              <span>Price</span>
-              <input type="text" className="form-control" name="price" placeholder="Price" value={showing.price} onChange={(event) => handleShowingChange(event, index)} required/>
-            </div>
-          </div>
-          );
-      })} 
-      <div id={styles.showingManage}>
-        <button className="btn" onClick={addShowing}><span className="fa-solid fa-plus"></span></button>
-        <button className="btn" onClick={removeShowing}><span className="fa-solid fa-minus"></span></button>
-      </div>
-      <div className="modal-footer">
-        <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" className="btn btn-primary" onClick={handleUpdate}>Submit</button>
-      </div>
-    </form>
+            );
+        })} 
+        <div id={styles.showingManage}>
+          <button className="btn" onClick={addShowing}><span className="fa-solid fa-plus"></span></button>
+          <button className="btn" onClick={removeShowing}><span className="fa-solid fa-minus"></span></button>
+        </div>
+        <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" className="btn btn-primary" onClick={handleUpdate}>Submit</button>
+        </div>
+      </form>
+    </>
     </React.Fragment>
   )
 }
@@ -214,7 +215,6 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
         ProgramService.deleteProgram(program.id)
         .then(() => {
           updatePrograms((prev: ProgramData[]) => prev.filter(item => item !== program));
-          window.$("#programDisplay").modal("hide");
         })
         .catch(() => {
           console.error("Error deleting program")
@@ -314,10 +314,13 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
   }
   function showEditProgramBody() {
     console.log("showEditProgramBody");
-    // Hide the programDisplay modal
+    // Close the programDisplay modal
     window.$("#programDisplay").modal("hide");
-    // Show the editProgramModal
+    // Open the editProgramModal
     window.$("#editProgramModal").modal("show");
+    // Make editProgramModal scroll able
+    window.$("#editProgramModal").css("overflow-y", "scroll");
+
   }
   return (
     <>
@@ -353,7 +356,7 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
         </table>
       </div>
       <Modal modalTarget="programDisplay" modalTitle={currentProgram?.title} modalBody={<ProgramDisplayModalBody program={findProgramById(currentProgram?.id)} updatePrograms={updatePrograms} showEditProgramBody={showEditProgramBody} />} />
-      <Modal modalTarget="editProgramModal" modalTitle="Edit Program" modalBody={<ModalEditProgramBody program={currentProgram} updatePrograms={updatePrograms} />} />
+      <Modal modalTarget="editProgramModal" modalTitle={currentProgram?.title} modalBody={<ModalEditProgramBody program={currentProgram} updatePrograms={updatePrograms} />} />
     </>
   );
 }
