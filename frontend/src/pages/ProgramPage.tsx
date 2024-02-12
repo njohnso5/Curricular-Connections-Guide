@@ -94,14 +94,17 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       if (newProgram.image) {
         formData.append('image', newProgram.image);
       }
+      console.log("formData: ", formData);
       // Call the updateProgram method from ProgramService
       ProgramService.updateProgram(formData) // Gives updateProgram all of the ProgramData
       .then(() => {
 
         updatePrograms((prev: ProgramData[]) => [...prev.filter(item => item !== program), newProgram]);
+        window.$("#editProgramModal").modal("hide");
       })
       .catch(() => {
         console.error("Error editing program")
+        window.$("#editProgramModal").modal("hide");
       });
     } else {
       console.log("There was an error finding the program you want to update. Try refreshing the page.")
