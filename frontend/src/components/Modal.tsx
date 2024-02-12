@@ -250,7 +250,7 @@ interface ModalNewThemeBodyProps {
 
 const ModalNewThemeBody: React.FC<ModalNewThemeBodyProps> =(props) => {
   const[themeData, setThemeData] = useState<Theme>({
-    id: -1,
+    id: null,
     name: null
   });
 
@@ -556,7 +556,7 @@ export {
   DeleteSemesterBody,
   DeleteThemeBody,
   ModalNewThemeBody,
-  DeleteThemeModalButton
+  DeleteThemeModalButton,
   ModalAddCourseBody,
   ModalEditCourseBody,
   ModalDeleteCourseBody
