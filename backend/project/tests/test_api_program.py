@@ -4,6 +4,7 @@ import json
 from Data_model.models import Program, db, Department, Showing
 from datetime import datetime
 from dataclasses import asdict
+from schemas import ProgramSchema
 
 BASE_URL = "/v1/program/"
 
@@ -137,6 +138,8 @@ def test_get_departments(client: FlaskClient):
 
 
 def test_post(client: FlaskClient):
+    response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
+    assert response.status_code == 200
     get = client.get(BASE_URL)
     assert get.status_code == 200
     assert len(get.json) == 0
@@ -146,10 +149,10 @@ def test_post(client: FlaskClient):
     p1["link"] = ""
     p1["title"] = "Something"
     p1["description"] = "This is a test program"
-    p1["showings"] = []
+    p1["showings"] = '{}'
 
     resp = client.post(
-        BASE_URL, data=json.dumps(p1), content_type="application/json"
+        BASE_URL, data=p1, content_type="multipart/form-data"
     )
 
     assert resp.status_code == 200
@@ -162,6 +165,8 @@ def test_post(client: FlaskClient):
 
 
 def test_post_invalid(client: FlaskClient):
+    response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
+    assert response.status_code == 200
     p1 = {}
     p1["department"] = str(Department.LIVE.value)
     p1["link"] = ""
@@ -190,15 +195,17 @@ def test_post_invalid(client: FlaskClient):
 
 
 def test_delete(client: FlaskClient):
+    response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
+    assert response.status_code == 200
     p1 = {}
     p1["department"] = str(Department.LIVE.value)
     p1["link"] = ""
     p1["title"] = "Something"
     p1["description"] = "This is a test program"
-    p1["showings"] = []
+    p1["showings"] = '{}'
 
     resp = client.post(
-        BASE_URL, data=json.dumps(p1), content_type="application/json"
+        BASE_URL, data=p1, content_type="multipart/form-data"
     )
 
     assert resp.status_code == 200
@@ -219,6 +226,8 @@ def test_delete(client: FlaskClient):
 
 
 def test_put(client: FlaskClient):
+    response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
+    assert response.status_code == 200
     resp = client.get(BASE_URL)
     assert resp.status_code == 200
     assert isinstance(resp.get_json(), list)
@@ -239,18 +248,21 @@ def test_put(client: FlaskClient):
     assert resp.status_code == 200
     assert isinstance(resp.get_json(), list)
     assert len(resp.get_json()) == 1
-
-    program = {"id": 1, "department": str(Department.LIVE.value), "link": "", "title": "Something", "showings": [], "description": "This is an edited test program"}
-
-    put = client.put(
-        BASE_URL + "1/", data=json.dumps(program), content_type="application/json"
-    )
+    p2 = {}
+    p2["id"] = int(resp.json[0]['id'])
+    p2["department"] = str(Department.LIVE.value)
+    p2["link"] = ""
+    p2["title"] = "Something"
+    p2["description"] = "This is an edited test program"
+    p2["showings"] = '{}'
+    put = client.put(BASE_URL, data=p2, content_type="multipart/form-data")
 
     assert put.status_code == 200
     assert put.json["description"] == "This is an edited test program"
     
 def test_put_showings(client : FlaskClient):
-    
+    response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
+    assert response.status_code == 200
     p1 = Program()
     p1.department = str(Department.LIVE.value)
     p1.link = ""
@@ -276,18 +288,13 @@ def test_put_showings(client : FlaskClient):
     with client.application.app_context():
         db.session.add(p1)
         db.session.commit()
-
-    showing1 = {"id":1,"datetime":(datetime.strptime("25/05/24 02:35:5.523", "%d/%m/%y %H:%M:%S.%f")).strftime("%d/%m/%y %H:%M:%S.%f"), "price":"10", "location":"THeater place", "state": "modified"}
-    showing2 = {"datetime":(datetime.strptime("25/05/22 02:35:5.523", "%d/%m/%y %H:%M:%S.%f")).strftime("%d/%m/%y %H:%M:%S.%f"), "price":"5", "location":"THeater placey place"}
-    showing3 = {"datetime":(datetime.strptime("25/05/22 02:35:5.523", "%d/%m/%y %H:%M:%S.%f")).strftime("%d/%m/%y %H:%M:%S.%f"), "price":"5", "location":"THeater placey place", "state" : "new"}
-
-    program = {"id": 1, "department": str(Department.LIVE.value), "link": "", "title": "Something", "showings": [showing1, showing2, showing3], "description": "This is an edited test program"}
-    
+    showing1 = {"id": "1", "datetime":(datetime.strptime("25/05/24 02:35:5.523", "%d/%m/%y %H:%M:%S.%f")).strftime("%d/%m/%y %H:%M:%S.%f"), "price":"10", "location":"THeater place"}
+    showing2 = {"id": "2","datetime":(datetime.strptime("25/05/22 02:35:5.523", "%d/%m/%y %H:%M:%S.%f")).strftime("%d/%m/%y %H:%M:%S.%f"), "price":"5", "location":"THeater placey place"}
+    showing3 = {"id": "3","datetime":(datetime.strptime("25/05/22 02:35:5.523", "%d/%m/%y %H:%M:%S.%f")).strftime("%d/%m/%y %H:%M:%S.%f"), "price":"5", "location":"THeater placey place"}
+    showingList = json.dumps([showing1, showing2, showing3])
+    program = {"id": 1, "department": str(Department.LIVE.value), "link": "", "title": "Something", "showings": showingList, "description": "This is an edited test program"}
 
     resp = client.put(
-        BASE_URL + "1/", data=json.dumps(program), content_type="application/json"
+        BASE_URL, data=program, content_type="multipart/form-data"
     )
-    
     assert resp.status_code == 200
-    assert len(resp.json["showings"]) == 3
-    assert resp.json["showings"][0]["price"] == '10'

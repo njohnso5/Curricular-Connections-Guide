@@ -9,6 +9,7 @@ class ShowingSchema(Schema):
     program_id = fields.Int()
 
 class ShowingPostSchema(Schema):
+    id = fields.Int()
     datetime = fields.Str(required=True)
     location = fields.Str(required=True)
     datetime = fields.Str(required=True)

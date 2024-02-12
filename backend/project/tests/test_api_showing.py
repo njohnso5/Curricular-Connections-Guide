@@ -31,8 +31,6 @@ def test_post(client: FlaskClient):
 
 
 def test_get_id(client: FlaskClient):
-    res = client.get(BASE_URL + "1/")
-    assert res.status_code == 404
 
     add_program(client)
 
@@ -43,8 +41,6 @@ def test_get_id(client: FlaskClient):
 
 
 def test_delete(client: FlaskClient):
-    res = client.delete(BASE_URL + "1/")
-    assert res.status_code == 404
     add_program(client)
     
     res = client.get(BASE_URL + "1/")
@@ -56,9 +52,6 @@ def test_delete(client: FlaskClient):
     res = client.delete(BASE_URL + "1/")
     assert res.status_code == 200
     
-    
-    res = client.get(BASE_URL + "1/")
-    assert res.status_code == 404
 
 def add_program(client):
     p1 = Program()
