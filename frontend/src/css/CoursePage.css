@@ -33,3 +33,27 @@
 .dateInfo p { display: inline-block; max-width: 50%; }
 .dateInfo p:nth-child(1) { float:left; }
 .dateInfo p:nth-child(2) { float:right; }
+
+
+.radio {
+  margin-left: 30px;
+  margin-top: 20px;
+  transform: scale(1.5);
+}
+
+.round-checkbox {
+  margin-left: 30px;
+  margin-top: 20px;
+  border-radius: 50%;
+  border: 2px solid #000000;
+  outline: none;
+  transform: scale(1.5);
+}
+.btn-group {
+  margin: 20px;
+}
+
+.selected {
+  background-color: rgb(148, 57, 47); /* Adjust the styling as needed */
+  color: white; /* Adjust text color if needed for better contrast */
+}

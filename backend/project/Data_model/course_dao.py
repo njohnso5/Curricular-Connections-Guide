@@ -1,4 +1,4 @@
-from Data_model.models import db, Course, Semester
+from Data_model.models import db, Course, Semester, Course_to_Faculty
 from flask import current_app
 from sqlalchemy import select
 
@@ -51,8 +51,19 @@ def update_course(course : Course) -> bool:
     
     
 # Removes a course from the db by its id
-def delete_course(course : Course) -> bool:
-    cnt = Course.query.filter(Course.id==course.id).delete()
+def delete_course(id : int) -> bool:
+
+    course : Course = get_by_id(id)
+    # print(course)
+    # print(course.themes)
+    # print(course.faculty)
+    temp = course.themes.copy()
+    for theme in temp:
+        course.themes.remove(theme)
+    temp = course.faculty.copy()
+    for faculty in temp:
+        course.faculty.remove(faculty)
+    cnt = Course.query.filter(Course.id==id).delete()
     if cnt == 1:
         db.session.commit()
         return True

@@ -63,6 +63,7 @@ class SemesterList(MethodView):
         for i in range(0, df.shape[0]):
             # Creates a new course
             course = Course()
+
             # Reads the id from the database into a variable
             course_id = df.iloc[i, 0]
             print(course_id)
@@ -184,6 +185,7 @@ class SemesterCourseList(MethodView):
     @semester_controller.response(200, CourseSchema(many=True))
     def get(self, semester_id):
         semester: Semester = dao.get_by_id(semester_id)
+        # print(semester.courses)
         return semester.courses
 
 
