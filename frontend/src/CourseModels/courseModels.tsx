@@ -21,6 +21,9 @@ export type Course = {
     themes: Theme[];
     title_long: string;
     title_short: string;
+    topics_description: string;
+    topics_description_s: string;
+    topics_description_f: string;
 }
 
 export type CourseInfo = {

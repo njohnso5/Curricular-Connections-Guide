@@ -30,8 +30,9 @@ def insert_course(course : Course) -> bool:
         return True
         
 def insert_many(courses : list[Course]) -> bool:
-        
+        print(str(len(courses)) + " courses are being added to the database")
         db.session.add_all(courses)
+        print("Committing to course DAO")
         db.session.commit()
         return True
 
