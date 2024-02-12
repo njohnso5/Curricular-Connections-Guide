@@ -37,7 +37,7 @@ IMAGE_DIR = DIR.joinpath("image_uploads/")
 
 
 # Define a class for handling program-related requests
-@program_router.route("/")
+@program_router.route("/", methods=['GET', 'POST', 'PUT'])
 class HandleProgram(MethodView):
     # Define a method to handle GET requests
     @program_router.response(200, ProgramSchema(many=True))
@@ -109,6 +109,7 @@ class HandleProgram(MethodView):
             # Update the program without modifying showings yet
             program = prog_dao.get_by_id(programid)
             result = prog_dao.update(program_data, programid)
+            
             if len(program.showings) > len(showings):
                 flag = True
                 for sho in program.showings:
@@ -130,13 +131,11 @@ class HandleProgram(MethodView):
                     show_dao.add_show_to_program(new_show, programid)
                 # Update an existing showing
                 elif db_show != None:
-                    id = show.pop("id")
-                    show_dao.update(show, id)
+                    show_dao.update(show)
             theme_dao.classify_program(program, commit=True)
-
             return result
         except SQLAlchemyError:
-            abort(422)
+            abort(500)
 
 # Route to retrieve Departments that the frontend is allowed to use
 @program_router.route("/departments/")

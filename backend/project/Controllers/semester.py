@@ -31,7 +31,7 @@ class SemesterList(MethodView):
         return dao.get_all()
     
     @semester_controller.arguments(SemesterPostSchema, location='form')
-    @semester_controller.response(201, SemesterSchema)
+    @semester_controller.response(200, SemesterSchema)
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def post(self, semester_data):
         # Initializes necessary lists
@@ -54,7 +54,7 @@ class SemesterList(MethodView):
         semester.year = semester_data.get("year")
         semester.period_id = semester_data.get("period_id")
         semester.active = semester_data.get("active")
-    
+
         try:
             dao.insert_semester(semester)
         except SQLAlchemyError:
@@ -117,7 +117,6 @@ class SemesterList(MethodView):
                 
                     if pandas.isna(email):
                         continue
-                
                     db_faculty = faculty_dao.get_faculty_by_name(faculty_dao.Faculty.email==email)
                     
                     if db_faculty is None:
