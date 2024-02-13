@@ -73,7 +73,7 @@ def insert(theme: str):
 
 
 # Deletes a theme from the database by its id
-def delete(theme_id):
+def delete(theme_id: int):
     theme = Theme.query.get_or_404(theme_id)
 
     prgs: list[Program] = find_programs(theme_id)

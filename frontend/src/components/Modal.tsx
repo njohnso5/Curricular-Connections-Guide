@@ -250,7 +250,7 @@ interface ModalNewThemeBodyProps {
 
 const ModalNewThemeBody: React.FC<ModalNewThemeBodyProps> =(props) => {
   const[themeData, setThemeData] = useState<Theme>({
-    id: null,
+    id: -1,
     name: null
   });
 
