@@ -82,7 +82,7 @@ def delete(theme_id: int):
     crcs: list[Course] = find_courses(theme_id)
     [c.themes.remove(theme) for c in crcs]
 
-    db.session.remove(theme)
+    Theme.query.filter(Theme.id == theme_id).delete()
     db.session.commit()
 
 
