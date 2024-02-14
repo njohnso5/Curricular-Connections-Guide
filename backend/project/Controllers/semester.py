@@ -31,84 +31,121 @@ class SemesterList(MethodView):
         return dao.get_all()
     
     @semester_controller.arguments(SemesterPostSchema, location='form')
-    @semester_controller.response(201, SemesterSchema)
+    @semester_controller.response(200, SemesterSchema)
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def post(self, semester_data):
-
+        # Initializes necessary lists
         course_list = []
-        catalog_file = request.files["catalog"]
-        filename = secure_filename(catalog_file.filename)
-        filetype = filename.split('.')[1]
-        supported_filetypes = ['xls', 'xlsx', 'xlsm', 'xlsb', 'odf', 'ods', 'odt']
-        if filetype == 'csv':
-            df = pandas.read_csv(catalog_file)
-        elif filetype not in supported_filetypes:
-            abort(415, message="Error: Unsupported Media Type")
-        else: 
-            df = pandas.read_excel(catalog_file, 0)
-            
+        course_ids = []
+        # Sets up new semester    
         semester = Semester()
         semester.year = semester_data.get("year")
         semester.period_id = semester_data.get("period_id")
         semester.active = semester_data.get("active")
-    
+
         try:
             dao.insert_semester(semester)
         except SQLAlchemyError:
             abort(500, message="An error occured inserting the semester")
-        
-        for i in range(0, df.shape[0]):
-            course = Course()
-            course.title_short = df.iloc[i,1]
-            course.title_long = df.iloc[i, 1 + 1]
-            course.description = df.iloc[i, 1 + 2]
-            if pandas.isna(course.description):
-                course.description = ""
-            subject = df.iloc[i, 1 + 3]               
-            
-            db_subject = subject_dao.get_subject_by_name(subject_dao.Subject.subject==subject)
-        
-            if db_subject is None:
-                db_subject = Subject()
-                db_subject.subject = subject
-                subject_dao.insert(db_subject)
-        
-            course.subject_id = db_subject.id
-            course.semester_id = semester.id 
-            course.catalog_number = df.iloc[i, 1 + 4]
-            names = str(df.iloc[i, 1 + 5]).split(";")
-            emails = str(df.iloc[i, 1 + 6])
-            
-            faculty_list = []
-            
-            emails_string = emails.split(";")
-                            
-            for email in emails_string:
-            
-                if pandas.isna(email):
-                    continue
-            
-                db_faculty = faculty_dao.get_faculty_by_name(faculty_dao.Faculty.email==email)
-                
-                if db_faculty is None:
-                    db_faculty = Faculty()
-                    db_faculty.email = email
-                    db_faculty.name = names[emails_string.index(email)]
-                    faculty_dao.insert_faculty(db_faculty)
-                faculty_list.append(db_faculty)                
-                
-            course.faculty = faculty_list
-            course_list.append(course)
+        if (len(request.files) != 0):
+            # Sets up the file to be read
+            catalog_file = request.files["catalog"]
+            filename = secure_filename(catalog_file.filename)
+            filetype = filename.split('.')[1]
+            supported_filetypes = ['xls', 'xlsx', 'xlsm', 'xlsb', 'odf', 'ods', 'odt']
+            # Confirms that the file type is a supported spreadsheet format and reads data from spreadsheet
+            if filetype == 'csv':
+                df = pandas.read_csv(catalog_file, encoding="latin-1")
+            elif filetype not in supported_filetypes:
+                abort(415, message="Error: Unsupported Media Type")
+            else: 
+                df = pandas.read_excel(catalog_file, 0)
+            # Iterates through every course
+            for i in range(0, df.shape[0]):
+                # Creates a new course
+                course = Course()
 
-        print(str(len(course_list)) + " courses being added")
-        try:
-            course_dao.insert_many(course_list)
-            theme_dao.classify_course_bulk(course_list, commit=True)
-        except SQLAlchemyError:
-            abort(500, message="An error occured inserting the courses")
-        except ArgumentError:
-            abort(500, message="Course object not part of session")
+                # Reads the id from the database into a variable
+                course_id = df.iloc[i, 0]
+                print(course_id)
+                # Confirms that id field is a number not yet parsed
+                if not pandas.isna(course_id) and str(course_id).isdigit() and not course_ids.__contains__(course_id):
+                    # Adds id to list used to skip duplicates
+                    course_ids.append(course_id)
+                    # Gets subject of course
+                    subject = df.iloc[i, 1]               
                 
+                    print(subject)
+                    # Checks if subject exists
+                    db_subject = subject_dao.get_subject_by_name(subject_dao.Subject.subject==subject)
+                    # If subject doesn't exist, creates the subject
+                    if db_subject is None:
+                        db_subject = Subject()
+                        db_subject.subject = subject
+                        subject_dao.insert(db_subject)
+                    # Reads in course information
+                    course.catalog_number = df.iloc[i, 1 + 1]
+                    course.title_long = df.iloc[i, 1 + 2]
+                    course.title_short = df.iloc[i, 1 + 3]
+                    # Reads in description or autofills with empty description
+                    course.description = df.iloc[i, 1 + 4]
+                    if pandas.isna(course.description):
+                        course.description = ""
+                    # Reads in special topics descriptions or autofills with empty descriptions
+                    course.topics_description = df.iloc[i, 1 + 5]
+                    if pandas.isna(course.topics_description):
+                        course.topics_description = ""
+
+                    course.topics_description_s = df.iloc[i, 1 + 6]
+                    if pandas.isna(course.topics_description_s):
+                        course.topics_description_s = ""
+
+                    course.topics_description_f = df.iloc[i, 1 + 7]
+                    if pandas.isna(course.topics_description_f):
+                        course.topics_description_f = ""
+                    
+                    # Adds ids of subject and semester objects to course
+                    course.subject_id = db_subject.id
+                    course.semester_id = semester.id 
+                    # Sets the emails of instructors of the course
+                    emails = str(df.iloc[i, 1 + 9])
+                    # Separates faculty from the emails and adds them to a list of faculty
+                    faculty_list = []
+                    names = str(df.iloc[i, 1 + 8])
+                    emails_string = emails.split(";")
+                    names_string = names.split(";")
+                    count = 0
+                    for email in emails_string:
+                    
+                        if pandas.isna(email):
+                            continue
+                        db_faculty = faculty_dao.get_faculty_by_name(faculty_dao.Faculty.email==email)
+                        if db_faculty is None:
+                            db_faculty = Faculty()
+                            db_faculty.name = names_string[count]
+                            db_faculty.email = email
+                            faculty_dao.insert_faculty(db_faculty)
+                        faculty_list.append(db_faculty)        
+                        count +=1            
+                        
+                    course.faculty = faculty_list
+                    # Adds course to the semester course list
+                    course_list.append(course)
+            print(str(len(course_list)) + " courses being added")
+            try:
+                print("Courses being added")
+                # Adds courses to the database
+                course_dao.insert_many(course_list)
+                print("Course DAO done")
+                # Runs the theme classifier on all courses
+                theme_dao.classify_course_bulk(course_list, commit=True)
+                print("Courses have been added")
+            except SQLAlchemyError:
+                abort(500, message="An error occured inserting the courses")
+            except ArgumentError:
+                abort(500, message="Course object not part of session")
+        
+        # Returns the new semester object
         return semester
     
 @semester_controller.route('/<int:semester_id>/')

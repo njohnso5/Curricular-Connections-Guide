@@ -6,3 +6,7 @@ class ThemeSchema(Schema):
     
 class ThemeSearchSchema(Schema):
     theme_ids = fields.List(fields.Int())
+
+class ThemePostSchema(Schema):
+    id = fields.Int(dump_only=True)
+    name = fields.Str(required=True)

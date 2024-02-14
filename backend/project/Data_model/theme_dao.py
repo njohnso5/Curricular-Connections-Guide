@@ -62,18 +62,16 @@ def insert_from_list(themes: list[str]):
 
 
 # Insert a new theme name into the database
-def insert(theme: str):
-    new_theme = Theme()
-    new_theme.name = theme
+def insert(theme: Theme):
 
-    db.session.add(new_theme)
+    db.session.add(theme)
     db.session.commit()
 
-    return new_theme
+    return True
 
 
 # Deletes a theme from the database by its id
-def delete(theme_id):
+def delete(theme_id: int):
     theme = Theme.query.get_or_404(theme_id)
 
     prgs: list[Program] = find_programs(theme_id)
@@ -82,7 +80,7 @@ def delete(theme_id):
     crcs: list[Course] = find_courses(theme_id)
     [c.themes.remove(theme) for c in crcs]
 
-    db.session.remove(theme)
+    Theme.query.filter(Theme.id == theme_id).delete()
     db.session.commit()
 
 
@@ -129,12 +127,14 @@ def classify_course(course: Course, commit: bool = False):
 
 # Discovers a set of themes that are related to a given course. If the commit parameter is True, the theme associations are saved to the database so long as the given Course object is stored in the engine session.
 def classify_course_bulk(courses: list[Course], commit: bool = False):
+    print("Starting theme classification")
     themes = Theme.query.all()
 
     clss = Classifier()
     clss.set_themes(themes)
-
+    print("Checking courses")
     for course in courses:
+        print(course.title_short)
         clss.set_description(course.description)
         clss.set_course_title(course.title_long)
         try:
@@ -149,6 +149,7 @@ def classify_course_bulk(courses: list[Course], commit: bool = False):
                 course.themes.clear()
             course.themes.extend(predicted_themes)
             db.session.commit()
+    print("Theme DAO completed")
     return True
 
 
