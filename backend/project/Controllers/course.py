@@ -129,7 +129,7 @@ class CourseList(MethodView):
                 faculty_dao.update_faculty(db_faculty)
             faculty_list.append(db_faculty)
 
-
+        course.faculty = faculty_list
         try:
             course_dao.update_course(course)
             theme_dao.classify_course(course, commit=True)
