@@ -62,14 +62,12 @@ def insert_from_list(themes: list[str]):
 
 
 # Insert a new theme name into the database
-def insert(theme: str):
-    new_theme = Theme()
-    new_theme.name = theme
+def insert(theme: Theme):
 
-    db.session.add(new_theme)
+    db.session.add(theme)
     db.session.commit()
 
-    return new_theme
+    return True
 
 
 # Deletes a theme from the database by its id
