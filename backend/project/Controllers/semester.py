@@ -111,20 +111,22 @@ class SemesterList(MethodView):
                     emails = str(df.iloc[i, 1 + 9])
                     # Separates faculty from the emails and adds them to a list of faculty
                     faculty_list = []
-                    
+                    names = str(df.iloc[i, 1 + 8])
                     emails_string = emails.split(";")
-                                    
+                    names_string = names.split(";")
+                    count = 0
                     for email in emails_string:
                     
                         if pandas.isna(email):
                             continue
                         db_faculty = faculty_dao.get_faculty_by_name(faculty_dao.Faculty.email==email)
-                        
                         if db_faculty is None:
                             db_faculty = Faculty()
+                            db_faculty.name = names_string[count]
                             db_faculty.email = email
                             faculty_dao.insert_faculty(db_faculty)
-                        faculty_list.append(db_faculty)                
+                        faculty_list.append(db_faculty)        
+                        count +=1            
                         
                     course.faculty = faculty_list
                     # Adds course to the semester course list
