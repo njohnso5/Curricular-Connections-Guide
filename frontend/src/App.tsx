@@ -18,6 +18,7 @@ import NotFound from './components/NotFound'
 import SearchPage from './pages/Search/SearchPage';
 import ProgramPageDetail from './pages/Program/ProgramDetailPage';
 import AdministratorNavBar from './components/AdministratorNavBar';
+import ThemePage from './pages/ThemePage';
 
 function App() {
 
@@ -47,6 +48,7 @@ function App() {
                 <Route index element={<AdminHomePage />} />
                 <Route path="programs" element={<PageContent pageTitle="Manage Programs" page={<ProgramPage />} />} />
                 <Route path="courses" element={<PageContent pageTitle="Manage Courses" page={<CoursePage />} />} />
+                <Route path="themes" element={<PageContent pageTitle="Manage Themes" page={<ThemePage />} />} />
                 <Route path="administrators" element={<PageContent pageTitle="Administrators" page={<AuthorizationPage />} />}/>
               </Route>
           </Route>

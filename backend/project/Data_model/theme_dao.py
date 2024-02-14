@@ -62,18 +62,16 @@ def insert_from_list(themes: list[str]):
 
 
 # Insert a new theme name into the database
-def insert(theme: str):
-    new_theme = Theme()
-    new_theme.name = theme
+def insert(theme: Theme):
 
-    db.session.add(new_theme)
+    db.session.add(theme)
     db.session.commit()
 
-    return new_theme
+    return True
 
 
 # Deletes a theme from the database by its id
-def delete(theme_id):
+def delete(theme_id: int):
     theme = Theme.query.get_or_404(theme_id)
 
     prgs: list[Program] = find_programs(theme_id)
@@ -82,7 +80,7 @@ def delete(theme_id):
     crcs: list[Course] = find_courses(theme_id)
     [c.themes.remove(theme) for c in crcs]
 
-    db.session.remove(theme)
+    Theme.query.filter(Theme.id == theme_id).delete()
     db.session.commit()
 
 
