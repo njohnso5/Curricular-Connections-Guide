@@ -19,12 +19,11 @@ def insert(show: Showing):
     db.session.commit()
 
 # Function to update an existing showing in the database
-def update(show: dict, id: int):
+def update(show: dict):
     # Parse the datetime string in the show dictionary
     show["datetime"] = parser.parse(show["datetime"])
-
     # Update the showing with the provided dictionary
-    Showing.query.filter(Showing.id == id).update(show)
+    Showing.query.filter(Showing.id == show.get('id')).update(show)
 
     # Commit the changes to the database
     db.session.commit()
@@ -51,9 +50,7 @@ def get_showing_by_datetime_expression(expression: BinaryExpression) -> list[Sho
 def add_show_to_program(show: Showing, programid: int):
     # Retrieve the program by its ID
     program = prog_dao.get_by_id(programid)
-
     # Append the showing to the program's list of showings
     program.showings.append(show)
-
     # Commit the changes to the database
     db.session.commit()

@@ -122,12 +122,14 @@ def classify_course(course: Course, commit: bool = False):
 
 # Discovers a set of themes that are related to a given course. If the commit parameter is True, the theme associations are saved to the database so long as the given Course object is stored in the engine session.
 def classify_course_bulk(courses: list[Course], commit: bool = False):
+    print("Starting theme classification")
     themes = Theme.query.all()
 
     clss = Classifier()
     clss.set_themes(themes)
-
+    print("Checking courses")
     for course in courses:
+        print(course.title_short)
         clss.set_description(course.description)
         try:
             predicted_themes = clss.classify()
@@ -138,6 +140,7 @@ def classify_course_bulk(courses: list[Course], commit: bool = False):
                 raise ArgumentError("Course object not part of session")
             course.themes.extend(predicted_themes)
             db.session.commit()
+    print("Theme DAO completed")
     return True
 
 
