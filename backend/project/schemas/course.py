@@ -20,7 +20,10 @@ class CoursePostSchema(Schema):
     faculty = fields.Str(required=True)
     emails = fields.Str(required=True)
     semester_id = fields.Int(required=True)
-
+    faculty_list = fields.List(fields.Nested(FacultySchema()), required=False)
+    topics_description = fields.Str(required=False)
+    topics_description_s = fields.Str(required=False)
+    topics_description_f = fields.Str(required=False)
     course_id = fields.Int(required=False)
     
 
@@ -33,6 +36,10 @@ class CourseSchema(Schema):
     subject = fields.Nested(SubjectSchema())
     catalog_number = fields.Str()
     semester_id = fields.Int()
+    topics_description = fields.Str(required=False)
+    topics_description_s = fields.Str(required=False)
+    topics_description_f = fields.Str(required=False)
     themes = fields.List(fields.Nested(ThemeSchema()))
     faculty = fields.List(fields.Nested(FacultySchema()))
+    
   
