@@ -2,9 +2,12 @@ from flask import Flask, request
 from flask.testing import FlaskClient
 import pytest
 import sys
-sys.path.append(".")
+
+sys.path.append(".") # Adds higher directory to python modules path.
 from Data_model.models import db, RoleEnum, Role, Administrator
 from app import create_app, db 
+# docker exec -it <container_name_or_id> bash
+
 
 
 @pytest.fixture()
