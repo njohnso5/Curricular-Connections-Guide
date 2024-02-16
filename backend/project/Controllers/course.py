@@ -47,8 +47,8 @@ class CourseList(MethodView):
         course.title_long = course_data.get("title_long")
         course.description = course_data.get("description")
         course.topics_description = course_data.get("topics_description")
-        course.topics_description_s = course_data.get("topics_description_s")
-        course.topics_description_f = course_data.get("topics_description_f")
+        # course.topics_description_s = course_data.get("topics_description_s")
+        # course.topics_description_f = course_data.get("topics_description_f")
     
         subject = course_data.get("subject")
         db_subject = subject_dao.get_subject_by_name(subject_dao.Subject.subject==subject)
@@ -104,8 +104,8 @@ class CourseList(MethodView):
         course.title_long = course_data.get("title_long")
         course.description = course_data.get("description")
         course.topics_description = course_data.get("topics_description")
-        course.topics_description_s = course_data.get("topics_description_s")
-        course.topics_description_f = course_data.get("topics_description_f")
+        # course.topics_description_s = course_data.get("topics_description_s")
+        # course.topics_description_f = course_data.get("topics_description_f")
         
         if course_data.get("subject") != course.subject.subject:
             db_subject = subject_dao.get_subject_by_name(subject_dao.Subject.subject==course_data.get("subject"))

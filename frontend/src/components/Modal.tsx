@@ -334,8 +334,8 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
     title_long: "",
     description: "",
     topics_description: "",
-    topics_description_s: "",
-    topics_description_f: "",
+    // topics_description_s: "",
+    // topics_description_f: "",
     subject: "",
     catalog_number: null,
     faculty: "",
@@ -355,8 +355,8 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
     formData.append('title_long', courseData.title_long.toString());
     formData.append('description', courseData.description.toString());
     formData.append('topics_description', courseData.topics_description.toString());
-    formData.append('topics_description_s', courseData.topics_description_s.toString());
-    formData.append('topics_description_f', courseData.topics_description_f.toString());
+    // formData.append('topics_description_s', courseData.topics_description_s.toString());
+    // formData.append('topics_description_f', courseData.topics_description_f.toString());
     formData.append('subject', courseData.subject.toString());
     formData.append('catalog_number', courseData.catalog_number.toString());
     formData.append('faculty', courseData.faculty.toString());
@@ -375,8 +375,8 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
           title_long: "",
           description: "",
           topics_description: "",
-          topics_description_s: "",
-          topics_description_f: "",
+          // topics_description_s: "",
+          // topics_description_f: "",
           subject: "",
           catalog_number: null,
           faculty: "",
@@ -417,14 +417,14 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
           <label>Enter special topics description</label>
           <input type="text" className="form-control" value={courseData.topics_description} onChange={(e) => setCourseData({ ...courseData, topics_description: e.target.value })} />
         </div>
-        <div className="form-group">
+        {/* <div className="form-group">
           <label>Enter short special topics description</label>
           <input type="text" className="form-control" value={courseData.topics_description_s} onChange={(e) => setCourseData({ ...courseData, topics_description_s: e.target.value })} />
         </div>
         <div className="form-group">
           <label>Enter full special topics description</label>
           <input type="text" className="form-control" value={courseData.topics_description_f} onChange={(e) => setCourseData({ ...courseData, topics_description_f: e.target.value })} />
-        </div>
+        </div> */}
         <div className="form-group">
           <label>Enter course instructors</label>
           <input type="text" className="form-control" value={courseData.faculty} onChange={(e) => setCourseData({ ...courseData, faculty: e.target.value })} />
@@ -472,8 +472,8 @@ const ModalEditCourseBody: React.FC< { course: Course, updateCoursesList: ()=> v
       formData.append('title_long', localCourse.title_long.toString());
       formData.append('description', localCourse.description.toString());
       formData.append('topics_description', localCourse.topics_description.toString());
-      formData.append('topics_description_s', localCourse.topics_description_s.toString());
-      formData.append('topics_description_f', localCourse.topics_description_f.toString());
+      // formData.append('topics_description_s', localCourse.topics_description_s.toString());
+      // formData.append('topics_description_f', localCourse.topics_description_f.toString());
       formData.append('subject', localCourse.subject.subject.toString());
       formData.append('catalog_number', localCourse.catalog_number.toString());
       formData.append('faculty', faculty.toString());
@@ -519,14 +519,14 @@ const ModalEditCourseBody: React.FC< { course: Course, updateCoursesList: ()=> v
           <label>Enter special topics description</label>
           <input type="text" className="form-control" value={localCourse.topics_description} onChange={(e) => setLocalCourse({ ...localCourse, topics_description: e.target.value })} />
         </div>
-        <div className="form-group">
+        {/* <div className="form-group">
           <label>Enter short special topics description</label>
           <input type="text" className="form-control" value={localCourse.topics_description_s} onChange={(e) => setLocalCourse({ ...localCourse, topics_description_s: e.target.value })} />
         </div>
         <div className="form-group">
           <label>Enter full special topics description</label>
           <input type="text" className="form-control" value={localCourse.topics_description_f} onChange={(e) => setLocalCourse({ ...localCourse, topics_description_f: e.target.value })} />
-        </div>
+        </div> */}
         <div className="form-group">
           <label>Enter course instructors</label>
           <input type="text" className="form-control" value={faculty} onChange={(e) => setFaculty(e.target.value)} />
