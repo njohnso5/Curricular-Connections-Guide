@@ -94,7 +94,7 @@ class CourseList(MethodView):
     @course_controller.response(200, CourseSchema)
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def put(self, course_data):
-        print(course_data)
+        # print(course_data)
         emails = course_data.get("emails").split(";")
         names = course_data.get("faculty").split(";")
         if len(emails) != len(names):
@@ -135,7 +135,7 @@ class CourseList(MethodView):
                 faculty_dao.update_faculty(db_faculty)
             faculty_list.append(db_faculty)
 
-
+        course.faculty = faculty_list
         try:
             course_dao.update_course(course)
             theme_dao.classify_course(course, commit=True)

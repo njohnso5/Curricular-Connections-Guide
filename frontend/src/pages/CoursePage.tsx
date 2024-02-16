@@ -192,8 +192,8 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
                                 />
                             </th>
                             <td onClick={() => { handleClick(course.id); setCourseTitleClick(course.id); setCourseType(course.id) }}>{course.subject.subject} {course.catalog_number}</td>
-                            <td>{course.title_long}</td>
-                            <td>{course.catalog_number}</td>
+                            <td onClick={() => { handleClick(course.id); setCourseTitleClick(course.id); setCourseType(course.id) }}>{course.title_long}</td>
+                            <td onClick={() => { handleClick(course.id); setCourseTitleClick(course.id); setCourseType(course.id) }}>{course.catalog_number}</td>
                         </tr>
                     ))}
                 </tbody>

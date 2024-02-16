@@ -2,6 +2,7 @@ import React from 'react';
 import styles from "../../css/SearchNavBar.module.css"
 import Select from 'react-select';
 import { DayPicker } from 'react-day-picker';
+import Switch from 'react-switch';
 import 'react-day-picker/dist/style.css';
 import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
@@ -60,6 +61,9 @@ const SearchNavBar: React.FC<{setResults: Function}> = ({setResults}) => {
     const [displayDayPicker, setDisplayDayPicker] = React.useState<boolean>(false);
     const datePickerRef = React.useRef<HTMLDivElement | null>(null);
     const [searchQuery, setSearchQuery] = React.useState<SearchQuery>(initialQuery);
+    
+    // State for the switch button, to determine search by range, or by single dates
+    const [searchByRange, setSearchByRange] = React.useState<boolean>(false);
 
     const handleAddTag = (tagName: string, type: SearchDropdown) => {
         switch(type) {
@@ -148,8 +152,19 @@ const SearchNavBar: React.FC<{setResults: Function}> = ({setResults}) => {
     }
 
     function handleSearch() {
+        console.log(selectedTags);
         searchQuery.departments = selectedTags.filter(tag => tag.type == "departments").map(tag => tag.name);
         searchQuery.themes = selectedTags.filter(tag => tag.type == "themes").map(tag => tag.name);
+        
+        // date{
+        //     "name": "Fri Feb 09 2024",
+        //     "type": "date"
+        // }
+        searchQuery.dates = selectedTags.filter(tag => tag.type == "date").map(tag => tag.name);
+        searchQuery.searchByRange = searchByRange;
+        if (searchByRange && searchQuery.dates.length !== 2) {
+            window.alert("Please select a range of dates");
+        }
         SearchService.getSearchResults(searchQuery)
         .then(response => {
             setResults(response.data);
@@ -172,12 +187,14 @@ const SearchNavBar: React.FC<{setResults: Function}> = ({setResults}) => {
                                 <div ref={datePickerRef}>
                                     <DayPicker    
                                         mode="single"
-                                        onSelect={handleDateSelected}
+                                        onDayClick={handleDateSelected}
                                         style={{ position: 'absolute', top: '10px', left: '20px', backgroundColor: 'white', zIndex: '1', border: '1px solid black'}}
                                     />
                                 </div>
                             }
                         </div>
+                        <Switch onChange={() => setSearchByRange(prev => !prev)} checked={searchByRange} />
+                        <span>Search by Range</span>
                     </div>
                 </div>
                 <div className="col-md-6 d-flex justify-content-end">

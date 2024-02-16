@@ -1,5 +1,5 @@
 from schemas.faculty import FacultySchema
-from schemas.theme import ThemeSchema, ThemeSearchSchema
+from schemas.theme import ThemeSchema, ThemeSearchSchema, ThemePostSchema
 from schemas.course import CourseSchema, CoursePostSchema
 from schemas.period import PeriodSchema
 from schemas.semester import SemesterPostSchema, SemesterSchema, SemesterUpdateSchema

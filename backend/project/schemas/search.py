@@ -6,6 +6,7 @@ class SearchProgramSchema(Schema):
     departments = fields.List(fields.Str())
     title = fields.Str()
     dates = fields.List(fields.Str())
+    searchByRange = fields.Bool(required=True)
     
     
 class SearchCourseSchema(Schema):
