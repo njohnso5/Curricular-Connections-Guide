@@ -1,9 +1,55 @@
 # Import necessary modules and classes
-from flask import request, jsonify, current_app, make_response, Blueprint, Response
+from flask import request, jsonify, current_app, make_response, Response
+from flask_smorest import Blueprint, abort
+from flask.views import MethodView
+from sqlalchemy.exc import SQLAlchemyError, ArgumentError
 import Data_model.theme_dao as theme_dao
+from Data_model.models import db, Theme, RoleEnum
+from schemas import ThemeSchema, ThemePostSchema
+from Data_model.permissions import require_roles
 
 # Create a Blueprint for the theme API with a specified URL prefix
 theme_router = Blueprint("theme_api", __name__, url_prefix="/themes")
+
+@theme_router.route("/")
+class ThemeList(MethodView):
+    
+    @theme_router.response(200, ThemeSchema(many=True))
+    def get(self): # Process to retrieve all themes from db
+        return Theme.query.all()
+    
+    # Define a method to handle POST requests to create a new theme
+    @theme_router.arguments(ThemePostSchema, location="form")
+    @theme_router.response(200, ThemeSchema)
+    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
+    def post(self, theme_data):
+        theme = Theme()
+        theme.name = theme_data.get("name")  
+    # Finish building the theme object and add it to the db
+        try:
+            theme_dao.insert(theme)
+        except SQLAlchemyError:
+            abort(500, message="An error occured inserting the theme")
+        except ArgumentError:
+            abort(500, message="Theme object not part of session")
+
+        return theme
+    
+@theme_router.route("delete/")
+class DeleteTheme(MethodView):
+
+    @theme_router.response(204)
+    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
+    def delete(self, theme_data):
+        try:
+            data = request.get_json()
+            print(data)
+            theme_id = theme_data.get('themeId')
+            theme_dao.delete(theme_id)
+        except SQLAlchemyError as e:
+            print(e)
+            abort(400, message="Error deleting Theme")
+        return {'message': 'Theme deleted successfully'}
 
 
 # Define a route for handling GET and POST requests

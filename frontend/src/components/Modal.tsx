@@ -2,6 +2,8 @@ import '../css/Modal.css'
 import SemesterService from '../services/SemesterService';
 import PeriodService from '../services/PeriodService';
 import CourseService from '../services/CourseServices';
+import themesService from '../services/themes-service';
+import { Theme } from '../models/programModels';
 import { SemesterForm, Course, CourseForm } from '../CourseModels/courseModels';
 import React, { useState, useEffect } from 'react';
 import CourseTable from '../pages/CoursePage';
@@ -33,6 +35,14 @@ const ModalButton: React.FC<ModalButtonProps> = ({ modalTarget, buttonMessage, d
 }
 
 const DeleteSemesterModalButton: React.FC<ModalButtonProps> = ({ modalTarget, buttonMessage }) => {
+  return (
+      <button type="button" className="btn btn-primary" data-toggle="modal" data-target={"#" + modalTarget}>
+        {buttonMessage}
+      </button>
+  );
+}
+
+const DeleteThemeModalButton: React.FC<ModalButtonProps> = ({modalTarget, buttonMessage}) => {
   return (
       <button type="button" className="btn btn-primary" data-toggle="modal" data-target={"#" + modalTarget}>
         {buttonMessage}
@@ -94,6 +104,55 @@ const DeleteSemesterBody: React.FC = () => {
       </div>
     </form>
   )
+}
+
+const DeleteThemeBody: React.FC = () => {
+  const [selectedThemeId, setSelectedThemeId] = useState<Number | null>(null);
+  const [themes, setThemes] = useState<Theme[] | null>();
+
+  useEffect(() => {
+    themesService.getTags().then((response) => {setThemes(response.data)});
+  }, []);
+
+  const handleDelete = () => {
+    console.log("inside handle delete function");
+    console.log(selectedThemeId);
+
+    if(selectedThemeId != null) {
+      themesService.removeTheme(selectedThemeId)
+        .then(() => {
+          setThemes((prevThemes) => prevThemes ? prevThemes.filter((theme) => theme.id !== selectedThemeId) : null);
+        })
+        .catch((error) => {
+          console.log("Error deleting theme", error);
+        });
+    }
+  };
+
+  return (
+    <form>
+      <div className="row">
+        <div className="col-md-6">
+          <div className="dropdown">
+            <label className="chooseSeason">Theme : </label>
+            <select className="chooseSeason" value={selectedThemeId || ''}
+              onChange={(e) => setSelectedThemeId(parseInt(e.target.value, 10))}>
+              <option className="dropdown-item"></option>
+              {themes ? themes.map((theme) => (
+                <option className="dropdown-item" key={theme.themeId} value={theme.id} name="ThemeId">{theme.name}</option>
+              )) : null}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div className="col-md-6">
+        <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={handleDelete}>
+          Delete Theme
+        </button>
+      </div>
+    </form>
+  )
+
 }
 
 
@@ -185,6 +244,52 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
   );
 }
 
+interface ModalNewThemeBodyProps {
+  handleUpload: (theme: Theme) => void;
+}
+
+const ModalNewThemeBody: React.FC<ModalNewThemeBodyProps> =(props) => {
+  const[themeData, setThemeData] = useState<Theme>({
+    id: -1,
+    name: null
+  });
+
+  function handleSubmit(event: React.FormEvent) {
+    // do this with axios
+    event.preventDefault();
+
+    const formData = new FormData();
+    formData.append('name', themeData.name.toString());
+
+    themesService.createTheme(formData)
+      .then((_response: AxiosResponse<Theme>) => {
+        props.handleUpload(_response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  return (
+    <div>
+      <form id="new-theme-info" method="POST" action="/themes/" onSubmit={handleSubmit}>
+        <div className="row">
+          <div className="col-md-6">
+            <div className="input-group input-group-sm mb-3">
+              <div className="input-group-prepend">
+                <span className="input-group-text" id="inputGroup-sizing-sm">Name</span>
+              </div>
+              <input type="text" className="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value={themeData.name}
+                onChange={(e) => setThemeData({ ...themeData, name: String(e.target.value) })} />
+            </div>
+          </div>
+        </div>
+        <button type="submit" className="btn btn-primary">Save changes</button>
+      </form>
+    </div>
+  );
+}
+
 
 const Modal: React.FC<ModalProps> = ({ modalTarget, modalTitle, modalBody }) => {
 
@@ -228,6 +333,9 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
     title_short: "",
     title_long: "",
     description: "",
+    topics_description: "",
+    // topics_description_s: "",
+    // topics_description_f: "",
     subject: "",
     catalog_number: null,
     faculty: "",
@@ -246,6 +354,9 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
     formData.append('title_short', courseData.title_short.toString());
     formData.append('title_long', courseData.title_long.toString());
     formData.append('description', courseData.description.toString());
+    formData.append('topics_description', courseData.topics_description.toString());
+    // formData.append('topics_description_s', courseData.topics_description_s.toString());
+    // formData.append('topics_description_f', courseData.topics_description_f.toString());
     formData.append('subject', courseData.subject.toString());
     formData.append('catalog_number', courseData.catalog_number.toString());
     formData.append('faculty', courseData.faculty.toString());
@@ -263,6 +374,9 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
           title_short: "",
           title_long: "",
           description: "",
+          topics_description: "",
+          // topics_description_s: "",
+          // topics_description_f: "",
           subject: "",
           catalog_number: null,
           faculty: "",
@@ -299,7 +413,18 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
           <label>Enter course description</label>
           <input type="text" className="form-control" value={courseData.description} onChange={(e) => setCourseData({ ...courseData, description: e.target.value })} />
         </div>
-        
+        <div className="form-group">
+          <label>Enter special topics description</label>
+          <input type="text" className="form-control" value={courseData.topics_description} onChange={(e) => setCourseData({ ...courseData, topics_description: e.target.value })} />
+        </div>
+        {/* <div className="form-group">
+          <label>Enter short special topics description</label>
+          <input type="text" className="form-control" value={courseData.topics_description_s} onChange={(e) => setCourseData({ ...courseData, topics_description_s: e.target.value })} />
+        </div>
+        <div className="form-group">
+          <label>Enter full special topics description</label>
+          <input type="text" className="form-control" value={courseData.topics_description_f} onChange={(e) => setCourseData({ ...courseData, topics_description_f: e.target.value })} />
+        </div> */}
         <div className="form-group">
           <label>Enter course instructors</label>
           <input type="text" className="form-control" value={courseData.faculty} onChange={(e) => setCourseData({ ...courseData, faculty: e.target.value })} />
@@ -346,6 +471,9 @@ const ModalEditCourseBody: React.FC< { course: Course, updateCoursesList: ()=> v
       formData.append('title_short', localCourse.title_short.toString());
       formData.append('title_long', localCourse.title_long.toString());
       formData.append('description', localCourse.description.toString());
+      formData.append('topics_description', localCourse.topics_description.toString());
+      // formData.append('topics_description_s', localCourse.topics_description_s.toString());
+      // formData.append('topics_description_f', localCourse.topics_description_f.toString());
       formData.append('subject', localCourse.subject.subject.toString());
       formData.append('catalog_number', localCourse.catalog_number.toString());
       formData.append('faculty', faculty.toString());
@@ -387,6 +515,18 @@ const ModalEditCourseBody: React.FC< { course: Course, updateCoursesList: ()=> v
           <label>Enter course description</label>
           <input type="text" className="form-control" value={localCourse.description} onChange={(e) => setLocalCourse({ ...localCourse, description: e.target.value })} />
         </div>
+        <div className="form-group">
+          <label>Enter special topics description</label>
+          <input type="text" className="form-control" value={localCourse.topics_description} onChange={(e) => setLocalCourse({ ...localCourse, topics_description: e.target.value })} />
+        </div>
+        {/* <div className="form-group">
+          <label>Enter short special topics description</label>
+          <input type="text" className="form-control" value={localCourse.topics_description_s} onChange={(e) => setLocalCourse({ ...localCourse, topics_description_s: e.target.value })} />
+        </div>
+        <div className="form-group">
+          <label>Enter full special topics description</label>
+          <input type="text" className="form-control" value={localCourse.topics_description_f} onChange={(e) => setLocalCourse({ ...localCourse, topics_description_f: e.target.value })} />
+        </div> */}
         <div className="form-group">
           <label>Enter course instructors</label>
           <input type="text" className="form-control" value={faculty} onChange={(e) => setFaculty(e.target.value)} />
@@ -449,6 +589,9 @@ export {
   ModalNewSemesterBody,
   DeleteSemesterModalButton,
   DeleteSemesterBody,
+  DeleteThemeBody,
+  ModalNewThemeBody,
+  DeleteThemeModalButton,
   ModalAddCourseBody,
   ModalEditCourseBody,
   ModalDeleteCourseBody

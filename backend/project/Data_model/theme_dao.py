@@ -62,18 +62,16 @@ def insert_from_list(themes: list[str]):
 
 
 # Insert a new theme name into the database
-def insert(theme: str):
-    new_theme = Theme()
-    new_theme.name = theme
+def insert(theme: Theme):
 
-    db.session.add(new_theme)
+    db.session.add(theme)
     db.session.commit()
 
-    return new_theme
+    return True
 
 
 # Deletes a theme from the database by its id
-def delete(theme_id):
+def delete(theme_id: int):
     theme = Theme.query.get_or_404(theme_id)
 
     prgs: list[Program] = find_programs(theme_id)
@@ -82,7 +80,7 @@ def delete(theme_id):
     crcs: list[Course] = find_courses(theme_id)
     [c.themes.remove(theme) for c in crcs]
 
-    db.session.remove(theme)
+    Theme.query.filter(Theme.id == theme_id).delete()
     db.session.commit()
 
 
@@ -99,6 +97,8 @@ def classify_program(program: Program, commit: bool = False):
     if commit:
         if object_session(program) is None:
             raise ArgumentError("Program object not part of session")
+        if program.themes is not None:
+            program.themes.clear()
         program.themes.extend(predicted_themes)
         db.session.commit()
     return predicted_themes
@@ -111,12 +111,15 @@ def classify_course(course: Course, commit: bool = False):
     clss = Classifier()
     clss.set_themes(themes)
     clss.set_description(course.description)
-
+    clss.set_course_title(course.title_long)
     predicted_themes = clss.classify()
 
     if commit:
         if object_session(course) is None:
             raise ArgumentError("Course object not part of session")
+        if(course.themes is not None):
+            course.themes.clear()
+
         course.themes.extend(predicted_themes)
         db.session.commit()
     return predicted_themes
@@ -133,6 +136,7 @@ def classify_course_bulk(courses: list[Course], commit: bool = False):
     for course in courses:
         print(course.title_short)
         clss.set_description(course.description)
+        clss.set_course_title(course.title_long)
         try:
             predicted_themes = clss.classify()
         except BaseException:
@@ -140,6 +144,9 @@ def classify_course_bulk(courses: list[Course], commit: bool = False):
         if commit:
             if object_session(course) is None:
                 raise ArgumentError("Course object not part of session")
+
+            if course.themes is not None:
+                course.themes.clear()
             course.themes.extend(predicted_themes)
             db.session.commit()
     print("Theme DAO completed")

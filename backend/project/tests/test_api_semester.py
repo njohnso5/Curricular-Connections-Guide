@@ -10,6 +10,8 @@ SEMESTER_BASE_URL = "/v1/semesters/"
 
 
 def test_get(client: FlaskClient, app: Flask):
+    response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
+    assert response.status_code == 200
     # Check that nothing is retrieved sucessfully
     resp = client.get(SEMESTER_BASE_URL)
     assert resp.status_code == 200
@@ -17,7 +19,7 @@ def test_get(client: FlaskClient, app: Flask):
     assert len(resp.get_json()) == 0
     
     # Add semester to database
-    response = client.post("/v1/semesters/", json=json.loads('{ "year": 2023, "active": true, "period_id": 1}'))
+    response = client.post("/v1/semesters/", data={ "year": 2023, "active": "true", "period_id": 1})
     assert response.status_code == 200
 
     # Get semester from database
@@ -33,7 +35,7 @@ def test_get(client: FlaskClient, app: Flask):
 
     s1 = Semester()
     s1.year = "2023"
-    s1.period = 1
+    s1.period_id= 1
     
 # def test_course_upload
 
