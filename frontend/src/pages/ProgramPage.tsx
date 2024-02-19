@@ -89,7 +89,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       formData.append('title', newProgram.title.toString());
       formData.append('department', newProgram.department.toString());
       formData.append('description', newProgram.description.toString());
-      if (newProgram.link != '' && newProgram.link != undefined) {
+      if (newProgram.link != '') {
         formData.append('link', newProgram.link);
       }
       formData.append('showings', JSON.stringify(newProgram.showings));
@@ -152,7 +152,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       <form id="edit-program" className="modal-body">
         <div className="form-group align-items-center gap-1">
           <span>Image</span>
-          <img className="img-fluid" src={`/api/v1/program/${program.id}/image/`} />
+          <img className="img-fluid" src={filePreview} />
           <input id="image-input" type="file" className="form-control" name="image" onChange={handleImageSelect} />
         </div>
         <div className="form-group align-items-center gap-1">
