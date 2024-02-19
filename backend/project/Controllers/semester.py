@@ -93,18 +93,18 @@ class SemesterList(MethodView):
                     course.description = df.iloc[i, 1 + 4]
                     if pandas.isna(course.description):
                         course.description = ""
+                    # course.topics_description = df.iloc[i, 1 + 5]
+                    # if pandas.isna(course.topics_description):
+                    #     course.topics_description = ""
+
+                    # course.topics_description_s = df.iloc[i, 1 + 6]
+                    # if pandas.isna(course.topics_description_s):
+                    #     course.topics_description_s = ""
+                    
                     # Reads in special topics descriptions or autofills with empty descriptions
-                    course.topics_description = df.iloc[i, 1 + 5]
+                    course.topics_description = df.iloc[i, 1 + 7]
                     if pandas.isna(course.topics_description):
                         course.topics_description = ""
-
-                    course.topics_description_s = df.iloc[i, 1 + 6]
-                    if pandas.isna(course.topics_description_s):
-                        course.topics_description_s = ""
-
-                    course.topics_description_f = df.iloc[i, 1 + 7]
-                    if pandas.isna(course.topics_description_f):
-                        course.topics_description_f = ""
                     
                     # Adds ids of subject and semester objects to course
                     course.subject_id = db_subject.id

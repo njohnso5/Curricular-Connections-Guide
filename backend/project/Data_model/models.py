@@ -71,6 +71,10 @@ class Course(db.Model):
     )
     title_long: Mapped[String] = mapped_column(String(500), nullable=False)
     description: Mapped[String] = mapped_column(String(5000), nullable=False)
+    topics_description: Mapped[String] = mapped_column(String(500), nullable=False)
+    # topics_description_s: Mapped[String] = mapped_column(String(500), nullable=False)
+    # topics_description_f: Mapped[String] = mapped_column(String(500), nullable=False)
+
     subject : Mapped["Subject"] = relationship()
     subject_id: Mapped[ForeignKey] = mapped_column(
         ForeignKey("subject.id"), nullable=False
