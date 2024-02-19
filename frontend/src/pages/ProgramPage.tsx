@@ -71,7 +71,7 @@ function listShowingDates(showings: Showing[]) {
 }
 
 const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
-  const [filePreview, setFilePreview] = useState();
+  const [filePreview, setFilePreview] = useState('/api/v1/program/${program.id}/image/');
   const [newProgram, setNewProgram] = useState<ProgramData>(program);
   // Handles the Update button functionality from the Modal-footer module
   useEffect(() => {
@@ -89,7 +89,9 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       formData.append('title', newProgram.title.toString());
       formData.append('department', newProgram.department.toString());
       formData.append('description', newProgram.description.toString());
-      formData.append('link', newProgram.link.toString());
+      if (newProgram.link != '') {
+        formData.append('link', newProgram.link);
+      }
       formData.append('showings', JSON.stringify(newProgram.showings));
       if (newProgram.image) {
         formData.append('image', newProgram.image);
@@ -150,7 +152,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       <form id="edit-program" className="modal-body">
         <div className="form-group align-items-center gap-1">
           <span>Image</span>
-          <img className="img-fluid" src={`/api/v1/program/${program.id}/image/`} />
+          <img className="img-fluid" src={filePreview} />
           <input id="image-input" type="file" className="form-control" name="image" onChange={handleImageSelect} />
         </div>
         <div className="form-group align-items-center gap-1">
