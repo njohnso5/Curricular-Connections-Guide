@@ -243,7 +243,7 @@ const ShowClassInfo: React.FC<{ course: Course }> = ({ course }) => {
 
     const getEmails = () => course.faculty.map(faculty => faculty.email).join(", ");
     const getThemes = () => course.themes.map(theme => theme.name).join(", ");
-    if (course.description !== "") {
+    if (!course.name.includes("Special Topics")) {
         return (
             <div className="modal-body">
                 <h6><strong>Description: </strong>{course.description}</h6>
@@ -256,7 +256,8 @@ const ShowClassInfo: React.FC<{ course: Course }> = ({ course }) => {
         return (
             <div className="modal-body">
                 <h6><strong>Special Topics Course </strong></h6>
-                <h6><strong>Description: </strong>{course.topics_description}</h6>
+                <h6><strong>Description: </strong>{course.description}</h6>
+                <h6><strong>Special Topics Description: </strong>{course.topics_description}</h6>
                 {/* <h6><strong>Short Special Topics Description: </strong>{course.topics_description_s}</h6>
                 <h6><strong>Full Special Topics Description: </strong>{course.topics_description_f}</h6> */}
                 <h6><strong>Emails: </strong>{getEmails()}</h6>
