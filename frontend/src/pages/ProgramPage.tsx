@@ -71,7 +71,7 @@ function listShowingDates(showings: Showing[]) {
 }
 
 const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
-  const [filePreview, setFilePreview] = useState();
+  const [filePreview, setFilePreview] = useState('/api/v1/program/${program.id}/image/');
   const [newProgram, setNewProgram] = useState<ProgramData>(program);
   // Handles the Update button functionality from the Modal-footer module
   useEffect(() => {
@@ -89,7 +89,9 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       formData.append('title', newProgram.title.toString());
       formData.append('department', newProgram.department.toString());
       formData.append('description', newProgram.description.toString());
-      formData.append('link', newProgram.link.toString());
+      if (newProgram.link != '' && newProgram.link != undefined) {
+        formData.append('link', newProgram.link);
+      }
       formData.append('showings', JSON.stringify(newProgram.showings));
       if (newProgram.image) {
         formData.append('image', newProgram.image);
