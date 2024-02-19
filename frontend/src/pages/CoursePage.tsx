@@ -243,14 +243,27 @@ const ShowClassInfo: React.FC<{ course: Course }> = ({ course }) => {
 
     const getEmails = () => course.faculty.map(faculty => faculty.email).join(", ");
     const getThemes = () => course.themes.map(theme => theme.name).join(", ");
-
-    return (
-        <div className="modal-body">
-            <h6><strong>Description: </strong>{course.description}</h6>
-            <h6><strong>Emails: </strong>{getEmails()}</h6>
-            <h6><strong>Themes: </strong>{getThemes() || "No themes"}</h6>
-        </div>     
-    )
+    if (course.description !== "") {
+        return (
+            <div className="modal-body">
+                <h6><strong>Description: </strong>{course.description}</h6>
+                <h6><strong>Emails: </strong>{getEmails()}</h6>
+                <h6><strong>Themes: </strong>{getThemes() || "No themes"}</h6>
+            </div>     
+        )
+    }
+    else {
+        return (
+            <div className="modal-body">
+                <h6><strong>Special Topics Course </strong></h6>
+                <h6><strong>Description: </strong>{course.topics_description}</h6>
+                {/* <h6><strong>Short Special Topics Description: </strong>{course.topics_description_s}</h6>
+                <h6><strong>Full Special Topics Description: </strong>{course.topics_description_f}</h6> */}
+                <h6><strong>Emails: </strong>{getEmails()}</h6>
+                <h6><strong>Themes: </strong>{getThemes() || "No themes"}</h6>
+            </div>     
+        )
+    }
 }
 
 
