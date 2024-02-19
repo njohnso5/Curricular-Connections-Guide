@@ -1,6 +1,8 @@
 from flask import request
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
+import json
+import binascii
 from sqlalchemy.exc import SQLAlchemyError, ArgumentError
 from schemas.semester import SemesterPostSchema, SemesterSchema, SemesterUpdateSchema
 from schemas.course import CourseSchema
@@ -84,7 +86,7 @@ class SemesterList(MethodView):
                         db_subject.subject = subject
                         subject_dao.insert(db_subject)
                     # Reads in course information
-                    course.catalog_number = df.iloc[i, 1 + 1]
+                    course.catalog_number = str(df.iloc[i, 1 + 1]).encode(encoding='latin-1')
                     course.title_long = df.iloc[i, 1 + 2]
                     course.title_short = df.iloc[i, 1 + 3]
                     # Reads in description or autofills with empty description
@@ -188,7 +190,6 @@ class SemesterCourseList(MethodView):
     @semester_controller.response(200, CourseSchema(many=True))
     def get(self, semester_id):
         semester: Semester = dao.get_by_id(semester_id)
-        # print(semester.courses)
         return semester.courses
 
 

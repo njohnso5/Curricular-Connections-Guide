@@ -155,10 +155,8 @@ class DeleteCourses(MethodView):
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def delete(self):
         # print('Api successfully called')
-
         try:
             data = request.get_json()
-            print(data)
             course_ids = data.get('courseIds', [])
             for course_id in course_ids:
                 course_dao.delete_course(course_id)
