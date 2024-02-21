@@ -78,7 +78,7 @@ def search(**kwargs) -> list[Program]:
     themes: list[str] = kwargs.get("themes") 
     title: str = kwargs.get("title")
     dates: list[str] = kwargs.get("dates")
-    departments: list[str] = kwargs.get("departments")
+    departments: str = kwargs.get("departments")
     searchByRange: bool = kwargs.get("searchByRange")
     filters: list[BinaryExpression[bool]] = [] # A list of SQLAlchemy filter expressions
     themes_subquery = None
@@ -97,8 +97,7 @@ def search(**kwargs) -> list[Program]:
 
     # Filter by departments if specified
     if departments:
-        filters.append(Program.department.in_(departments))
-
+        filters.append(Program.department == departments)
     # Filter by dates if specified
     if dates:
         # If there are two dates, parse them into datetime objects and filter by the range

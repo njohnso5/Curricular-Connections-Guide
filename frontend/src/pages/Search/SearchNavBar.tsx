@@ -56,7 +56,8 @@ const initialQuery: SearchQuery = {
 const SearchNavBar: React.FC<{setResults: Function}> = ({setResults}) => {
 
     const [themes, setThemes] = React.useState<SelectOption[]>([])
-    const [deparments, setDepartments] = React.useState<SelectOption[]>([])
+
+    const [deparments, setDepartments] = React.useState<SelectOption | null>(null);
     const [selectedTags, setSelectedTags] = React.useState<Tag[]>([]);
     const [displayDayPicker, setDisplayDayPicker] = React.useState<boolean>(false);
     const datePickerRef = React.useRef<HTMLDivElement | null>(null);
@@ -67,16 +68,16 @@ const SearchNavBar: React.FC<{setResults: Function}> = ({setResults}) => {
 
     const handleAddTag = (tagName: string, type: SearchDropdown) => {
         switch(type) {
-            case SearchDropdown.DEPARTMENTS:
-                setDepartments(prev => prev.filter(department => department.value !== tagName))
-                break;
             case SearchDropdown.THEMES:
                 setThemes(prev => prev.filter(theme => theme.value !== tagName))
                 break;
         }
 
         if (!selectedTags.some((selectedTag) => selectedTag.name === tagName)) {
-            setSelectedTags((prev) => [...prev, {name: tagName, type: type }]);
+            // Delete the previous department tags by keep the themes and date tags
+            setSelectedTags((prev) => prev.filter(tag => tag.type !== type));
+            // Add the new department tag
+            setSelectedTags((prev) => [...prev, {name: tagName, type: type}]);
         }
     };
 
@@ -112,9 +113,6 @@ const SearchNavBar: React.FC<{setResults: Function}> = ({setResults}) => {
     const handleTagDelete = (_tag: any, _changedTags: any, changedIndexes: number[]) => {
         const tag = selectedTags[changedIndexes[0]]
         switch(tag.type) {
-            case SearchDropdown.DEPARTMENTS:
-                setDepartments(prev => [...prev, {label: tag.name, value: tag.name}].sort((a, b) => a.label.localeCompare(b.label)))
-                break;
             case SearchDropdown.THEMES:
                 setThemes(prev => [...prev, {label: tag.name, value: tag.name}].sort((a, b) => a.label.localeCompare(b.label)))
                 break;
@@ -153,7 +151,7 @@ const SearchNavBar: React.FC<{setResults: Function}> = ({setResults}) => {
 
     function handleSearch() {
         console.log(selectedTags);
-        searchQuery.departments = selectedTags.filter(tag => tag.type == "departments").map(tag => tag.name);
+        searchQuery.departments = selectedTags.filter(tag => tag.type == "departments")[0]?.name;
         searchQuery.themes = selectedTags.filter(tag => tag.type == "themes").map(tag => tag.name);
         
         // date{

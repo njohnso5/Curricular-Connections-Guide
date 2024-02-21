@@ -1,6 +1,6 @@
 interface SearchQuery {
   title?: string;
-  departments?: string[];
+  departments?: string;
   themes?: string[];
   dates?: string[];
   searchByRange?: boolean;

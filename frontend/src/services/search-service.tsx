@@ -5,6 +5,7 @@ const API_URL = "/api/v1/search/"
 
 class SearchService {
     getSearchResults(query: SearchQuery) {
+        // console.log(query);
         return axios.post(API_URL, query);
     }
 }
