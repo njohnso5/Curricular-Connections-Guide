@@ -1,0 +1,5 @@
+[run]
+include =.
+
+[report]
+omit = *tests*
