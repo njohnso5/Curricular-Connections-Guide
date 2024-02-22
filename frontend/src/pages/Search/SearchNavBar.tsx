@@ -71,11 +71,16 @@ const SearchNavBar: React.FC<{setResults: Function}> = ({setResults}) => {
             case SearchDropdown.THEMES:
                 setThemes(prev => prev.filter(theme => theme.value !== tagName))
                 break;
+            case SearchDropdown.DEPARTMENTS:
+                // Replace the department tag with the new one if it exists
+                if (selectedTags.some((selectedTag) => selectedTag.type === type)) {
+                    setSelectedTags((prev) => prev.map((tag) => tag.type === type ? {name: tagName, type: type} : tag));
+                    return;
+                }
+                break;
         }
 
         if (!selectedTags.some((selectedTag) => selectedTag.name === tagName)) {
-            // Delete the previous department tags by keep the themes and date tags
-            setSelectedTags((prev) => prev.filter(tag => tag.type !== type));
             // Add the new department tag
             setSelectedTags((prev) => [...prev, {name: tagName, type: type}]);
         }
