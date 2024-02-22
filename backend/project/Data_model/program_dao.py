@@ -1,7 +1,7 @@
 # Import necessary modules and classes
-from Data_model.models import Program, db, Showing, Program_to_Theme, Department, Theme
+from Data_model.models import Program, db, Showing, Program_to_Theme, Department, Theme, Course, Course_to_Theme, Subject
 from sqlalchemy.sql.functions import func
-from sqlalchemy import or_, BinaryExpression
+from sqlalchemy import or_, BinaryExpression, and_
 from dateutil import parser
 from werkzeug.exceptions import NotFound
 
@@ -83,6 +83,41 @@ def search(**kwargs) -> list[Program]:
     filters: list[BinaryExpression[bool]] = [] # A list of SQLAlchemy filter expressions
     themes_subquery = None
 
+    # Return all programs if no search parameters are given
+    if not (themes or title or dates or departments):
+        return get_all()
+
+    # print(title)
+    # Title can be course subject + " " + course number or course_title_long
+    if title:
+        course = Course()
+        # 1. Find the course that matches the title, case insensitive
+        if len(title.split()) == 2:
+            # Turn the subject into uppercase
+            course = db.session.query(Course).join(Course.subject).filter(
+                and_(
+                    func.lower(Subject.subject) == title.split()[0].lower(),
+                    Course.catalog_number == title.split()[1]
+                )
+            ).first()
+        else:
+            course = db.session.query(Course).filter(func.lower(Course.title_long) == title.lower()).first()
+        
+        print(course)
+        # 2. If the course is found, find the theme of the course and add it to the themes list
+        if course:
+            # print(course)
+            # 3. Find the themes of the course
+            course_themes = db.session.query(Course_to_Theme).filter(Course_to_Theme.columns.course_id == course.id).all()
+            # 4. Add the themes to the themes list
+            for course_theme in course_themes:
+                theme = db.session.query(Theme).filter(Theme.id == course_theme.theme_id).first()
+                themes.append(theme.name)
+            # print(themes)
+        else:
+            # Cannot find the course with the given title
+            return []
+
     # Filter by themes if specified
     if themes:
         themes_subquery = (
@@ -94,7 +129,7 @@ def search(**kwargs) -> list[Program]:
             .subquery()
         )
         filters.append(Program.id.in_(themes_subquery))
-
+    
     # Filter by departments if specified
     if departments:
         filters.append(Program.department == departments)
@@ -120,15 +155,9 @@ def search(**kwargs) -> list[Program]:
                     func.date(Showing.datetime).in_(parsed_dates)
                 )
             )
-
-    # Combine the filters to function as an OR statement in SQL
-    crit_query = db.session.query(Program).filter(or_(*filters))
-
-    # Further filter by title if specified
-    # Operates as an AND SQL statement rather than the OR in previous filters
-    if title:
-        search_param = "%{}%".format(title)
-        return crit_query.filter(Program.title.like(search_param)).all()
+            
+    # Combine the filters to function as an AND statement in SQL
+    crit_query = db.session.query(Program).filter(*filters)
 
     return crit_query.all()
 
