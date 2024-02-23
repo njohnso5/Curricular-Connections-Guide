@@ -188,7 +188,7 @@ def search_programs_by_themes(themes: list[int]) -> list[Program]:
 
 
 # Returns a set of Program objects, where each Program contains every specified theme.
-def search_courses_by_themes(themes: list[int]) -> list[Program]:
+def search_courses_by_themes(themes: list[int]) -> list[Course]:
     # Subquery to find programs with the specified theme_ids using the Progam_to_Theme association table
     subquery = (
         db.session.query(Course_to_Theme.c.course_id)
@@ -197,39 +197,37 @@ def search_courses_by_themes(themes: list[int]) -> list[Program]:
         .having(func.count() == len(themes))
         .subquery()
     )
-
     # Query for programs that match the subquery
     courses = db.session.query(Course).filter(Course.id.in_(subquery)).all()
     return courses
 
 
-def related_courses(programid: int, common_count: int = 5, page=5, count=5):
-    # Retrieve the Program by the given program ID
-    program: Program = prog_dao.get_by_id(programid)
+# def related_courses(programid: int, common_count: int = 5, page=5, count=5):
+#     # Retrieve the Program by the given program ID
+#     program: Program = prog_dao.get_by_id(programid)
 
-    # If the program does not exist, raise a NotFound exception
-    if not program:
-        raise NotFound("Program not found")
+#     # If the program does not exist, raise a NotFound exception
+#     if not program:
+#         raise NotFound("Program not found")
+#     # Create a subquery to count common themes per course related to the program
+#     common_courses_query = (
+#         db.session.query(
+#             Course.id, func.count(Course_to_Theme.c.theme_id).label("common_count")
+#         )
+#         .join(Course_to_Theme, Course.id == Course_to_Theme.c.course_id)
+#         .filter(Course_to_Theme.c.theme_id.in_([theme.id for theme in program.themes]))
+#         .group_by(Course.id)
+#         .subquery()
+#     )
 
-    # Create a subquery to count common themes per course related to the program
-    common_courses_query = (
-        db.session.query(
-            Course.id, func.count(Course_to_Theme.c.theme_id).label("common_count")
-        )
-        .join(Course_to_Theme, Course.id == Course_to_Theme.c.course_id)
-        .filter(Course_to_Theme.c.theme_id.in_([theme.id for theme in program.themes]))
-        .group_by(Course.id)
-        .subquery()
-    )
+#     # Query to fetch related courses having at least a number of common themes specified by common_count
+#     courses = (
+#         db.session.query(Course)
+#         .join(common_courses_query, Course.id == common_courses_query.c.id)
+#         .filter(common_courses_query.c.common_count >= common_count)
+#         .order_by(common_courses_query.c.common_count.desc())
+#         .paginate(page=page, per_page=count)
+#         .items
+#     )
 
-    # Query to fetch related courses having at least a number of common themes specified by common_count
-    courses = (
-        db.session.query(Course)
-        .join(common_courses_query, Course.id == common_courses_query.c.id)
-        .filter(common_courses_query.c.common_count >= common_count)
-        .order_by(common_courses_query.c.common_count.desc())
-        .paginate(page=page, per_page=count)
-        .items
-    )
-
-    return courses
+#     return courses

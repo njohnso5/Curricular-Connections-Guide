@@ -298,3 +298,43 @@ def test_put_showings(client : FlaskClient):
         BASE_URL, data=program, content_type="multipart/form-data"
     )
     assert resp.status_code == 200
+
+def test_image(client : FlaskClient):
+    response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
+    assert response.status_code == 200
+    p1 = {"department": str(Department.LIVE.value), "link":"test", "title":"Something", "description":"This is a test program History", "image": open("tests/test_image.jpeg" ,"rb"),"showings":'{}'}
+
+    response = client.post(BASE_URL, data=p1, content_type="multipart/form-data")
+    assert response.status_code == 200
+    progid = str(response.json['id'])
+    print(response.json)
+    response = client.get(BASE_URL + progid + "/image/")
+    assert response.status_code == 200
+
+# def test_related_course(client : FlaskClient):
+#     response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
+#     assert response.status_code == 200
+
+#     response = client.post("/v1/semesters/", data={"year": "2022", "period_id": "1", "active": "true"})
+
+#     assert response.status_code == 200
+
+#     # Create Sample Courses
+#     response = client.post("/v1/courses/", data={ "title_short": "Automata Theory", "title_long": "Automata Theory Long", "description": "History Nothing Much wbu?", "subject": "CSC", "catalog_number": "333","topics_description":"test", "faculty": "prof", "emails": "p@ncsu.edu", "semester_id": "1"})
+
+#     assert response.status_code == 200
+#     print(response.json)
+
+#     p1 = {}
+#     p1["department"] = str(Department.LIVE.value)
+#     p1["link"] = ""
+#     p1["title"] = "Something"
+#     p1["description"] = "This is a test program History"
+#     p1["showings"] = '{}'
+
+#     response = client.post(BASE_URL, data=p1, content_type="multipart/form-data")
+#     assert response.status_code == 200
+#     progid = response.json['id']
+#     response = client.get(BASE_URL + str(progid) + "/courses/")
+#     assert response.status_code == 200
+#     assert response.json['title_short'] == "Automata Theory"
