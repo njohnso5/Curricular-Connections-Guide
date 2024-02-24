@@ -63,11 +63,11 @@ class Classifier:
 
         return [description_vector, tag_vectors]
 
-    def compute_similarity(self, tag, paragraph):
-        tag_doc = self.nlp(tag + " art program topic")
-        paragraph_doc = self.nlp(paragraph)
+    # def compute_similarity(self, tag, paragraph):
+    #     tag_doc = self.nlp(tag + " art program topic")
+    #     paragraph_doc = self.nlp(paragraph)
         
-        return tag_doc.similarity(paragraph_doc)
+    #     return tag_doc.similarity(paragraph_doc)
 
 
 
