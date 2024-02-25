@@ -104,8 +104,9 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       // Call the updateProgram method from ProgramService
       ProgramService.updateProgram(formData) // Gives updateProgram all of the ProgramData
       .then(() => {
-
-        updatePrograms((prev: ProgramData[]) => [...prev.filter(item => item !== program), newProgram]);
+        ProgramService.getAllPrograms().then(response => {
+          updatePrograms(response.data);
+        })
         window.$("#editProgramModal").modal("hide");
       })
       .catch(() => {
