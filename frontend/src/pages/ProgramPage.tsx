@@ -71,14 +71,18 @@ function listShowingDates(showings: Showing[]) {
 }
 
 const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
-  const [filePreview, setFilePreview] = useState(`/api/v1/program/${program.id}/image/`);
-  const [newProgram, setNewProgram] = useState<ProgramData>(program);
+  const [filePreview, setFilePreview] = useState();
+  const [newProgram, setNewProgram] = useState<ProgramData>();
   // Handles the Update button functionality from the Modal-footer module
   useEffect(() => {
     setNewProgram(program);
-
+    /*You need this check here or else when the program page loads it will try to get an id 
+      field from an undefined object*/
+    if (program != undefined) {
+      setFilePreview(`/api/v1/program/${program.id}/image/`)
+    }
   }, [program]);
-  if(!newProgram) {
+  if(newProgram == undefined) {
     return null;
   }
   function handleUpdate(event: any) {
