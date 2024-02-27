@@ -133,7 +133,8 @@ class CourseList(MethodView):
             else:
                 db_faculty.name = names[emails.index(email)]
                 faculty_dao.update_faculty(db_faculty)
-            faculty_list.append(db_faculty)
+            if db_faculty not in course.faculty:
+                faculty_list.append(db_faculty)
 
         course.faculty = faculty_list
         try:
