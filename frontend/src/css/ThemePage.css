@@ -10,6 +10,24 @@
     text-align: center;
 }
 
+.grid-container {
+  display:grid;
+  gap: 10px;
+  grid-auto-rows: minmax(100px, auto);
+}
+
+.grid-item {
+  grid-column-start: 1;
+  grid-column-end: 14;
+}
+.theme-button {
+  border-color: transparent;
+  margin-top:2px;
+  margin-left: 2px;
+  margin-right: 2px;
+  margin-bottom: 2px;
+}
+
 .table > tbody > tr:nth-child(odd):hover {
     background-color: var(--hover-color);
     cursor: pointer;

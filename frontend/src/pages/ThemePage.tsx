@@ -28,10 +28,6 @@ const NewThemeTab: React.FC = () => {
         })
     }
 
-    const handleClick = (id: number) => {
-        setId(id);
-    };
-
     return (
         <div className="container-fluid">
             <div className='d-flex flex-row align-items-center justify-content-between w-100'>
@@ -44,10 +40,10 @@ const NewThemeTab: React.FC = () => {
                     <Modal modalTarget="DeleteThemeModal" modalTitle="DELETE A THEME" modalBody={<DeleteThemeBody />} />
                 </div>
             </div>
-            <div className='d-flex flex-column'>
-                <div className="btn-group-vertical" role="toolbar">
+            <div className='grid-container'>
+                <div className="grid-item">
                     {themes ? themes.map((theme) => (
-                        <button type="button" className="btn btn-default" value={theme.id} onClick={() => handleClick(theme.id)}>{theme.name}</button>
+                        <button type="button" className="theme-button" value={theme.id}>{theme.name}</button>
                     )) : null}
                 </div>
             </div>
