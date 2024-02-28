@@ -93,7 +93,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       formData.append('title', newProgram.title.toString());
       formData.append('department', newProgram.department.toString());
       formData.append('description', newProgram.description.toString());
-      if (newProgram.link != '') {
+      if (newProgram.link != '' || (program.link != '' && newProgram.link == '')) {
         formData.append('link', newProgram.link);
       }
       formData.append('showings', JSON.stringify(newProgram.showings));
