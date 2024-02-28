@@ -197,11 +197,12 @@ class RelatedCourses(MethodView):
         )
         try:
             print('here')
+            
             # results = theme_dao.related_courses(
             #     programid, common_count=int(threshhold), page=int(page), count=int(count)
             # )
             # return results
-            return
+            return []
         except ValueError:
             abort(422, message="Bad query parameters")
 
