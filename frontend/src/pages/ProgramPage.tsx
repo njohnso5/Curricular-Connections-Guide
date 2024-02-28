@@ -225,9 +225,11 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
         ProgramService.deleteProgram(program.id)
         .then(() => {
           updatePrograms((prev: ProgramData[]) => prev.filter(item => item !== program));
+          window.$("#programDisplay").modal("hide");
         })
         .catch(() => {
           console.error("Error deleting program")
+          window.$("#programDisplay").modal("hide");
         });
       } else {
         console.log("There was an error finding the program you want to delete. Try refreshing the page.")
