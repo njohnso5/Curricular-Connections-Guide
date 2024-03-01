@@ -198,7 +198,7 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
     SemesterService.createSemester(formData)
       .then((_response: AxiosResponse<SemesterForm>) => {
         props.handleUpload(_response.data);
-        window.alert("123");
+        window.alert("Semester has been uploaded");
         hideProgress();
       })
       .catch((error) => {
