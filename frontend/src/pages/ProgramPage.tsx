@@ -72,13 +72,17 @@ function listShowingDates(showings: Showing[]) {
 
 const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
   const [filePreview, setFilePreview] = useState();
-  const [newProgram, setNewProgram] = useState<ProgramData>(program);
+  const [newProgram, setNewProgram] = useState<ProgramData>();
   // Handles the Update button functionality from the Modal-footer module
   useEffect(() => {
     setNewProgram(program);
-
+    /*You need this check here or else when the program page loads it will try to get an id 
+      field from an undefined object*/
+    if (program != undefined) {
+      setFilePreview(`/api/v1/program/${program.id}/image/`)
+    }
   }, [program]);
-  if(!newProgram) {
+  if(newProgram == undefined) {
     return null;
   }
   function handleUpdate(event: any) {
@@ -89,7 +93,9 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       formData.append('title', newProgram.title.toString());
       formData.append('department', newProgram.department.toString());
       formData.append('description', newProgram.description.toString());
-      formData.append('link', newProgram.link.toString());
+      if (newProgram.link != '' || (program.link != '' && newProgram.link == '')) {
+        formData.append('link', newProgram.link);
+      }
       formData.append('showings', JSON.stringify(newProgram.showings));
       if (newProgram.image) {
         formData.append('image', newProgram.image);
@@ -98,8 +104,9 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       // Call the updateProgram method from ProgramService
       ProgramService.updateProgram(formData) // Gives updateProgram all of the ProgramData
       .then(() => {
-
-        updatePrograms((prev: ProgramData[]) => [...prev.filter(item => item !== program), newProgram]);
+        ProgramService.getAllPrograms().then(response => {
+          updatePrograms(response.data);
+        })
         window.$("#editProgramModal").modal("hide");
       })
       .catch(() => {
@@ -150,7 +157,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       <form id="edit-program" className="modal-body">
         <div className="form-group align-items-center gap-1">
           <span>Image</span>
-          <img className="img-fluid" src={`/api/v1/program/${program.id}/image/`} />
+          <img className="img-fluid" src={filePreview} />
           <input id="image-input" type="file" className="form-control" name="image" onChange={handleImageSelect} />
         </div>
         <div className="form-group align-items-center gap-1">
@@ -218,9 +225,11 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
         ProgramService.deleteProgram(program.id)
         .then(() => {
           updatePrograms((prev: ProgramData[]) => prev.filter(item => item !== program));
+          window.$("#programDisplay").modal("hide");
         })
         .catch(() => {
           console.error("Error deleting program")
+          window.$("#programDisplay").modal("hide");
         });
       } else {
         console.log("There was an error finding the program you want to delete. Try refreshing the page.")

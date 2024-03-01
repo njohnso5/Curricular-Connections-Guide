@@ -23,22 +23,15 @@ const ProgramPageDetail = () => {
 
     const [pageNumber, setPageNumber] = useState<number>(1);
     const observer = useRef<IntersectionObserver | undefined>(undefined);
-    const { isLoading, courses, hasMore } = useRelatedCourseSearch(Number.parseInt(id ?? "0"), pageNumber);
-
-    const lastCourseElementRef = useCallback((node: Element | null) => {
-        if(isLoading) return;
-        if(observer.current) observer.current.disconnect();
-
-        observer.current = new IntersectionObserver(entries => {
-            if(entries[0].isIntersecting && hasMore) {
-                setPageNumber(prevPageNumber => prevPageNumber + 1);
-            }
-        })
-
-        if(node) observer.current.observe(node);
-
-    }, [isLoading, hasMore])
-
+    const {isLoading, courses, hasMore} = useRelatedCourseSearch(Number.parseInt(id!), pageNumber);
+    let uniqueCourses: Course[] = [];
+    if(courses) {
+        uniqueCourses = courses.filter((course, index, self) =>
+            index === self.findIndex((c) => (
+                c.id === course.id
+            ))
+        );
+    }
     useEffect(() => {
         ProgramService.getProgram(Number.parseInt(id!)).then((response: AxiosResponse<ProgramData>) => {
             setProgram(response.data);
@@ -46,7 +39,8 @@ const ProgramPageDetail = () => {
         .catch(error => {
             console.log(error);
         });
-
+        console.log(courses);
+        console.log(uniqueCourses);
         return () => {
             if (observer.current) {
               observer.current.disconnect();
@@ -102,7 +96,7 @@ const ProgramPageDetail = () => {
                 </div>
                 <div className="row">
                     <div className="col">
-                        <h2>Show Dates</h2>
+                        <h2>Show's Dates</h2>
                         <hr />
                         <Slider {...sliderSettings}>
                             {program?.showings.map((showing, index) => {
@@ -118,7 +112,7 @@ const ProgramPageDetail = () => {
                                 </div>
                             ))})}
                         </Slider>
-                        <hr className={styles['dotted-line']} />
+                        {/* <hr className={styles['dotted-line']} /> */}
                     </div>
                 </div>
                 <div className="row mt-3">
@@ -135,20 +129,17 @@ const ProgramPageDetail = () => {
                     <div className="col-12">
                         <h2>Related Courses</h2>
                     </div>
-                    {courses?.map((course, index) => {
-                        if(index < 21) { return; }
-                        const isLastCourse = courses.length === index + 1;
-
+                    {uniqueCourses?.map((course, index) => {
                         return(
                             <div className={`col-lg-4 col-md-6`}>
                                 <div className={`card-body p-0 ${styles['card-body']} ${styles.clickable}`} onClick={(_) => handleInspectCourse(course)} data-toggle="modal" data-target=".course-inspect">
                                     <h5 className={`card-title ${styles['card-title']}`}>{course.title_short}</h5>
                                     <h6 className={`card-subtitle mb-2 text-muted ${styles['card-subtitle']}`}>{course.subject.subject.trim()} {course.catalog_number}</h6>
                                 </div>
-                                {isLastCourse && <div ref={lastCourseElementRef}></div>}
+
                             </div>
                         )
-                    })}  
+                    })}
                 </div>
             </div>
             {course && <CourseModal course={course} />}

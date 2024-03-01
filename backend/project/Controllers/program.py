@@ -75,7 +75,6 @@ class HandleProgram(MethodView):
                 show["datetime"] = parser.parse(show["datetime"])
                 new_show = show_dao.Showing(**show)
                 new_prg.showings.append(new_show)
-
             # Upload program image if provided
             if "image" in request.files:
                 filename = upload_file(request.files["image"], IMAGE_DIR)
@@ -175,6 +174,7 @@ class HandleProgramID(MethodView):
 class ProgramImage(MethodView):
     def get(self, programid):
         # Get the program and its image filename
+        print("here")
         program = prog_dao.get_by_id(programid)
         filename = program.image_filename
 
@@ -196,10 +196,12 @@ class RelatedCourses(MethodView):
             request.args.get("threshhold") if request.args.get("threshhold") else 5
         )
         try:
-            results = theme_dao.related_courses(
+            print('here')
+            
+            courses = theme_dao.related_courses(
                 programid, common_count=int(threshhold), page=int(page), count=int(count)
             )
-            return results
+            return courses
         except ValueError:
             abort(422, message="Bad query parameters")
 

@@ -13,8 +13,9 @@ export default function useRelatedCourseSearch(programId: number, pageNumber: nu
         setIsLoading(true);
 
         ProgramService.getRelatedCourses(programId, pageNumber, 21, 7).then((response: AxiosResponse<Course[]>) => {
+            console.log(response.data);
             setCourses((prevCourses) => {
-                return Array.from(new Set([...(prevCourses || []), ...response.data]))
+                return prevCourses ? [...prevCourses, ...response.data] : response.data;
             }
             );
             setHasMore(response.data.length > 0)

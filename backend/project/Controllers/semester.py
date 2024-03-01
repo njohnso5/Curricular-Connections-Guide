@@ -1,6 +1,8 @@
 from flask import request
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
+import json
+import binascii
 from sqlalchemy.exc import SQLAlchemyError, ArgumentError
 from schemas.semester import SemesterPostSchema, SemesterSchema, SemesterUpdateSchema
 from schemas.course import CourseSchema
@@ -67,7 +69,7 @@ class SemesterList(MethodView):
 
                 # Reads the id from the database into a variable
                 course_id = df.iloc[i, 0]
-                print(course_id)
+                # print(course_id)
                 # Confirms that id field is a number not yet parsed
                 if not pandas.isna(course_id) and str(course_id).isdigit() and not course_ids.__contains__(course_id):
                     # Adds id to list used to skip duplicates
@@ -75,7 +77,7 @@ class SemesterList(MethodView):
                     # Gets subject of course
                     subject = df.iloc[i, 1]               
                 
-                    print(subject)
+                    # print(subject)
                     # Checks if subject exists
                     db_subject = subject_dao.get_subject_by_name(subject_dao.Subject.subject==subject)
                     # If subject doesn't exist, creates the subject
@@ -84,7 +86,7 @@ class SemesterList(MethodView):
                         db_subject.subject = subject
                         subject_dao.insert(db_subject)
                     # Reads in course information
-                    course.catalog_number = df.iloc[i, 1 + 1]
+                    course.catalog_number = str(df.iloc[i, 1 + 1]).encode(encoding='latin-1')
                     course.title_long = df.iloc[i, 1 + 2]
                     course.title_short = df.iloc[i, 1 + 3]
                     # Reads in description or autofills with empty description
@@ -116,22 +118,29 @@ class SemesterList(MethodView):
                     names_string = names.split(";")
                     count = 0
                     for email in emails_string:
-                    
+                        print(email, "line 121")
+                        print(pandas.isna(email))
                         if pandas.isna(email):
                             continue
                         db_faculty = faculty_dao.get_faculty_by_name(faculty_dao.Faculty.email==email)
+                        print(db_faculty)
                         if db_faculty is None:
                             db_faculty = Faculty()
                             db_faculty.name = names_string[count]
                             db_faculty.email = email
                             faculty_dao.insert_faculty(db_faculty)
-                        faculty_list.append(db_faculty)        
+                        else:
+                            db_faculty.name = names[emails_string.index(email)]
+                            faculty_dao.update_faculty(db_faculty)
+                        if db_faculty not in faculty_list:
+                            faculty_list.append(db_faculty)        
+                            
                         count +=1            
-                        
+                    print(faculty_list)
                     course.faculty = faculty_list
                     # Adds course to the semester course list
                     course_list.append(course)
-            print(str(len(course_list)) + " courses being added")
+            # print(str(len(course_list)) + " courses being added")
             try:
                 print("Courses being added")
                 # Adds courses to the database
@@ -188,7 +197,6 @@ class SemesterCourseList(MethodView):
     @semester_controller.response(200, CourseSchema(many=True))
     def get(self, semester_id):
         semester: Semester = dao.get_by_id(semester_id)
-        # print(semester.courses)
         return semester.courses
 
 

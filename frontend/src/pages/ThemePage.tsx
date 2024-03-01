@@ -28,23 +28,23 @@ const NewThemeTab: React.FC = () => {
         })
     }
 
-    const handleClick = (id: number) => {
-        setId(id);
-    };
-
     return (
         <div className="container-fluid">
-            <div className='d-flex align-items-center justify-content-between w-100'>
-                <div className="btn-group" role="toolbar">
-                    <ModalButton modalTarget="uploadModal" buttonMessage="Add a theme" />
+            <div className='d-flex flex-row align-items-center justify-content-between w-100'>
+                <div className="add-button-wrapper">
+                    <ModalButton modalTarget="uploadModal" buttonMessage="Add a Theme" />
                     <Modal modalTarget="uploadModal" modalTitle="CREATE A NEW THEME" modalBody={<ModalNewThemeBody handleUpload={handleThemeUpload} />} />
-                    {themes ? themes.map((theme) => (
-                        <button type="button" className="btn btn-default" value={theme.id} onClick={() => handleClick(theme.id)}>{theme.name}</button>
-                    )) : null}
                 </div>
                 <div className="delete-button-wrapper">
-                    <DeleteThemeModalButton modalTarget="DeleteThemeModal" buttonMessage="Delete a theme" />
+                    <DeleteThemeModalButton modalTarget="DeleteThemeModal" buttonMessage="Delete a Theme" />
                     <Modal modalTarget="DeleteThemeModal" modalTitle="DELETE A THEME" modalBody={<DeleteThemeBody />} />
+                </div>
+            </div>
+            <div className='grid-container'>
+                <div className="grid-item">
+                    {themes ? themes.map((theme) => (
+                        <button type="button" className="theme-button" value={theme.id}>{theme.name}</button>
+                    )) : null}
                 </div>
             </div>
             {id !== null && <TableBodyRows id={id} />}
