@@ -255,7 +255,6 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
           </div>
         </div>
         <button type="submit" className="btn btn-primary" onClick={showProgress}>Save changes</button>
-        <Modal modalTarget="ProgressBarModal" open={progressShow} modalBody={<SemesterUploadProgressBar />} modalTitle="REQUEST IN PROGRESS">Your request is in process. Please wait.</Modal>
       </form>
     </div>
   );
@@ -603,9 +602,11 @@ const ModalDeleteCourseBody: React.FC<{ courseIds: number []; updateCoursesList:
 
 const SemesterUploadProgressBar: React.FC<ModalProps> = ({modalTarget, modalTitle, modalBody}) => {
   return (
-    <div className="progress" role="progressbar" aria-label="Semester upload in progress" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-      <div className="progress-bar progress-bar-striped progress-bar-animated"></div>
-    </div>
+    <React.Fragment>
+      <div className="progress" role="progressbar" aria-label="Semester upload in progress" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+        <div className="progress-bar progress-bar-striped progress-bar-animated"></div>
+      </div>
+    </React.Fragment>
   )
 }
 export {

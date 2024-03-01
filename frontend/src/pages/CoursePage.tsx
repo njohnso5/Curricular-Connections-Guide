@@ -3,7 +3,7 @@ import CourseService from "../services/CourseServices.tsx"
 import SemesterService from '../services/SemesterService';
 import "../css/CoursePage.css"
 import { Course, SemesterForm } from "../CourseModels/courseModels.tsx";
-import { Modal, ModalButton, ModalNewSemesterBody, DeleteSemesterModalButton, DeleteSemesterBody, ModalAddCourseBody, ModalEditCourseBody, ModalDeleteCourseBody } from "../components/Modal.tsx";
+import { Modal, ModalButton, ModalNewSemesterBody, DeleteSemesterModalButton, DeleteSemesterBody, ModalAddCourseBody, ModalEditCourseBody, ModalDeleteCourseBody, SemesterUploadProgressBar } from "../components/Modal.tsx";
 import CourseModal from './Program/CourseModal.tsx';
 
 interface TableBodyRowsProps {
@@ -45,7 +45,10 @@ const NewSemesterTab: React.FC = () => {
             <div className='d-flex align-items-center justify-content-between w-100'>
                 <div className="btn-group" role="toolbar">
                     <ModalButton modalTarget="uploadModal" buttonMessage="Add a semester" />
-                    <Modal modalTarget="uploadModal" modalTitle="CREATE A NEW SEMESTER" modalBody={<ModalNewSemesterBody handleUpload={handleSemesterUpload} />} />
+                    <Modal modalTarget="uploadModal" modalTitle="CREATE A NEW SEMESTER" modalBody={<ModalNewSemesterBody handleUpload={handleSemesterUpload} />}>
+                        
+                    </Modal>
+                    <Modal modalTarget="ProgressBarModal" open={ModalNewSemesterBody.progressShow} modalBody={<SemesterUploadProgressBar />} modalTitle="REQUEST IN PROGRESS">Your request is in process. Please wait.</Modal>
                     {semesters ? semesters.map((semester) => (
                         <button type="button" className={`btn btn-default ${id === semester.id ? 'selected' : ''}`} value={semester.id} onClick={() => handleClick(semester.id)}>{semester.period.period} {semester.year}</button>
                     )) : null}
