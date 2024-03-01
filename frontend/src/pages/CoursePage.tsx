@@ -45,10 +45,8 @@ const NewSemesterTab: React.FC = () => {
             <div className='d-flex align-items-center justify-content-between w-100'>
                 <div className="btn-group" role="toolbar">
                     <ModalButton modalTarget="uploadModal" buttonMessage="Add a semester" />
-                    <Modal modalTarget="uploadModal" modalTitle="CREATE A NEW SEMESTER" modalBody={<ModalNewSemesterBody handleUpload={handleSemesterUpload} />}>
-                        
-                    </Modal>
-                    <Modal modalTarget="ProgressBarModal" open={ModalNewSemesterBody.progressShow} modalBody={<SemesterUploadProgressBar />} modalTitle="REQUEST IN PROGRESS">Your request is in process. Please wait.</Modal>
+                    <Modal modalTarget="uploadModal" modalTitle="CREATE A NEW SEMESTER" modalBody={<ModalNewSemesterBody handleUpload={handleSemesterUpload} />}></Modal>
+                    <Modal modalTarget="progressBarModal" modalBody={<SemesterUploadProgressBar />} modalTitle="REQUEST IN PROGRESS">Your request is in process. Please wait.</Modal>
                     {semesters ? semesters.map((semester) => (
                         <button type="button" className={`btn btn-default ${id === semester.id ? 'selected' : ''}`} value={semester.id} onClick={() => handleClick(semester.id)}>{semester.period.period} {semester.year}</button>
                     )) : null}
@@ -246,7 +244,8 @@ const ShowClassInfo: React.FC<{ course: Course }> = ({ course }) => {
 
     const getEmails = () => course.faculty.map(faculty => faculty.email).join(", ");
     const getThemes = () => course.themes.map(theme => theme.name).join(", ");
-    if (!course.name.includes("Special Topics")) {
+    // if (!course.name.includes("Special Topics")) {
+    if (!course.title_long.includes("Special Topics")) {
         return (
             <div className="modal-body">
                 <h6><strong>Description: </strong>{course.description}</h6>

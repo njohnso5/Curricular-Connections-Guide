@@ -163,16 +163,13 @@ interface ModalNewSemesterBodyProps {
 // This is the modal that displays when you click the "add a semester button on the courses page"
 // React.FC is used for a component that doesn't take in any props
 const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
-  const [progressShow, setProgressShow] = useState(false);
   function showProgress() {
-    console.log("Setting progressShow to True");
-    setProgressShow(true);
-    console.log(progressShow);
+    window.$("#uploadModal").modal("hide");
+    window.$("#progressBarModal").modal("show");
   }
 
   function hideProgress() {
-    setProgressShow(false);
-    console.log(progressShow);
+    window.$("#progressBarModal").modal("hide");
   }
   // use state to create the semester form.
 
@@ -201,13 +198,12 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
     SemesterService.createSemester(formData)
       .then((_response: AxiosResponse<SemesterForm>) => {
         props.handleUpload(_response.data);
-        window.alert("123")
+        window.alert("123");
+        hideProgress();
       })
       .catch((error) => {
         console.error(error);
       });
-
-      hideProgress();
   }
 
   const [periods, setPeriods] = useState([]);
@@ -604,7 +600,7 @@ const SemesterUploadProgressBar: React.FC<ModalProps> = ({modalTarget, modalTitl
   return (
     <React.Fragment>
       <div className="progress" role="progressbar" aria-label="Semester upload in progress" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-        <div className="progress-bar progress-bar-striped progress-bar-animated"></div>
+        <div className="progress-bar progress-bar-striped progress-bar-animated" style={{width: "50%"}}></div>
       </div>
     </React.Fragment>
   )
