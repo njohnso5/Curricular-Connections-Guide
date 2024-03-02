@@ -163,6 +163,14 @@ interface ModalNewSemesterBodyProps {
 // This is the modal that displays when you click the "add a semester button on the courses page"
 // React.FC is used for a component that doesn't take in any props
 const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
+  function showProgress() {
+    window.$("#uploadModal").modal("hide");
+    window.$("#progressBarModal").modal("show");
+  }
+
+  function hideProgress() {
+    window.$("#progressBarModal").modal("hide");
+  }
   // use state to create the semester form.
 
   const [semesterData, setSemesterData] = useState<SemesterForm>({
@@ -177,6 +185,8 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
     // do this with axios
     event.preventDefault();
 
+    showProgress();
+
     const formData = new FormData();
     formData.append('year', semesterData.year.toString());
     formData.append('active', semesterData.active.toString());
@@ -188,6 +198,8 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
     SemesterService.createSemester(formData)
       .then((_response: AxiosResponse<SemesterForm>) => {
         props.handleUpload(_response.data);
+        window.alert("Semester has been uploaded");
+        hideProgress();
       })
       .catch((error) => {
         console.error(error);
@@ -238,7 +250,7 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
             </div>
           </div>
         </div>
-        <button type="submit" className="btn btn-primary">Save changes</button>
+        <button type="submit" className="btn btn-primary" onClick={showProgress}>Save changes</button>
       </form>
     </div>
   );
@@ -583,6 +595,16 @@ const ModalDeleteCourseBody: React.FC<{ courseIds: number []; updateCoursesList:
     </React.Fragment>
   )
 }
+
+const SemesterUploadProgressBar: React.FC<ModalProps> = ({modalTarget, modalTitle, modalBody}) => {
+  return (
+    <React.Fragment>
+      <div className="progress" role="progressbar" aria-label="Semester upload in progress" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+        <div className="progress-bar progress-bar-striped progress-bar-animated" style={{width: "50%"}}></div>
+      </div>
+    </React.Fragment>
+  )
+}
 export {
   Modal,
   ModalButton,
@@ -594,5 +616,6 @@ export {
   DeleteThemeModalButton,
   ModalAddCourseBody,
   ModalEditCourseBody,
-  ModalDeleteCourseBody
+  ModalDeleteCourseBody,
+  SemesterUploadProgressBar
 }

@@ -3,7 +3,7 @@ import CourseService from "../services/CourseServices.tsx"
 import SemesterService from '../services/SemesterService';
 import "../css/CoursePage.css"
 import { Course, SemesterForm } from "../CourseModels/courseModels.tsx";
-import { Modal, ModalButton, ModalNewSemesterBody, DeleteSemesterModalButton, DeleteSemesterBody, ModalAddCourseBody, ModalEditCourseBody, ModalDeleteCourseBody } from "../components/Modal.tsx";
+import { Modal, ModalButton, ModalNewSemesterBody, DeleteSemesterModalButton, DeleteSemesterBody, ModalAddCourseBody, ModalEditCourseBody, ModalDeleteCourseBody, SemesterUploadProgressBar } from "../components/Modal.tsx";
 import CourseModal from './Program/CourseModal.tsx';
 
 interface TableBodyRowsProps {
@@ -45,7 +45,8 @@ const NewSemesterTab: React.FC = () => {
             <div className='d-flex align-items-center justify-content-between w-100'>
                 <div className="btn-group" role="toolbar">
                     <ModalButton modalTarget="uploadModal" buttonMessage="Add a semester" />
-                    <Modal modalTarget="uploadModal" modalTitle="CREATE A NEW SEMESTER" modalBody={<ModalNewSemesterBody handleUpload={handleSemesterUpload} />} />
+                    <Modal modalTarget="uploadModal" modalTitle="CREATE A NEW SEMESTER" modalBody={<ModalNewSemesterBody handleUpload={handleSemesterUpload} />}></Modal>
+                    <Modal modalTarget="progressBarModal" modalBody={<SemesterUploadProgressBar />} modalTitle="REQUEST IN PROGRESS">Your request is in process. Please wait.</Modal>
                     {semesters ? semesters.map((semester) => (
                         <button type="button" className={`btn btn-default ${id === semester.id ? 'selected' : ''}`} value={semester.id} onClick={() => handleClick(semester.id)}>{semester.period.period} {semester.year}</button>
                     )) : null}
@@ -243,7 +244,8 @@ const ShowClassInfo: React.FC<{ course: Course }> = ({ course }) => {
 
     const getEmails = () => course.faculty.map(faculty => faculty.email).join(", ");
     const getThemes = () => course.themes.map(theme => theme.name).join(", ");
-    if (course.description !== "") {
+    // if (!course.name.includes("Special Topics")) {
+    if (!course.title_long.includes("Special Topics")) {
         return (
             <div className="modal-body">
                 <h6><strong>Description: </strong>{course.description}</h6>
@@ -256,7 +258,8 @@ const ShowClassInfo: React.FC<{ course: Course }> = ({ course }) => {
         return (
             <div className="modal-body">
                 <h6><strong>Special Topics Course </strong></h6>
-                <h6><strong>Description: </strong>{course.topics_description}</h6>
+                <h6><strong>Description: </strong>{course.description}</h6>
+                <h6><strong>Special Topics Description: </strong>{course.topics_description}</h6>
                 {/* <h6><strong>Short Special Topics Description: </strong>{course.topics_description_s}</h6>
                 <h6><strong>Full Special Topics Description: </strong>{course.topics_description_f}</h6> */}
                 <h6><strong>Emails: </strong>{getEmails()}</h6>
