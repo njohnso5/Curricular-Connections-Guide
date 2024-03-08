@@ -311,6 +311,22 @@ def test_image(client : FlaskClient):
     response = client.get(BASE_URL + progid + "/image/")
     assert response.status_code == 200
 
+def test_search(client : FlaskClient):
+    response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
+    assert response.status_code == 200
+    p1 = {"department": str(Department.LIVE.value), "link":"test", "title":"Something", "description":"This is a test program History", "showings":'{}'}
+
+    response = client.post(BASE_URL, data=p1, content_type="multipart/form-data")
+    assert response.status_code == 200
+    search = {}
+    search["themes"] = ["History"]
+    search["departments"] = ""
+    search["title"] = "Something"
+    search["dates"] = []
+    search["searchByRange"] = False
+    response = client.post("/v1/search/", data=search, content_type="multipart/form-data")
+    assert response.status_code == 200
+
 # def test_related_course(client : FlaskClient):
 #     response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
 #     assert response.status_code == 200

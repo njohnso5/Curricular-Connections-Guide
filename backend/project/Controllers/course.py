@@ -118,7 +118,7 @@ class CourseList(MethodView):
         course.catalog_number = course_data.get("catalog_number")
         
         # Check if the faculty has been updated
-        faculty_list = course.faculty
+        faculty_list = []
         print(emails)
         for email in emails:
             if pandas.isna(email):
@@ -134,9 +134,7 @@ class CourseList(MethodView):
                 db_faculty.name = names[emails.index(email)]
                 faculty_dao.update_faculty(db_faculty)
 
-            # Check if the faculty is already in the course
-            if db_faculty not in course.faculty:
-                faculty_list.append(db_faculty)
+            faculty_list.append(db_faculty)
 
         course.faculty = faculty_list
         try:

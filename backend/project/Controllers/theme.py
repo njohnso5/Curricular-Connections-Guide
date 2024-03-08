@@ -34,23 +34,6 @@ class ThemeList(MethodView):
             abort(500, message="Theme object not part of session")
 
         return theme
-    
-@theme_router.route("delete/")
-class DeleteTheme(MethodView):
-
-    @theme_router.response(204)
-    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
-    def delete(self, theme_data):
-        try:
-            data = request.get_json()
-            print(data)
-            theme_id = theme_data.get('themeId')
-            theme_dao.delete(theme_id)
-        except SQLAlchemyError as e:
-            print(e)
-            abort(400, message="Error deleting Theme")
-        return {'message': 'Theme deleted successfully'}
-
 
 # Define a route for handling GET and DELETE requests to /themes/<int:theme_id>/
 @theme_router.route("/<int:theme_id>/", methods=["GET", "DELETE"])
