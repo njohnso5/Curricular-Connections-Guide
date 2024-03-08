@@ -168,9 +168,6 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
     window.$("#progressBarModal").modal("show");
   }
 
-  function hideProgress() {
-    window.$("#progressBarModal").modal("hide");
-  }
   // use state to create the semester form.
 
   const [semesterData, setSemesterData] = useState<SemesterForm>({
@@ -198,8 +195,8 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
     SemesterService.createSemester(formData)
       .then((_response: AxiosResponse<SemesterForm>) => {
         props.handleUpload(_response.data);
-        window.alert("Semester has been uploaded");
-        hideProgress();
+        // window.alert("Semester has been uploaded");
+        completeProgress();
       })
       .catch((error) => {
         console.error(error);
@@ -216,6 +213,12 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
         console.log(error);
       })
   }, []);
+
+  function completeProgress() {
+    console.log("Hiding progress indicator");
+    window.$("#progressBarModal").modal("hide");
+    window.$("#progressBarCompleteModal").modal("show");
+  }
 
   return (
     <div>
@@ -597,10 +600,30 @@ const ModalDeleteCourseBody: React.FC<{ courseIds: number []; updateCoursesList:
 }
 
 const SemesterUploadProgressBar: React.FC<ModalProps> = ({modalTarget, modalTitle, modalBody}) => {
+
   return (
     <React.Fragment>
       <div className="progress" role="progressbar" aria-label="Semester upload in progress" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
         <div className="progress-bar progress-bar-striped progress-bar-animated" style={{width: "50%"}}></div>
+      </div>
+    </React.Fragment>
+  )
+}
+
+const SemesterUploadComplete: React.FC<ModalProps> = ({modalTarget, modalTitle, modalBody}) => {
+  const closeButton = document.querySelector("#closebutton");
+  closeButton?.addEventListener("click", closeUpload);
+  function closeUpload(event) {
+    event.preventDefault();
+    window.$("#progressBarCompleteModal").modal("hide");
+  }
+  return (
+    <React.Fragment>
+      <div className="progress" role="progressbar" aria-label="Semester upload in progress" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+        <div className="progress-bar progress-bar-striped progress-bar-animated" style={{width: "100%"}}></div>
+      </div>
+      <div className="text-center mt-3">
+        <button class="btn btn-primary btn-close" id="closebutton" type="button" aria-label="Close">Close</button>
       </div>
     </React.Fragment>
   )
@@ -617,5 +640,6 @@ export {
   ModalAddCourseBody,
   ModalEditCourseBody,
   ModalDeleteCourseBody,
-  SemesterUploadProgressBar
+  SemesterUploadProgressBar,
+  SemesterUploadComplete
 }
