@@ -7,7 +7,7 @@ import Data_model.theme_dao as theme_dao
 from Data_model.models import db, Theme, RoleEnum
 from schemas import ThemeSchema, ThemePostSchema, CourseSchema
 from Data_model.permissions import require_roles
-import logging
+from Utilities import logging
 
 # Create a Blueprint for the theme API with a specified URL prefix
 theme_router = Blueprint("theme_api", __name__, url_prefix="/themes")
@@ -29,7 +29,7 @@ class ThemeList(MethodView):
     # Finish building the theme object and add it to the db
         try:
             call = str(theme_dao.insert(theme))
-            logging.log(self, call)
+            logging.Logging.logAPI(self, call)
         except SQLAlchemyError:
             abort(500, message="An error occured inserting the theme")
         except ArgumentError:
