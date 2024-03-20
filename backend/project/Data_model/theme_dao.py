@@ -91,6 +91,7 @@ def classify_program(program: Program, commit: bool = False):
     clss = Classifier()
     clss.set_description(program.description)
     clss.set_themes(themes)
+    clss.preprocess_themes()
 
     predicted_themes = clss.classify()
 
@@ -110,6 +111,7 @@ def classify_course(course: Course, commit: bool = False):
 
     clss = Classifier()
     clss.set_themes(themes)
+    clss.preprocess_themes()
     clss.set_description(course.description)
     clss.set_course_title(course.title_long)
     predicted_themes = clss.classify()
@@ -132,6 +134,8 @@ def classify_course_bulk(courses: list[Course], commit: bool = False):
 
     clss = Classifier()
     clss.set_themes(themes)
+    clss.preprocess_themes()
+
     print("Checking courses")
     for course in courses:
         print(course.title_short)
