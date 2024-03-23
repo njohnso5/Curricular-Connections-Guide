@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask.testing import FlaskClient
 import pytest
+import os
 import sys
 
 sys.path.append("./project") # Append the path of the project to the system path
@@ -22,11 +23,9 @@ def app():
         db.create_all()
         db.session.add_all(roles)
         db.session.commit()
-    
-
     yield app
     
 @pytest.fixture()
 def client(app: Flask):
-    app.testing = True
+    os.environ['DEBUG'] = 'True'
     return app.test_client()

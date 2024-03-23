@@ -10,8 +10,6 @@ SEMESTER_BASE_URL = "/v1/semesters/"
 
 
 def test_get(client: FlaskClient, app: Flask):
-    response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
-    assert response.status_code == 200
     # Check that nothing is retrieved sucessfully
     resp = client.get(SEMESTER_BASE_URL)
     assert resp.status_code == 200
@@ -39,9 +37,6 @@ def test_get(client: FlaskClient, app: Flask):
     
 # def test_course_upload
 def test_course_upload(client: FlaskClient, app: Flask):
-    #add Admin
-    response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
-    assert response.status_code == 200
     catalog = open('tests/test_new.csv', 'rb')
     #print(catalog)
     #add semester with a course catalog

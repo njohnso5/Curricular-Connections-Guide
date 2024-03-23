@@ -3,6 +3,7 @@ import ProgramService from "../services/programs-services";
 import { Modal, ModalButton } from "../components/Modal";
 import { Showing, Theme, ProgramData, ProgramFormShowing, ProgramForm } from "../models/programModels";
 import styles from "../css/ProgramPage.module.css";
+import programsServices from '../services/programs-services';
 
 const TimeTabBar: React.FC<{updatePrograms: Function}> = ({updatePrograms}) => {
   const tabs = document.querySelectorAll(".nav-link");
@@ -373,6 +374,53 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
   );
 }
 
+
+
+const EmailProfessorsBody: React.FC = () => {
+  const [selectedProgramId, setSelectedProgramId] = useState<Number | null>(null);
+  const [programs, setPrograms] = useState<ProgramData[] | null>();
+
+  useEffect(() => {
+    programsServices.getAllPrograms().then((response) => {setPrograms(response.data)});
+  }, []);
+
+  const handleEmail = () => {
+    console.log(selectedProgramId)
+    if(selectedProgramId != null) {
+      programsServices.postEmails(selectedProgramId)
+        .then(() => {})
+        .catch((error) => {
+          console.log("Error getting programs", error);
+        });
+    }
+  };
+
+  return (
+    <form>
+      <div className="row">
+        <div className="col-md-6">
+          <div className="dropdown">
+            <label className="chooseSeason">Programs : </label>
+            <select className="chooseSeason" value={selectedProgramId || ''}
+              onChange={(e) => setSelectedProgramId(parseInt(e.target.value, 10))}>
+              <option className="dropdown-item"></option>
+              {programs ? programs.map((program) => (
+                <option className="dropdown-item" key={program.id} value={program.id} name="ThemeId">{program.title}</option>
+              )) : null}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div className="col-md-6">
+        <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={handleEmail}>
+          Notify Professor
+        </button>
+      </div>
+    </form>
+  )
+
+}
+
 const initialForm: ProgramForm = {
   title : "",
   department : "",
@@ -565,6 +613,8 @@ const ProgramPage: React.FC = () => {
       <ProgramPreviewTable programs={programList} updatePrograms={setProgramList}/>
       <ModalButton modalTarget="newProgram" buttonMessage="Create Program" />
       <Modal modalTarget="newProgram" modalTitle="Create Program" modalBody={<ModalNewProgramBody updatePrograms={setProgramList} />} />
+      <ModalButton modalTarget="notifyProfessors" buttonMessage="Notify Professors" />
+      <Modal modalTarget="notifyProfessors" modalTitle="Notify Professors" modalBody={<EmailProfessorsBody />} />
     </>
   );
 }
