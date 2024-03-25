@@ -50,6 +50,80 @@ const DeleteThemeModalButton: React.FC<ModalButtonProps> = ({modalTarget, button
   );
 }
 
+const EditSemesterModalButton: React.FC<ModalButtonProps> = ({ modalTarget, buttonMessage }) => {
+  return (
+      <button type="button" className="btn btn-primary" data-toggle="modal" data-target={"#" + modalTarget}>
+        {buttonMessage}
+      </button>
+  );
+}
+
+const ChangeActiveSemesterBody: React.FC = () => {
+
+  const [currentActive, setCurrentActive] = useState<SemesterForm | null>(null);
+  const [selectedSemesterId, setSelectedSemesterId] = useState<number | null>(null);
+  const [semesters, setSemesters] = useState<SemesterForm[] | null>();
+
+  useEffect(() => {
+    SemesterService.getSemesters()
+      .then((response) => {
+        setSemesters(response.data);
+      })
+    SemesterService.getActiveSemester()
+      .then((response) => {
+        console.log(response.data);
+        setCurrentActive(response.data);
+      })
+  }, []);
+
+  const handleChange = () => {
+    console.log("inside handle change function");
+    
+    // console.log(selectedSemesterId);
+    if (selectedSemesterId !== null) {
+      const formDatafalse = new FormData();
+      formDatafalse.append("active", "False");
+      console.log("Current Active Semester: " + currentActive.id);
+      SemesterService.setActive(formDatafalse, currentActive.id)
+        .catch((error: any) => {
+          console.error('Error changing active semester:', error);
+        });
+      const formDatatrue = new FormData();
+      formDatatrue.append("active", "True");
+      console.log("New Active Semester: " + selectedSemesterId);
+      // Call the SemesterService or your API function to delete the selected semester
+      SemesterService.setActive(formDatatrue, selectedSemesterId)
+        .catch((error: any) => {
+          console.error('Error changing active semester:', error);
+        });
+    }
+  };
+
+  return (
+    <form>
+      <div className="row">
+        <div className="col-md-6">
+          <div className="dropdown">
+            <label className="chooseSeason">Semester : </label>
+            <select className="chooseSeason" value={selectedSemesterId || ''}
+              onChange={(e) => setSelectedSemesterId(parseInt(e.target.value, 10))}>
+              <option className="dropdown-item"></option>
+              {semesters ? semesters.map((semester) => (
+                <option className="dropdown-item" key={semester.semesterId} value={semester.id} name="SemesterId">{semester.period.period} {semester.year}</option>
+              )) : null}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div className="col-md-6">
+        <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={handleChange}>
+          Change Semester
+        </button>
+      </div>
+    </form>
+  )
+}
+
 const DeleteSemesterBody: React.FC = () => {
 
   const [selectedSemesterId, setSelectedSemesterId] = useState<number | null>(null);
@@ -173,7 +247,7 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
   const [semesterData, setSemesterData] = useState<SemesterForm>({
     id: -1,
     year: 2024,
-    active: false,
+    active: true,
     period_id: -1,
     catalog: null
   });
@@ -184,6 +258,10 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
 
     showProgress();
 
+    if (SemesterService.getActiveSemester()) {
+      setSemesterData({...semesterData, active: false});
+    }
+    
     const formData = new FormData();
     formData.append('year', semesterData.year.toString());
     formData.append('active', semesterData.active.toString());
@@ -641,5 +719,7 @@ export {
   ModalEditCourseBody,
   ModalDeleteCourseBody,
   SemesterUploadProgressBar,
-  SemesterUploadComplete
+  SemesterUploadComplete,
+  ChangeActiveSemesterBody,
+  EditSemesterModalButton
 }
