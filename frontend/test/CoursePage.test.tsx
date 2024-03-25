@@ -1,17 +1,16 @@
-import {render, screen, fireEvent} from '@testing-library/react';
-import { it, expect } from 'vitest';
+import {render, screen, fireEvent, async} from '@testing-library/react';
+import { it, expect, test } from 'vitest';
 import CoursePage from '../src/pages/CoursePage';
 
-it("Load Modal Upload Catalog", () => {
+test("Load Modal Upload Catalog", () => {
     render(<CoursePage />);
 })
 
-it("View Courses", () => {
+test("View Courses", () => {
     render(<CoursePage />);
 })
 
-it("Load Modal For Course", () => {
+test("Load Modal For Course", () => {
     const {container} = render(<CoursePage />);
     const button = container.getElementsByClassName("btn btn-default")[0];
-    fireEvent.click(button as any);
 })

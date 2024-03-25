@@ -172,7 +172,7 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
             <table className="table">
                 <thead>
                     <tr>
-                        <th><input type="radio" class="radio"
+                        <th><input type="radio" className="radio"
                             checked={selectedAll}
                             onClick={() => {handleSelectedAll()}}
                         onChange={()=> {}}></input></th>
@@ -217,20 +217,20 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
             </div>
             <div>
                 <nav aria-label="...">
-                    <ul class="pagination">
-                        <li class="page-item disabled">
-                            <span class="page-link">Previous</span>
+                    <ul className="pagination">
+                        <li className="page-item disabled">
+                            <span className="page-link">Previous</span>
                         </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item active">
-                            <span class="page-link">
+                        <li className="page-item"><a className="page-link" href="#">1</a></li>
+                        <li className="page-item active">
+                            <span className="page-link">
                                 2
-                                <span class="sr-only">(current)</span>
+                                <span className="sr-only">(current)</span>
                             </span>
                         </li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
+                        <li className="page-item"><a className="page-link" href="#">3</a></li>
+                        <li className="page-item">
+                            <a className="page-link" href="#">Next</a>
                         </li>
                     </ul>
                 </nav>

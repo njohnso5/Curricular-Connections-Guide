@@ -1,16 +1,16 @@
 import {render, screen, fireEvent} from '@testing-library/react';
-import { it, expect } from 'vitest';
+import { it, expect, test } from 'vitest';
 import PageContent from '../src/components/PageContent';
 import ProgramPage from '../src/pages/ProgramPage';
 
-it("Test Page Load", () => {
+test("Test Page Load", () => {
     render(<PageContent page={<ProgramPage />} pageTitle={"Hello World"} />);
 })
 
-it("Test Page Title", () => {
+test("Test Page Title", () => {
     render(<PageContent page={<ProgramPage />} pageTitle={"Hello World"} />);
 })
 
-it("Test Page Content", () => {
+test("Test Page Content", () => {
     render(<PageContent page={<ProgramPage />} pageTitle={"Hello World"} />);
 })

@@ -84,7 +84,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
     }
   }, [program]);
   if(newProgram == undefined) {
-    return null;
+    return undefined;
   }
   function handleUpdate(event: any) {
     event.preventDefault();
@@ -240,7 +240,7 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
       console.log("closeProgramDisplay");
       showEditProgramBody();
     }
-  if (program == null) {
+  if (program == undefined) {
     return (
     <>
       <p>Could not find program with the requested ID :/</p>
@@ -251,18 +251,18 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
   } else {
     return (
       <>
-        {program.image_filename != null ? (
+        {program.image_filename != undefined ? (
           <div className="form-group align-items-center gap-1">
             <span className={styles.programDisplayLabel}>Image:</span>
             <img className="img-fluid" src={`/api/v1/program/${program.id}/image/`} />
           </div>
-          ) : null}
-        {program.link != null && program.link != undefined && program.link != '' ? (
+          ) : undefined}
+        {program.link != undefined && program.link != undefined && program.link != '' ? (
           <div className="form-group align-items-center gap-1">
             <span className={styles.programDisplayLabel}>Link:</span>
             <p><a href={program.link} target="_blank">{program.link}</a></p>
           </div>
-          ) : null}
+          ) : undefined}
         <div className="form-group align-items-center gap-1">
           <span className={styles.programDisplayLabel}>Department:</span>
           <p>{program.department}</p>
@@ -315,7 +315,7 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
       return undefined;
     }
 
-    if (programs != null && programs != undefined) {
+    if (programs != undefined && programs != undefined) {
       for (let i = 0; i < programs.length; i++) {
         if (programs[i].id == programId) {
           return programs[i];
@@ -360,7 +360,7 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
                         <span key={theme.id} className={`badge badge-pill badge-primary ${styles.tag}`}>{theme.name}</span>
                       );
                     }) : <p>No themes at this time</p>}
-                    {program.themes.length > 4 ? <span>...</span> : null}
+                    {program.themes.length > 4 ? <span>...</span> : undefined}
                 </td>
                 </tr>
               );
@@ -377,8 +377,8 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
 
 
 const EmailProfessorsBody: React.FC = () => {
-  const [selectedProgramId, setSelectedProgramId] = useState<Number | null>(null);
-  const [programs, setPrograms] = useState<ProgramData[] | null>();
+  const [selectedProgramId, setSelectedProgramId] = useState<Number | undefined>(undefined);
+  const [programs, setPrograms] = useState<ProgramData[] | undefined>();
 
   useEffect(() => {
     programsServices.getAllPrograms().then((response) => {setPrograms(response.data)});
@@ -386,7 +386,7 @@ const EmailProfessorsBody: React.FC = () => {
 
   const handleEmail = () => {
     console.log(selectedProgramId)
-    if(selectedProgramId != null) {
+    if(selectedProgramId != undefined) {
       programsServices.postEmails(selectedProgramId)
         .then(() => {})
         .catch((error) => {
@@ -406,7 +406,7 @@ const EmailProfessorsBody: React.FC = () => {
               <option className="dropdown-item"></option>
               {programs ? programs.map((program) => (
                 <option className="dropdown-item" key={program.id} value={program.id} name="ThemeId">{program.title}</option>
-              )) : null}
+              )) : undefined}
             </select>
           </div>
         </div>
