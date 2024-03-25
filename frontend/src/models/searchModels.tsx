@@ -4,6 +4,7 @@ interface SearchQuery {
   themes?: string[];
   dates?: string[];
   searchByRange?: boolean;
+  searchByCourse?: boolean;
 }
 
 export type {

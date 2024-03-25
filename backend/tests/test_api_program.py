@@ -324,7 +324,7 @@ def test_search(client : FlaskClient):
     search["title"] = "Something"
     search["dates"] = []
     search["searchByRange"] = False
-    response = client.post("/v1/search/", data=search, content_type="multipart/form-data")
+    response = client.post("/v1/search/", json=search)
     assert response.status_code == 200
 
 # def test_related_course(client : FlaskClient):

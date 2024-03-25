@@ -80,6 +80,7 @@ def search(**kwargs) -> list[Program]:
     dates: list[str] = kwargs.get("dates")
     departments: str = kwargs.get("departments")
     searchByRange: bool = kwargs.get("searchByRange")
+    searchByCourse: bool = kwargs.get("searchByCourse")
     filters: list[BinaryExpression[bool]] = [] # A list of SQLAlchemy filter expressions
     themes_subquery = None
 
@@ -89,7 +90,7 @@ def search(**kwargs) -> list[Program]:
 
     # print(title)
     # Title can be course subject + " " + course number or course_title_long
-    if title:
+    if searchByCourse and title:
         course = Course()
         # 1. Find the course that matches the title, case insensitive
         if len(title.split()) == 2:
@@ -117,7 +118,18 @@ def search(**kwargs) -> list[Program]:
         else:
             # Cannot find the course with the given title
             return []
-
+    elif title:
+        # Filter by title or description if specified
+        filters.append(
+            or_(
+                Program.title.ilike(f"%{title}%"),
+                Program.description.ilike(f"%{title}%")
+            )
+        )
+    else:
+        # Do nothing
+        pass
+        
     # Filter by themes if specified
     if themes:
         themes_subquery = (

@@ -23,7 +23,7 @@ search_controller = Blueprint("search_api", __name__, url_prefix="/search")
 @search_controller.route("/")
 class ProgramSearch(MethodView):
     # Define endpoint for POST requests with search criteria
-    @search_controller.arguments(SearchProgramSchema, location="form")
+    @search_controller.arguments(SearchProgramSchema)
     @search_controller.response(200, ProgramSchema(many=True))
     def post(self, search_data: dict):
         # Perform a search for programs using data from the request
