@@ -8,11 +8,7 @@ PERIOD_BASE_URL = "/v1/courses/"
 
 
 def test_post(client: FlaskClient, app: Flask):
-    # Create Admin and Semester
-    response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
-
-    assert response.status_code == 200
-
+    # Create  Semester
     response = client.post("/v1/semesters/", data={"year": "2022", "period_id": "1", "active": "true"})
 
     assert response.status_code == 200
@@ -31,10 +27,8 @@ def test_post(client: FlaskClient, app: Flask):
     assert response.json['semester_id'] == 1
 
 def test_get(client: FlaskClient, app: Flask):
-    # Create Admin and Semester
-    response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
+    # Create  Semester
 
-    assert response.status_code == 200
     response = client.post("/v1/semesters/", data={ "year": 2022, "active": True, "period_id": 1})
     assert response.status_code == 200
 
@@ -57,10 +51,7 @@ def test_get(client: FlaskClient, app: Flask):
     assert response.json[0]['semester_id'] == 1
 
 def test_edit(client: FlaskClient, app: Flask):
-    # Create Admin and Semester
-    response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
-
-    assert response.status_code == 200
+    # Create  Semester
 
     response = client.post("/v1/semesters/", data={"year": "2022", "period_id": "1", "active": "true"})
 
@@ -88,10 +79,7 @@ def test_edit(client: FlaskClient, app: Flask):
     assert response.json[0]['semester_id'] == 1
 
 def test_delete(client: FlaskClient, app: Flask):
-    # Create Admin and Semester
-    response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
-
-    assert response.status_code == 200
+    # Create Semester
 
     response = client.post("/v1/semesters/", data={"year": "2022", "period_id": "1", "active": "true"})
 

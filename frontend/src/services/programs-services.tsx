@@ -37,6 +37,10 @@ class ProgramService {
     return axios.get(API_URL + "departments/")
   }
 
+  postEmails (id: Number) {
+    return axios.post(API_URL + "/" + id + "/email/")
+  }
+
   getRelatedCourses(id: number, page: number, per_page: number, threshold: number) {
     return axios.get(API_URL + `${id}/courses/?page=${page}&per_page=${per_page}&threshhold=${threshold}`)
   }

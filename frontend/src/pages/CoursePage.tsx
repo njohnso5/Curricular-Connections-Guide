@@ -187,7 +187,7 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
             <table className="table">
                 <thead>
                     <tr>
-                        <th><input type="radio" class="radio"
+                        <th><input type="radio" className="radio"
                             checked={selectedAll}
                             onClick={() => {handleSelectedAll()}}
                         onChange={()=> {}}></input></th>
