@@ -2,8 +2,9 @@ import datetime
 import os
 
 class Logging:
-    def prepend_line(file_name, line):
+    def logAPI(file_name, line):
         now = datetime.datetime.now()
+        open(file_name, 'a')
         """ Insert given string as a new line at the beginning of a file """
         # define name of temporary dummy file
         dummy_file = file_name + '.bak'
