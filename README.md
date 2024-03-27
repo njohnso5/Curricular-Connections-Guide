@@ -1,4 +1,4 @@
-# 2023FallTeam01-Arts
+# 2024FallTeam01-Arts
 
 ## Project Development notes
 
