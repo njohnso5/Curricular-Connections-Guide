@@ -65,7 +65,7 @@ const SearchNavBar: React.FC<{setResults: Function}> = ({setResults}) => {
     
     // State for the switch button, to determine search by range, or by single dates
     const [searchByRange, setSearchByRange] = React.useState<boolean>(false);
-
+    const [searchByCourse, setSearchByCourse] = React.useState<boolean>(false);
     const handleAddTag = (tagName: string, type: SearchDropdown) => {
         switch(type) {
             case SearchDropdown.THEMES:
@@ -168,6 +168,7 @@ const SearchNavBar: React.FC<{setResults: Function}> = ({setResults}) => {
         if (searchByRange && searchQuery.dates.length !== 2) {
             window.alert("Please select a range of dates");
         }
+        searchQuery.searchByCourse = searchByCourse;
         SearchService.getSearchResults(searchQuery)
         .then(response => {
             setResults(response.data);
@@ -196,8 +197,15 @@ const SearchNavBar: React.FC<{setResults: Function}> = ({setResults}) => {
                                 </div>
                             }
                         </div>
-                        <Switch onChange={() => setSearchByRange(prev => !prev)} checked={searchByRange} />
-                        <span>Search by Range</span>
+                        <div className='d-inline-flex align-items-center gap-1'>
+                            <Switch onChange={() => setSearchByRange(prev => !prev)} checked={searchByRange} />
+                            <span>Search by Range</span>
+                        </div>
+                        <div className='d-inline-flex align-items-center gap-1'>
+                            <Switch onChange={() => setSearchByCourse(prev => !prev)} checked={searchByCourse} />
+                            <span>Search by Course</span>
+                        </div>
+
                     </div>
                 </div>
                 <div className="col-md-6 d-flex justify-content-end">
