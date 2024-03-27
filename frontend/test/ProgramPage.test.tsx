@@ -1,13 +1,14 @@
 import {render, screen, fireEvent} from '@testing-library/react';
 import { it, expect, test } from 'vitest';
 import ProgramPage from '../src/pages/ProgramPage';
-
+import {ModalEditProgramBody} from '../src/pages/ProgramPage';
 test("Test Program Add Modal Loads", () => {
     render(<ProgramPage />);
 })
 
 test("Test Table Renders Programs", () => {
     render(<ProgramPage />);
+    render(<ModalEditProgramBody/>)
 })
 
 test("Test Program View Modal", () => {

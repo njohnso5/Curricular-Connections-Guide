@@ -71,7 +71,7 @@ function listShowingDates(showings: Showing[]) {
   return dateString;
 }
 
-const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
+export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
   const [filePreview, setFilePreview] = useState();
   const [newProgram, setNewProgram] = useState<ProgramData>();
   // Handles the Update button functionality from the Modal-footer module
