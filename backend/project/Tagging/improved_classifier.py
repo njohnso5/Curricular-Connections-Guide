@@ -51,7 +51,8 @@ class Classifier:
             has_meaning = False
             keep = False
             for token in description_doc:
-                similarity = token.similarity(self.theme_doc[theme.name])
+                if token.has_vector and self.theme_doc[theme.name].has_vector:
+                    similarity = token.similarity(self.theme_doc[theme.name])
 
                 if similarity > threashold:
                     has_meaning = True
