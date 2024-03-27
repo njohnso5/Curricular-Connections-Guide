@@ -17,7 +17,7 @@ import { Link } from 'react-router-dom'
                     return (
                         <div className="col-md-4">
                             <Link to={page.link}>
-                                <div className="card" style={{height: '150px'}}>
+                                <div className="card mb-4" style={{height: '150px'}}>
                                     <div className="card-body d-flex align-items-center justify-content-center">
                                     {page.title}
                                     </div>

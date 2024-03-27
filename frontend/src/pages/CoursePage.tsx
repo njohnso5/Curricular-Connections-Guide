@@ -5,7 +5,7 @@ import "../css/CoursePage.css"
 import { Course, SemesterForm } from "../CourseModels/courseModels.tsx";
 import { Modal, ModalButton, ModalNewSemesterBody, DeleteSemesterModalButton, DeleteSemesterBody, ModalAddCourseBody, ModalEditCourseBody, ModalDeleteCourseBody, SemesterUploadProgressBar, SemesterUploadComplete } from "../components/Modal.tsx";
 import CourseModal from './Program/CourseModal.tsx';
-
+import { ProgressBar } from 'react-bootstrap';
 interface TableBodyRowsProps {
     id: number;
 }
@@ -16,6 +16,7 @@ const NewSemesterTab: React.FC = () => {
 
     const [id, setId] = useState<number | null>(null);
     const [semesters, setSemesters] = useState<SemesterForm[] | null>();
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
 
@@ -33,8 +34,9 @@ const NewSemesterTab: React.FC = () => {
     }
 
     const handleClick = (id: number) => {
+        // Set loading to true when a semester is clicked
+        setIsLoading(true);
         setId(id);
-    
     };
 
 
@@ -57,12 +59,14 @@ const NewSemesterTab: React.FC = () => {
                     <Modal modalTarget="DeleteSemesterModal" modalTitle="DELETE A SEMESTER" modalBody={<DeleteSemesterBody />} />
                 </div>
             </div>
-            {id !== null && <TableBodyRows id={id}/>}
-        </div >
+
+            {isLoading && <ProgressBar animated now={75} label={'Loading classes'} />}
+            {id !== null && <TableBodyRows id={id} setIsLoading={setIsLoading}/>}
+        </div>
     )
 }
 
-const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
+const TableBodyRows: React.FC<TableBodyRowsProps> = ({id, setIsLoading}) => {
     const [course, setCourse] = useState<Course | undefined>(undefined);
     const [courseId, setCourseId] = useState<number | null>(null);
     const [courses, setCourses] = useState<Course[] | null>();
@@ -95,7 +99,8 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
         SemesterService.getCourses(id)
             .then((response) => {
                 setCourses((prevCourses) => {
-                    console.log(prevCourses);
+                    // console.log(prevCourses);
+                    setIsLoading(false);
                     return response.data;
                 });
             });
