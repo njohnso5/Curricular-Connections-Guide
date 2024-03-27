@@ -7,6 +7,7 @@ import Data_model.theme_dao as theme_dao
 from Data_model.models import db, Theme, RoleEnum
 from schemas import ThemeSchema, ThemePostSchema, CourseSchema
 from Data_model.permissions import require_roles
+from Utilities import logging
 
 # Create a Blueprint for the theme API with a specified URL prefix
 theme_router = Blueprint("theme_api", __name__, url_prefix="/themes")
@@ -28,6 +29,8 @@ class ThemeList(MethodView):
     # Finish building the theme object and add it to the db
         try:
             theme_dao.insert(theme)
+            call = "POST /v1/themes/ HTTP/1.1 200"
+            logging.Logging.prepend_line('log.txt', call)
         except SQLAlchemyError:
             abort(500, message="An error occured inserting the theme")
         except ArgumentError:
@@ -45,6 +48,8 @@ def handle_theme_id(theme_id):
     if request.method == "DELETE":
         # If the request method is DELETE, delete the theme by its ID
         theme_dao.delete(theme_id)
+        call = "DELETE /v1/themes/" + str(theme_id) + "/ HTTP/1.1 200"
+        logging.Logging.prepend_line('log.txt', call)
 
         # Return a JSON response indicating successful deletion and a status code of 200
         return make_response(jsonify({"success": "Theme deleted"}), 200)

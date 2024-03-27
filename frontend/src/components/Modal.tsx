@@ -126,6 +126,7 @@ const DeleteThemeBody: React.FC = () => {
         .catch((error) => {
           console.log("Error deleting theme", error);
         });
+      location.reload();
     }
   };
 
@@ -283,6 +284,8 @@ const ModalNewThemeBody: React.FC<ModalNewThemeBodyProps> =(props) => {
       .catch((error) => {
         console.error(error);
       });
+    
+    location.reload();
   }
 
   return (
