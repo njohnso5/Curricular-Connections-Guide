@@ -389,7 +389,7 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
       </div>
       <Modal modalTarget="programDisplay" modalTitle={currentProgram?.title} modalBody={<ProgramDisplayModalBody program={findProgramById(currentProgram?.id)} updatePrograms={updatePrograms} showEditProgramBody={showEditProgramBody} showEditTheme={showEditTheme} />} />
       <Modal modalTarget="editProgramModal" modalTitle={currentProgram?.title} modalBody={<ModalEditProgramBody program={currentProgram} updatePrograms={updatePrograms} />} />
-      <Modal modalTarget="editTheme" modalTitle="Edit Theme" modalBody={<EditThemes id={currentProgram?.id} updateProgram={updatedThemes} />} />
+      <Modal modalTarget="editTheme" modalTitle="Edit Theme" modalBody={<EditThemes obj={currentProgram} update={updatedThemes} />} />
     </>
   );
 }

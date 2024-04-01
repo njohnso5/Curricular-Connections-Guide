@@ -20,23 +20,13 @@ class ThemesService {
         return axios.delete(API_URL + themeId + "/");
     }
 
-    getProgramThemes(programId: Number) {
-        return axios.get(API_URL + 'program/' + programId + "/");
-        // return "getProgramThemes" + programId;
-    }
     updateProgramThemes(themes: Theme[], programId: number) {
-        const requestBody = themes.map(theme => ({id: theme.id, name: theme.name}));
-        return axios.put(API_URL + 'program/' + programId + "/", requestBody);
+        console.log(themes, programId, "updateProgramThemes");
+        return axios.put(API_URL + 'program/' + programId + "/", themes);
     }
 
-    getCourseThemes(courseId: Number) {
-        // return axios.get(API_URL + 'courses/' + courseId + "/");
-        return "getCourseThemes" + courseId;
-    }
-
-    updateCourseThemes(themeIds: [Number], courseId: Number) {
-        // return axios.put(API_URL + 'courses/' + courseId + "/", {'themeIds': themeIds, 'courseId': courseId});
-        return "updateCourseThemes" + themeIds + courseId;
+    updateCourseThemes(themes: Theme[], courseId: Number) {
+        return axios.put(API_URL + 'course/' + courseId + "/", themes);
     }
 
 

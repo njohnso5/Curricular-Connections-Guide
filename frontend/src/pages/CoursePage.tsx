@@ -4,6 +4,7 @@ import "../css/CoursePage.css"
 import { Course, SemesterForm } from "../CourseModels/courseModels.tsx";
 import { Modal, ModalButton, ModalNewSemesterBody, DeleteSemesterModalButton, DeleteSemesterBody, ModalAddCourseBody, ModalEditCourseBody, ModalDeleteCourseBody, SemesterUploadProgressBar, SemesterUploadComplete } from "../components/Modal.tsx";
 import { ProgressBar } from 'react-bootstrap';
+import EditThemes from '../components/EditThemes.tsx';
 interface TableBodyRowsProps {
     id: number;
 }
@@ -182,6 +183,7 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({id, setIsLoading}) => {
 
         // Update the selected courses
         setSelectedCourseIds([]);
+        window.$("#editThemesModal").modal("hide");
       };
 
 
@@ -222,6 +224,10 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({id, setIsLoading}) => {
                 <div>
                     <ModalButton modalTarget="addCourseModal" buttonMessage="Add a course" />
                     <Modal modalTarget="addCourseModal" modalTitle="ADD A COURSE" modalBody={<ModalAddCourseBody  semesterId={id} updateCoursesList={updateCoursesList}/>} />
+                </div>
+                <div>
+                    <ModalButton disabled={selectedCourseIds.length !== 1} modalTarget="editThemesModal" buttonMessage="Edit themes" />
+                    <Modal modalTarget="editThemesModal" modalTitle="EDIT A THEME" modalBody={<EditThemes obj={course} update={updateCoursesList} />} />
                 </div>
                 <div>
                     <ModalButton disabled={selectedCourseIds.length !== 1} modalTarget="editCourseModal" buttonMessage="Edit course" />

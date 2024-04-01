@@ -2,12 +2,11 @@ import 'react-tagsinput/react-tagsinput.css';
 import Select from 'react-select';
 import React, {useEffect} from 'react';
 import ThemesService from '../services/themes-service';
-import { Theme } from '../models/programModels';
-
-const EditThemes: React.FC<{id: number, updateProgram: Function}> = ({id, updateProgram}: {id: number, updateProgram: Function}) => {
+import { Theme, ProgramData } from '../models/programModels';
+import { Course } from '../CourseModels/courseModels';
+const EditThemes: React.FC<{obj: Course | ProgramData, update: Function}> = ({obj, update }: {obj: any, update: Function}) => {
     const [themes, setThemes] = React.useState<Theme[], null>([])
     const [selectedThemes, setSelectedThemes] = React.useState<number | null>(null)
-
     useEffect(() => {
         // console.log(id);
         ThemesService.getTags()
@@ -15,23 +14,30 @@ const EditThemes: React.FC<{id: number, updateProgram: Function}> = ({id, update
                 setThemes(response.data);
                 // console.log(themes);
             });
-        
-        ThemesService.getProgramThemes(id)
-            .then((response) => {
-                setSelectedThemes(response.data);
-                // console.log(selectedThemes);
+        if(obj) {
+            setSelectedThemes(obj.themes);
+        }
 
-            });
-    }, [id]);
+    }, [obj]);
+    function isPorgramData(obj: any): obj is ProgramData {
+        console.log((obj as ProgramData).department !== undefined);
+        return (obj as ProgramData).department !== undefined;
+    }
 
     function saveThemes() {
-        // console.log("Saving themes...");
-        ThemesService.updateProgramThemes(selectedThemes, id)
-            .then((response) => {
-                // console.log(response.data);
-                updateProgram();
-            });
-            
+        if (!isPorgramData(obj)) {
+            ThemesService.updateCourseThemes(selectedThemes, obj.id)
+                .then((response) => {
+                    update();
+                });
+
+        } else {
+            ThemesService.updateProgramThemes(selectedThemes, obj.id)
+                .then((response) => {
+                    update();
+                });
+        }
+
     }
     
     return (

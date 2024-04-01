@@ -72,11 +72,15 @@ class ThemeListByCourse(MethodView):
     @theme_router.response(200, ThemeSchema(many=True))
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def get(self, course_id):
-        return theme_dao.get_by_course(course_id)
+        return theme_dao.get_by_course(course_id).themes
 
     @theme_router.arguments(ThemeSchema(many=True), location="json")
-    @theme_router.response(200, ThemeSchema(many=True))
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
-    def put(self, course_id, theme_data):
-        return theme_dao.update_course_themes(course_id, theme_data)
+    def put(self, themes, course_id):
+        print(themes)
+        print(course_id)
+        if course_dao.update_course_themes(course_id, themes):
+            return make_response(jsonify({"success": "Themes updated"}), 200)
+        else:
+            abort(500, message="An error occured updating the themes")
         
