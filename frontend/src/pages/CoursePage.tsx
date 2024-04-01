@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import CourseService from "../services/CourseServices.tsx"
 import SemesterService from '../services/SemesterService';
 import "../css/CoursePage.css"
 import { Course, SemesterForm } from "../CourseModels/courseModels.tsx";
 import { Modal, ModalButton, ModalNewSemesterBody, DeleteSemesterModalButton, DeleteSemesterBody, ModalAddCourseBody, ModalEditCourseBody, ModalDeleteCourseBody, SemesterUploadProgressBar, SemesterUploadComplete } from "../components/Modal.tsx";
-import CourseModal from './Program/CourseModal.tsx';
 import { ProgressBar } from 'react-bootstrap';
 interface TableBodyRowsProps {
     id: number;
