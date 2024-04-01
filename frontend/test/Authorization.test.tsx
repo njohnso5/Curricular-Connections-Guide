@@ -1,15 +1,15 @@
 import {render, screen} from '@testing-library/react';
-import { it, expect } from 'vitest';
+import { it, expect, test } from 'vitest';
 import AuthorizationPage from '../src/pages/Authorization/AuthorizationPage';
 
 
-it("Test Authorization page is rendered", async () => {
+test("Test Authorization page is rendered", async () => {
     render(<AuthorizationPage />);
     const page = screen.getByTestId("administrator-page");
     expect(page).toBeInTheDocument();
 })
 
-it("Test Get Administrators", async () => {
+test("Test Get Administrators", async () => {
     
 })
 

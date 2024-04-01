@@ -41,8 +41,13 @@ const SearchPage: React.FC = () => {
             <div className={`container-fluid rounded-1`}>
                 <h1 className={`${styles.floatMiddle}`}>Curricular Connections Guide</h1>
                 <p className={`${styles.floatMiddleText}`}>
-                    NC State University has many courses that relate to the events offered through the NC State arts program. The guide below will allow you to search for
-                    programs based off department, theme, calendar date, and name.
+                Welcome to the Curricular Connection Guide (CCG) Web Application. The CCG is designed to find content connections between the courses you teach and the art programs offered at NC State. It is updated each semester and is managed by the Arts NC State office of Outreach and Engagement.<br></br><br></br>
+
+                Select a program and/or a theme that is relevant to your course. You can select as many themes as you like.<br></br><br></br>
+
+                Have questions or feedback? Please email Amy Sawyers-Williams acsawyer@ncsu.edu<br></br><br></br>
+
+                This web application was designed in partnership by NC State computer science senior design students, Arts NC State, and DASA Tech. You can learn more about the Curricular Connections Guide <a href="https://arts.ncsu.edu/about/for-nc-state-faculty/">here.</a>
                 </p>
                 <hr></hr>
                 <SearchNavBar setResults={setResults}/>

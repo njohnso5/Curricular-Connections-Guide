@@ -1,5 +1,5 @@
 import {render, screen} from '@testing-library/react';
-import { it, expect } from 'vitest';
+import { it, expect, test } from 'vitest';
 import AuthorizationPage from '../src/pages/Authorization/AuthorizationPage';
 import { MemoryRouter } from 'react-router-dom';
 import NotFound from '../src/components/NotFound';

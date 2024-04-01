@@ -3,7 +3,9 @@ import ProgramService from "../services/programs-services";
 import { Modal, ModalButton } from "../components/Modal";
 import { Showing, Theme, ProgramData, ProgramFormShowing, ProgramForm } from "../models/programModels";
 import styles from "../css/ProgramPage.module.css";
+
 import EditThemes from "../components/EditThemes";
+
 
 const TimeTabBar: React.FC<{updatePrograms: Function}> = ({updatePrograms}) => {
   const tabs = document.querySelectorAll(".nav-link");
@@ -71,7 +73,7 @@ function listShowingDates(showings: Showing[]) {
   return dateString;
 }
 
-const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
+export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
   const [filePreview, setFilePreview] = useState();
   const [newProgram, setNewProgram] = useState<ProgramData>();
   // Handles the Update button functionality from the Modal-footer module
@@ -84,7 +86,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
     }
   }, [program]);
   if(newProgram == undefined) {
-    return null;
+    return undefined;
   }
   function handleUpdate(event: any) {
     event.preventDefault();
@@ -240,10 +242,12 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
       console.log("closeProgramDisplay");
       showEditProgramBody();
     }
+
     function showEditThemeDisplay() {
       showEditTheme();
     }
-  if (program == null) {
+
+  if (program == undefined) {
     return (
     <>
       <p>Could not find program with the requested ID :/</p>
@@ -254,18 +258,18 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
   } else {
     return (
       <>
-        {program.image_filename != null ? (
+        {program.image_filename != undefined ? (
           <div className="form-group align-items-center gap-1">
             <span className={styles.programDisplayLabel}>Image:</span>
             <img className="img-fluid" src={`/api/v1/program/${program.id}/image/`} />
           </div>
-          ) : null}
-        {program.link != null && program.link != undefined && program.link != '' ? (
+          ) : undefined}
+        {program.link != undefined && program.link != undefined && program.link != '' ? (
           <div className="form-group align-items-center gap-1">
             <span className={styles.programDisplayLabel}>Link:</span>
             <p><a href={program.link} target="_blank">{program.link}</a></p>
           </div>
-          ) : null}
+          ) : undefined}
         <div className="form-group align-items-center gap-1">
           <span className={styles.programDisplayLabel}>Department:</span>
           <p>{program.department}</p>
@@ -320,7 +324,7 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
       return undefined;
     }
 
-    if (programs != null && programs != undefined) {
+    if (programs != undefined && programs != undefined) {
       for (let i = 0; i < programs.length; i++) {
         if (programs[i].id == programId) {
           return programs[i];
@@ -379,7 +383,7 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
                         <span key={theme.id} className={`badge badge-pill badge-primary ${styles.tag}`}>{theme.name}</span>
                       );
                     }) : <p>No themes at this time</p>}
-                    {program.themes.length > 4 ? <span>...</span> : null}
+                    {program.themes.length > 4 ? <span>...</span> : undefined}
                 </td>
                 </tr>
               );
@@ -392,6 +396,53 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
       <Modal modalTarget="editTheme" modalTitle="Edit Theme" modalBody={<EditThemes obj={currentProgram} update={updatedThemes} />} />
     </>
   );
+}
+
+
+
+const EmailProfessorsBody: React.FC = () => {
+  const [selectedProgramId, setSelectedProgramId] = useState<Number | undefined>(undefined);
+  const [programs, setPrograms] = useState<ProgramData[] | undefined>();
+
+  useEffect(() => {
+    programsServices.getAllPrograms().then((response) => {setPrograms(response.data)});
+  }, []);
+
+  const handleEmail = () => {
+    console.log(selectedProgramId)
+    if(selectedProgramId != undefined) {
+      programsServices.postEmails(selectedProgramId)
+        .then(() => {})
+        .catch((error) => {
+          console.log("Error getting programs", error);
+        });
+    }
+  };
+
+  return (
+    <form>
+      <div className="row">
+        <div className="col-md-6">
+          <div className="dropdown">
+            <label className="chooseSeason">Programs : </label>
+            <select className="chooseSeason" value={selectedProgramId || ''}
+              onChange={(e) => setSelectedProgramId(parseInt(e.target.value, 10))}>
+              <option className="dropdown-item"></option>
+              {programs ? programs.map((program) => (
+                <option className="dropdown-item" key={program.id} value={program.id} name="ThemeId">{program.title}</option>
+              )) : undefined}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div className="col-md-6">
+        <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={handleEmail}>
+          Notify Professor
+        </button>
+      </div>
+    </form>
+  )
+
 }
 
 const initialForm: ProgramForm = {
@@ -586,6 +637,8 @@ const ProgramPage: React.FC = () => {
       <ProgramPreviewTable programs={programList} updatePrograms={setProgramList}/>
       <ModalButton modalTarget="newProgram" buttonMessage="Create Program" />
       <Modal modalTarget="newProgram" modalTitle="Create Program" modalBody={<ModalNewProgramBody updatePrograms={setProgramList} />} />
+      <ModalButton modalTarget="notifyProfessors" buttonMessage="Notify Professors" />
+      <Modal modalTarget="notifyProfessors" modalTitle="Notify Professors" modalBody={<EmailProfessorsBody />} />
     </>
   );
 }
