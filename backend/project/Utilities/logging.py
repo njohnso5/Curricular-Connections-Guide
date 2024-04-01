@@ -1,9 +1,19 @@
 import datetime
 import os
+import Data_model.adminlog_dao as adminlog_dao
+from sqlalchemy.exc import SQLAlchemyError
+from flask_smorest import abort
 
 class Logging:
-    def logAPI(file_name, line):
-        now = datetime.datetime.now()
+    def logAPI(file_name, log):
+        try:
+            #get the timestamp and add it to the log
+            now = datetime.datetime.now()
+            log.datetime = now
+            #insert the log to admin log table
+            adminlog_dao.insert(log)
+        except SQLAlchemyError:
+            abort(500, message="An error occured inserting the log")
         open(file_name, 'a')
         """ Insert given string as a new line at the beginning of a file """
         # define name of temporary dummy file
