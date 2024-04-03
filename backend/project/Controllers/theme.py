@@ -51,7 +51,7 @@ def handle_theme_id(theme_id):
         # If the request method is DELETE, delete the theme by its ID
         theme_dao.delete(theme_id)
         call = g.user.unity_id + " DELETE /v1/themes/" + str(theme_id) + "/ HTTP/1.1 200"
-        logging.Logging.logAPI('log.txt', call)
+        logging.logAPI('log.txt', call)
 
         # Return a JSON response indicating successful deletion and a status code of 200
         return make_response(jsonify({"success": "Theme deleted"}), 200)
