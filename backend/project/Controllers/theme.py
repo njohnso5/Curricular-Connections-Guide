@@ -32,7 +32,7 @@ class ThemeList(MethodView):
             log.call = "POST /v1/themes/ HTTP/1.1 200"
             log.unity_id = g.user.unity_id
             theme_dao.insert(theme)
-            logging.Logging.logAPI('log.txt', log)
+            logging.logAPI('log.txt', log)
         except SQLAlchemyError:
             abort(500, message="An error occured inserting the theme")
         except ArgumentError:
