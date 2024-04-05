@@ -3,7 +3,9 @@ import ProgramService from "../services/programs-services";
 import { Modal, ModalButton } from "../components/Modal";
 import { Showing, Theme, ProgramData, ProgramFormShowing, ProgramForm } from "../models/programModels";
 import styles from "../css/ProgramPage.module.css";
-import programsServices from '../services/programs-services';
+import programsServices from "../services/programs-services";
+import EditThemes from "../components/EditThemes";
+
 
 const TimeTabBar: React.FC<{updatePrograms: Function}> = ({updatePrograms}) => {
   const tabs = document.querySelectorAll(".nav-link");
@@ -219,7 +221,7 @@ export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, u
   )
 }
 
-const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function, showEditProgramBody: ()=> void}> = ({program, updatePrograms, showEditProgramBody}) => {
+const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function, showEditProgramBody: Function, showEditTheme: Function}> = ({program, updatePrograms, showEditProgramBody, showEditTheme}) => {
     function handleDelete(event: any) {
       event.preventDefault();
       if (program) {
@@ -240,6 +242,11 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
       console.log("closeProgramDisplay");
       showEditProgramBody();
     }
+
+    function showEditThemeDisplay() {
+      showEditTheme();
+    }
+
   if (program == undefined) {
     return (
     <>
@@ -294,6 +301,7 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
           }) : <p>No showings at this time</p>}
         </div>
         <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" onClick={showEditThemeDisplay}> Edit Themes </button>
           <button type="button" className="btn btn-secondary" onClick={closeProgramDisplay}> Edit Program </button>
           
           <button type="button" className="btn btn-secondary" onClick={handleDelete}>Delete Program</button>
@@ -308,6 +316,7 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
 
   const handleProgramSelection = (program: ProgramData) => {
     setCurrentProgram(program);
+    console.log("handleProgramSelection", program);
   };
 
   function findProgramById(programId: number | undefined) {
@@ -334,6 +343,20 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
     // Make editProgramModal scroll able
     window.$("#editProgramModal").css("overflow-y", "scroll");
 
+  }
+  function showEditTheme() {
+    console.log("showEditTheme");
+    // Close the programDisplay modal
+    window.$("#programDisplay").modal("hide");
+    // Open the editTheme modal
+    window.$("#editTheme").modal("show");
+  }
+  function updatedThemes() {
+    console.log("updatedThemes");
+    window.$("#editTheme").modal("hide");
+    ProgramService.getAllPrograms().then(response => {
+      updatePrograms(response.data);
+    })
   }
   return (
     <>
@@ -368,8 +391,9 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
           </tbody>
         </table>
       </div>
-      <Modal modalTarget="programDisplay" modalTitle={currentProgram?.title} modalBody={<ProgramDisplayModalBody program={findProgramById(currentProgram?.id)} updatePrograms={updatePrograms} showEditProgramBody={showEditProgramBody} />} />
+      <Modal modalTarget="programDisplay" modalTitle={currentProgram?.title} modalBody={<ProgramDisplayModalBody program={findProgramById(currentProgram?.id)} updatePrograms={updatePrograms} showEditProgramBody={showEditProgramBody} showEditTheme={showEditTheme} />} />
       <Modal modalTarget="editProgramModal" modalTitle={currentProgram?.title} modalBody={<ModalEditProgramBody program={currentProgram} updatePrograms={updatePrograms} />} />
+      <Modal modalTarget="editTheme" modalTitle="Edit Theme" modalBody={<EditThemes obj={currentProgram} update={updatedThemes} />} />
     </>
   );
 }
@@ -594,7 +618,7 @@ const ProgramPage: React.FC = () => {
       .then(response => {
         setProgramList(response.data);
         response.data.forEach((program) => {
-          console.log(program);
+          // console.log(program);
         });
       })
       .catch(() => {

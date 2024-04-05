@@ -4,6 +4,8 @@ from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from sqlalchemy.exc import SQLAlchemyError, ArgumentError
 import Data_model.theme_dao as theme_dao
+import Data_model.program_dao as program_dao
+import Data_model.course_dao as course_dao
 from Data_model.models import db, Theme, RoleEnum, AdminLog
 from schemas import ThemeSchema, ThemePostSchema, CourseSchema
 from Data_model.permissions import require_roles
@@ -62,3 +64,37 @@ def handle_theme_id(theme_id):
 
         # Return a JSON response indicating successful deletion and a status code of 200
         return make_response(jsonify({"success": "Theme deleted"}), 200)
+
+@theme_router.route("/program/<int:program_id>/")
+class ThemeListByProgram(MethodView):
+    @theme_router.response(200, ThemeSchema(many=True))
+    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
+    def get(self, program_id):
+        return program_dao.get_by_id(program_id).themes
+
+    @theme_router.arguments(ThemeSchema(many=True), location="json")
+    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
+    def put(self, themes, program_id):
+        if program_dao.update_program_themes(program_id, themes):
+            return make_response(jsonify({"success": "Themes updated"}), 200)
+        else:
+            abort(500, message="An error occured updating the themes")
+
+
+@theme_router.route("/course/<int:course_id>/")
+class ThemeListByCourse(MethodView):
+    @theme_router.response(200, ThemeSchema(many=True))
+    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
+    def get(self, course_id):
+        return theme_dao.get_by_course(course_id).themes
+
+    @theme_router.arguments(ThemeSchema(many=True), location="json")
+    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
+    def put(self, themes, course_id):
+        print(themes)
+        print(course_id)
+        if course_dao.update_course_themes(course_id, themes):
+            return make_response(jsonify({"success": "Themes updated"}), 200)
+        else:
+            abort(500, message="An error occured updating the themes")
+        

@@ -1,7 +1,6 @@
-from Data_model.models import db, Course, Semester, Course_to_Faculty
+from Data_model.models import db, Course, Semester, Course_to_Faculty, Course_to_Theme, Theme
 from flask import current_app
 from sqlalchemy import select
-
 # Retrieve every course from the db
 def get_all() -> list[Course] or None:
     
@@ -69,4 +68,8 @@ def delete_course(id : int) -> bool:
         return True
     return False    
     
-    
+def update_course_themes(course_id: int, themes: list[Theme]) -> bool:
+    course = Course.query.get_or_404(course_id)
+    course.themes = [Theme.query.get_or_404(theme['id']) for theme in themes]
+    db.session.commit()
+    return True

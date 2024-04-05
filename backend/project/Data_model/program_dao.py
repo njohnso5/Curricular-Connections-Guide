@@ -64,6 +64,14 @@ def delete(id: int) -> bool:
 def get_departments() -> list[str]:
     return [department.value for department in Department]
 
+def update_program_themes(program_id: int, themes: list[Theme]) -> bool:
+    program = Program.query.get_or_404(program_id)
+    program.themes = [Theme.query.get_or_404(theme['id']) for theme in themes]
+    db.session.commit()
+    return True
+    
+
+
 '''
 Search programs based on various filter parameters
 Params:
