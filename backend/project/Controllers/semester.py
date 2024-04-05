@@ -94,14 +94,7 @@ class SemesterList(MethodView):
                     course.description = df.iloc[i, 1 + 4]
                     if pandas.isna(course.description):
                         course.description = ""
-                    # course.topics_description = df.iloc[i, 1 + 5]
-                    # if pandas.isna(course.topics_description):
-                    #     course.topics_description = ""
-
-                    # course.topics_description_s = df.iloc[i, 1 + 6]
-                    # if pandas.isna(course.topics_description_s):
-                    #     course.topics_description_s = ""
-                    
+    
                     # Reads in special topics descriptions or autofills with empty descriptions
                     course.topics_description = df.iloc[i, 1 + 7]
                     if pandas.isna(course.topics_description):
@@ -165,20 +158,44 @@ class ActiveSemester(MethodView):
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def get(self):
         semester = dao.get_active()
-        print(semester)
+        print("Active found: " + str(semester.id))
+        return semester
+    
+    @semester_controller.arguments(SemesterUpdateSchema, location="form")
+    @semester_controller.response(200, SemesterSchema)
+    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
+    def put(self, semester_data):
+        print("Semester Data: " + str(semester_data))
+        semester: Semester = dao.get_by_id(int(semester_data.get("id")))
+        print(str(semester.id))
+        semester.active = semester_data.get("active")
+
+        # for field, value in semester_data.items():
+        #     if hasattr(semester, field):
+        #         setattr(semester, field, value)
+        
+        print("Current Semester Active? " + str(semester.active))
+        try:
+            dao.update_semester(semester)
+        except SQLAlchemyError:
+            abort(500, message="An error occured updating the semester")
+
         return semester
     
 @semester_controller.route('/active/<int:semester_id>/')
 class ChangeActiveSemester(MethodView):
-    @semester_controller.arguments(SemesterUpdateSchema)
+    # @semester_controller.arguments(SemesterUpdateSchema)
     @semester_controller.response(200, SemesterSchema)
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
-    def put(self, semester_data: dict, semester_id):
-        semester: Semester = dao.get_by_id(semester_id)
+    def put(self, semester_data: dict):
+        semester: Semester = dao.get_by_id(semester_data.get("id"))
+        semester.active = semester_data.get("active")
+
+        # for field, value in semester_data.items():
+        #     if hasattr(semester, field):
+        #         setattr(semester, field, value)
         
-        for field, value in semester_data.items():
-            if hasattr(semester, field):
-                setattr(semester, field, value)
+        print("Current Semester Active? " + str(semester.active))
         try:
             dao.update_semester(semester)
         except SQLAlchemyError:

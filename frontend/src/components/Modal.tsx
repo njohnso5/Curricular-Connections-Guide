@@ -82,17 +82,22 @@ const ChangeActiveSemesterBody: React.FC = () => {
     // console.log(selectedSemesterId);
     if (selectedSemesterId !== null) {
       const formDatafalse = new FormData();
-      formDatafalse.append("active", "False");
-      console.log("Current Active Semester: " + currentActive.id);
-      SemesterService.setActive(formDatafalse, currentActive.id)
+      const activeF = false;
+      console.log("Current Active: " + currentActive.id.toString());
+      formDatafalse.append("id", currentActive.id.toString());
+      formDatafalse.append("active", activeF.toString());
+      console.log("Form Data: " + formDatafalse.get("id"));
+      SemesterService.setActive(formDatafalse)
         .catch((error: any) => {
           console.error('Error changing active semester:', error);
         });
       const formDatatrue = new FormData();
-      formDatatrue.append("active", "True");
-      console.log("New Active Semester: " + selectedSemesterId);
-      // Call the SemesterService or your API function to delete the selected semester
-      SemesterService.setActive(formDatatrue, selectedSemesterId)
+      const activeT = true;
+      formDatatrue.append("id", selectedSemesterId.toString());
+      formDatatrue.append("active", activeT.toString());
+      console.log("Form Data: " + formDatatrue);
+      console.log("New Active Semester: " + selectedSemesterId.id);
+      SemesterService.setActive(formDatatrue)
         .catch((error: any) => {
           console.error('Error changing active semester:', error);
         });
@@ -247,7 +252,7 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
   const [semesterData, setSemesterData] = useState<SemesterForm>({
     id: -1,
     year: 2024,
-    active: true,
+    active: false,
     period_id: -1,
     catalog: null
   });
@@ -257,27 +262,27 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
     event.preventDefault();
 
     showProgress();
-
-    if (SemesterService.getActiveSemester()) {
-      setSemesterData({...semesterData, active: false});
-    }
     
-    const formData = new FormData();
-    formData.append('year', semesterData.year.toString());
-    formData.append('active', semesterData.active.toString());
-    formData.append('period_id', semesterData.period_id.toString());
-    if (semesterData.catalog) {
-      formData.append('catalog', semesterData.catalog);
-    }
-    console.log(formData);
-    SemesterService.createSemester(formData)
-      .then((_response: AxiosResponse<SemesterForm>) => {
-        props.handleUpload(_response.data);
-        // window.alert("Semester has been uploaded");
-        completeProgress();
-      })
+    SemesterService.getActiveSemester()
       .catch((error) => {
-        console.error(error);
+        setSemesterData({...semesterData, active: true});
+      })
+      const formData = new FormData();
+      formData.append('year', semesterData.year.toString());
+      formData.append('active', semesterData.active.toString());
+      formData.append('period_id', semesterData.period_id.toString());
+      if (semesterData.catalog) {
+        formData.append('catalog', semesterData.catalog);
+      }
+      console.log("Is active? " + formData.get("active"));
+      SemesterService.createSemester(formData)
+        .then((_response: AxiosResponse<SemesterForm>) => {
+          props.handleUpload(_response.data);
+          // window.alert("Semester has been uploaded");
+          completeProgress();
+        })
+        .catch((error) => {
+          console.error(error);
       });
   }
 

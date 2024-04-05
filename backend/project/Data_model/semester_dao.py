@@ -7,8 +7,8 @@ def get_all() -> list[Semester] or None:
     return Semester.query.all()
 
 def get_active() -> Semester or None:
-     semester = Semester.query.filter(Semester.active == True).first_or_404()
-    #  print(semester)
+     semester = Semester.query.filter(Semester.active == 1).first_or_404()
+     print("Active found: " + str(semester.id))
      return semester
     
 # Retrieve every Semester that fits filter from the db
@@ -37,8 +37,8 @@ def update_semester(semester : Semester) -> bool:
     if saved_semester is None:
         return False
     
-    print('program_dao Saved Semester: ' + str(saved_semester.active))
-    print('Current Semester: ' + str(semester.active))
+    # print('program_dao Saved Semester: ' + str(saved_semester.active))
+    # print('Current Semester: ' + str(semester.active))
 
     db.session.merge(semester)
     db.session.commit()
