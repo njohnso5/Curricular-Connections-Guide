@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, g
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 import json
@@ -6,7 +6,7 @@ import binascii
 from sqlalchemy.exc import SQLAlchemyError, ArgumentError
 from schemas.semester import SemesterPostSchema, SemesterSchema, SemesterUpdateSchema
 from schemas.course import CourseSchema
-from Data_model.models import Semester, Subject, Course, Faculty, RoleEnum
+from Data_model.models import Semester, Subject, Course, Faculty, RoleEnum, AdminLog
 from Data_model.permissions import require_roles
 import Data_model.semester_dao as dao
 import Data_model.subject_dao as subject_dao
@@ -16,6 +16,7 @@ import Data_model.faculty_dao as faculty_dao
 from Data_model.models import db
 from werkzeug.utils import secure_filename
 import pandas
+from Utilities import logging
 
 # Build this blueprint of routes with the '/course' prefix
 semester_controller = Blueprint('semester_api', __name__, url_prefix='/semesters')
@@ -46,7 +47,11 @@ class SemesterList(MethodView):
         semester.active = semester_data.get("active")
 
         try:
+            log = AdminLog()
+            log.call = "POST /v1/semesters/ HTTP/1.1 200"
+            log.unity_id = g.user.unity_id
             dao.insert_semester(semester)
+            logging.logAPI(log)
         except SQLAlchemyError:
             abort(500, message="An error occured inserting the semester")
         if (len(request.files) != 0):
@@ -183,7 +188,11 @@ class SemesterDetail(MethodView):
         semester: Semester = dao.get_by_id(semester_id)
 
         try:
+            log = AdminLog()
+            log.call = "DELETE /v1/semesters/" + str(semester) + "/ HTTP/1.1 200"
+            log.unity_id = g.user.unity_id
             dao.delete_semester(semester)
+            logging.logAPI(log)
         except SQLAlchemyError as e:
             print(e)
             abort(500, message="An error occured deleting the semester")
