@@ -2,14 +2,15 @@ from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from sqlalchemy.exc import SQLAlchemyError, ArgumentError
 from schemas import CoursePostSchema, CourseSchema
-from Data_model.models import db, Course, RoleEnum, Course_to_Faculty, Course_to_Theme, Faculty, Theme, Subject
-from flask import request
+from Data_model.models import db, Course, RoleEnum, Course_to_Faculty, Course_to_Theme, Faculty, Theme, Subject, AdminLog
+from flask import request, g
 from Data_model.permissions import require_roles
 import Data_model.course_dao as course_dao
 import Data_model.theme_dao as theme_dao
 import Data_model.faculty_dao as faculty_dao
 import Data_model.subject_dao as subject_dao
 import pandas
+from Utilities import logging
 
 
 # Build this blueprint of routes with the '/course' prefix
@@ -81,8 +82,12 @@ class CourseList(MethodView):
             course.faculty = faculty_list
         # Finish building the course object and add it to the db
         try:
+            log = AdminLog()
+            log.call = "POST /v1/courses/ HTTP/1.1 200"
+            log.unity_id = g.user.unity_id
             course_dao.insert_course(course)
             theme_dao.classify_course(course, commit=True)
+            logging.logAPI(log)
         except SQLAlchemyError:
             abort(500, message="An error occured inserting the course")
         except ArgumentError:
@@ -166,7 +171,11 @@ class DeleteCourses(MethodView):
             data = request.get_json()
             course_ids = data.get('courseIds', [])
             for course_id in course_ids:
+                log = AdminLog()
+                log.call = "DELETE /v1/courses/" + str(course_id) + "/ HTTP 1.1 200"
+                log.unity_id = g.user.unity_id
                 course_dao.delete_course(course_id)
+                logging.logAPI(log)
         except SQLAlchemyError as e:
             print(e)
             abort(400, message="Error deleting courses")

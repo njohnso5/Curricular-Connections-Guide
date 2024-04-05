@@ -4,7 +4,7 @@ from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from sqlalchemy.exc import SQLAlchemyError, ArgumentError
 import Data_model.theme_dao as theme_dao
-from Data_model.models import db, Theme, RoleEnum
+from Data_model.models import db, Theme, RoleEnum, AdminLog
 from schemas import ThemeSchema, ThemePostSchema, CourseSchema
 from Data_model.permissions import require_roles
 from Utilities import logging
@@ -28,9 +28,11 @@ class ThemeList(MethodView):
         theme.name = theme_data.get("name")  
     # Finish building the theme object and add it to the db
         try:
+            log = AdminLog()
+            log.call = "POST /v1/themes/ HTTP/1.1 200"
+            log.unity_id = g.user.unity_id
             theme_dao.insert(theme)
-            call = g.user.unity_id + " POST /v1/themes/ HTTP/1.1 200"
-            logging.Logging.logAPI('log.txt', call)
+            logging.logAPI(log)
         except SQLAlchemyError:
             abort(500, message="An error occured inserting the theme")
         except ArgumentError:
@@ -47,9 +49,16 @@ def handle_theme_id(theme_id):
 
     if request.method == "DELETE":
         # If the request method is DELETE, delete the theme by its ID
-        theme_dao.delete(theme_id)
-        call = g.user.unity_id + " DELETE /v1/themes/" + str(theme_id) + "/ HTTP/1.1 200"
-        logging.Logging.logAPI('log.txt', call)
+        try:
+            log = AdminLog()
+            log.call = "DELETE /v1/themes/" + str(theme_id) + "/ HTTP/1.1 200"
+            log.unity_id = g.user.unity_id
+            theme_dao.delete(theme_id)
+            logging.logAPI(log)
+        except SQLAlchemyError:
+            abort(500, message="An error occured inserting the theme")
+        except ArgumentError:
+            abort(500, message="Theme object not part of session")
 
         # Return a JSON response indicating successful deletion and a status code of 200
         return make_response(jsonify({"success": "Theme deleted"}), 200)

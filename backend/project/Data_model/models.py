@@ -100,7 +100,20 @@ class Semester(db.Model):
 class Subject(db.Model):
     __table_name__ = "subject"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    subject: Mapped[String] = mapped_column(String(6), nullable=False) 
+    subject: Mapped[String] = mapped_column(String(6), nullable=False)
+
+class AdminLog(db.Model):
+    __table_name__ = "AdminLog"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    unity_id: Mapped[String] = mapped_column(String(20), nullable=False)
+    call: Mapped[String] = mapped_column(String(200), nullable=False)
+    datetime: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+
+class UserLog(db.Model):
+    __table_name__ = "UserLog"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    query: Mapped[String] = mapped_column(String(200), nullable=False)
+    datetime: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
 
 class Department(enum.Enum):
     CRAFTS = "Crafts Center"
