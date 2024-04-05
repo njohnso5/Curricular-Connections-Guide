@@ -158,7 +158,7 @@ class ActiveSemester(MethodView):
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def get(self):
         semester = dao.get_active()
-        print("Active found: " + str(semester.id))
+        print(semester)
         return semester
     
     @semester_controller.arguments(SemesterUpdateSchema, location="form")

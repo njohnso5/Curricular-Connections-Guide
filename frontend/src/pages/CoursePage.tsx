@@ -28,7 +28,7 @@ const NewSemesterTab: React.FC = () => {
 
     const handleSemesterUpload = (semester: SemesterForm) => {
         setSemesters((previous) => {
-            return [semester, ...previous ?? []];
+            return [semester, ...previous];
         })
     }
 

@@ -256,17 +256,38 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
     period_id: -1,
     catalog: null
   });
-
+  useEffect(() => {
+    console.log(semesterData.active);
+    SemesterService.getActiveSemester()
+      .then((response) => {
+        if (JSON.stringify(response.data) === '{}') {
+          setSemesterData({...semesterData, active: true});
+        }
+        else {
+          setSemesterData({...semesterData, active: false});
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+  const resetData = () => {
+    setSemesterData({
+      id: -1,
+      year: 2024,
+      active: false,
+      period_id: -1,
+      catalog: null
+    });
+  };
   function handleSubmit(event: React.FormEvent) {
     // do this with axios
     event.preventDefault();
 
     showProgress();
     
-    SemesterService.getActiveSemester()
-      .catch((error) => {
-        setSemesterData({...semesterData, active: true});
-      })
+      console.log('here');
+      console.log(semesterData.active);
       const formData = new FormData();
       formData.append('year', semesterData.year.toString());
       formData.append('active', semesterData.active.toString());
@@ -276,14 +297,16 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
       }
       console.log("Is active? " + formData.get("active"));
       SemesterService.createSemester(formData)
-        .then((_response: AxiosResponse<SemesterForm>) => {
+        .then((_response) => {
           props.handleUpload(_response.data);
           // window.alert("Semester has been uploaded");
+          resetData();
           completeProgress();
         })
         .catch((error) => {
           console.error(error);
       });
+      
   }
 
   const [periods, setPeriods] = useState([]);

@@ -7,8 +7,9 @@ def get_all() -> list[Semester] or None:
     return Semester.query.all()
 
 def get_active() -> Semester or None:
-     semester = Semester.query.filter(Semester.active == 1).first_or_404()
-     print("Active found: " + str(semester.id))
+     semester = Semester.query.filter(Semester.active == 1).first()
+     print("Active found: ")
+     print(semester)
      return semester
     
 # Retrieve every Semester that fits filter from the db
