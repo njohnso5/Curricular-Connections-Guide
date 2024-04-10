@@ -1,7 +1,7 @@
 # Import necessary modules and classes
-from flask import request, send_from_directory
+from flask import request, send_from_directory, g
 from Data_model.permissions import require_roles
-from Data_model.models import RoleEnum
+from Data_model.models import RoleEnum, AdminLog
 from schemas import (
     ProgramPostSchema,
     ProgramSchema,
@@ -32,6 +32,7 @@ from Data_model.permissions import (
     superuser_permission,
     ccg_permission,
 )
+from Utilities import logging
 
 # Create a Blueprint for the program API with a specified URL prefix
 program_router = Blueprint("program_api", __name__, url_prefix="/program")
@@ -86,7 +87,11 @@ class HandleProgram(MethodView):
                 new_prg.image_filename = filename
 
             # Insert the new program into the database
+            log = AdminLog()
+            log.call = "POST /v1/program/ HTTP/1.1 200"
+            log.unity_id = g.user.unity_id
             prog_dao.insert(new_prg)
+            logging.logAPI(log)
 
             # Classify program themes and commit changes
             theme_dao.classify_program(new_prg, commit=True)
