@@ -107,13 +107,13 @@ class AdminLog(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     unity_id: Mapped[String] = mapped_column(String(20), nullable=False)
     call: Mapped[String] = mapped_column(String(200), nullable=False)
-    datetime: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    datetime: Mapped[String] = mapped_column(String(200), nullable=False)
 
 class UserLog(db.Model):
     __table_name__ = "UserLog"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    query: Mapped[String] = mapped_column(String(200), nullable=False)
-    datetime: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    querySearch: Mapped[String] = mapped_column(String(200), nullable=False)
+    datetime: Mapped[String] = mapped_column(String(200), nullable=False)
 
 class Department(enum.Enum):
     CRAFTS = "Crafts Center"

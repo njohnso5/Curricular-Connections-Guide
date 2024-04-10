@@ -8,7 +8,8 @@ from Controllers import (
     admin_controller,
     user_controller,
     role_controller,
-    search_controller
+    search_controller,
+    log_controller
 )
 
 #Combine the routes of the all of the controllers under a parent route with the prefix "/v1"
@@ -23,4 +24,5 @@ api.register_blueprint(admin_controller)
 api.register_blueprint(user_controller)
 api.register_blueprint(role_controller)
 api.register_blueprint(search_controller)
+api.register_blueprint(log_controller)
 

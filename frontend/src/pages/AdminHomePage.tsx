@@ -7,7 +7,8 @@ import { Link } from 'react-router-dom'
         {title: "Manage Courses", link: "/admin/courses"},
         {title: "Manage Programs", link: "/admin/programs"},
         {title: "Administrators", link: "/admin/administrators"},
-        {title: "Manage Themes", link: "/admin/themes"}
+        {title: "Manage Themes", link: "/admin/themes"},
+        {title: "Logging Details", link: "/admin/logging"}
     ]
 
     return(
