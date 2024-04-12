@@ -143,7 +143,11 @@ class CourseList(MethodView):
 
         course.faculty = faculty_list
         try:
+            log = AdminLog()
+            log.call = "PUT /v1/courses/" + str(course) + "/ HTTP 1.1 200"
+            log.unity_id = g.user.unity_id
             course_dao.update_course(course)
+            logging.logAPI(log)
             theme_dao.classify_course(course, commit=True)
         except SQLAlchemyError:
             abort(500, message="An error occured updating the course")
