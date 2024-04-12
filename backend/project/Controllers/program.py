@@ -116,7 +116,11 @@ class HandleProgram(MethodView):
 
             # Update the program without modifying showings yet
             program = prog_dao.get_by_id(programid)
+            log = AdminLog()
+            log.call = "PUT /v1/programs/" + str(programid) + "/ HTTP/1.1 200"
+            log.unity_id = g.user.unity_id
             result = prog_dao.update(program_data, programid)
+            logging.logAPI(log)
             
             if len(program.showings) > len(showings):
                 flag = True
@@ -173,7 +177,11 @@ class HandleProgramID(MethodView):
         if filename is not None and os.path.exists(IMAGE_DIR.joinpath(filename)):
             os.remove(IMAGE_DIR.joinpath(filename))
             # Path.unlink(IMAGE_DIR.joinpath(filename))
+        log = AdminLog()
+        log.call = "DELETE /v1/programs/" + str(programid) + "/ HTTP/1.1 200"
+        log.unity_id = g.user.unity_id
         prog_dao.delete(programid)
+        logging.logAPI(log)
 
         return
 
