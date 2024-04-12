@@ -40,13 +40,13 @@ class Classifier:
         for theme in self.themes:
             self.theme_doc[theme.name] = self.nlp(theme.name)
 
-    def filter_themes(self, description : str, threashold=0.74):
+    def filter_themes(self, description : str, threashold=0.80):
 
         # Remove thems based on semantic similarity
         description_doc = self.nlp(description)
         filtered_themes = []
         removed_themes = []
-        keep_threshold = 0.7
+        keep_threshold = 0.9
         for theme in self.themes:
             has_meaning = False
             keep = False
@@ -70,7 +70,7 @@ class Classifier:
 
     def vectorize(self, themes : [] , description : str):
 
-        processed_themes = [self.preprocess_text(theme.name.lower() + " art program topic") for theme in themes]
+        processed_themes = [self.preprocess_text(theme.name.lower()) for theme in themes]
         # Preprocess description and themes
         processed_description = self.preprocess_text(description.lower())
 
@@ -78,7 +78,7 @@ class Classifier:
         documents = [processed_description] + processed_themes
 
         # Create TF-IDF vectorizer with tuned parameters
-        vectorizer = TfidfVectorizer(min_df=2, max_df=0.8)
+        vectorizer = TfidfVectorizer(min_df=1, max_df=2)
         lsa = TruncatedSVD(n_components=2, random_state=42)
 
         # Pipeline for vectorization and LSA
