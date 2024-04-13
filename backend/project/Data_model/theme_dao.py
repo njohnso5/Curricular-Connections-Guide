@@ -138,7 +138,7 @@ def classify_course_bulk(courses: list[Course], commit: bool = False):
 
     print("Checking courses")
     for course in courses:
-        print(course.title_short)
+        # print(course.title_short)
         clss.set_description(course.description)
         clss.set_course_title(course.title_long)
         try:

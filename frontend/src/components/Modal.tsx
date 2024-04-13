@@ -484,6 +484,7 @@ const ModalEditCourseBody: React.FC< { course: Course, updateCoursesList: ()=> v
   }
   const submitForm = () => {
     if (localCourse) {
+      // console.log(localCourse);
       const formData = new FormData();
       formData.append('course_id', localCourse.id.toString());
       formData.append('title_short', localCourse.title_short.toString());
@@ -497,7 +498,11 @@ const ModalEditCourseBody: React.FC< { course: Course, updateCoursesList: ()=> v
       formData.append('faculty', faculty.toString());
       formData.append('emails', emails.toString());
       formData.append('semester_id', localCourse.semester_id.toString());
-
+      console.log(JSON.stringify(localCourse.faculty.map(faculty => faculty.id)));
+      const facultyIds_string = localCourse.faculty.map(faculty => faculty.id).join(';');
+      // console.log(facultyIds_string);
+      formData.append('faculty_list', facultyIds_string);
+      // console.log([...formData.entries()]);
       CourseService.updateCourse(formData)
         .then(() => {
           updateForm();

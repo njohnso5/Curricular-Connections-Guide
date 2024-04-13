@@ -5,6 +5,7 @@ class SubjectSchema(Schema):
     id = fields.Int()
     subject = fields.Str()
 
+
 # Define the schema for the CoursePostSchema
 # This schema will be used to validate the data that is sent to the server when creating a new course
 # The data that is sent to the server must contain the following fields:
@@ -20,12 +21,29 @@ class CoursePostSchema(Schema):
     faculty = fields.Str(required=True)
     emails = fields.Str(required=True)
     semester_id = fields.Int(required=True)
-    faculty_list = fields.List(fields.Nested(FacultySchema()), required=False)
+
     topics_description = fields.Str(required=False)
     # topics_description_s = fields.Str(required=False)
     # topics_description_f = fields.Str(required=False)
     course_id = fields.Int(required=False)
     
+class CoursePutSchema(Schema):
+    id = fields.Int(dump_only=True)
+    title_short = fields.Str(required=True)
+    title_long = fields.Str(required=True)
+    description = fields.Str(required=True)
+    subject = fields.Str(required=True)
+    catalog_number = fields.Int(required=True)
+    faculty = fields.Str(required=True)
+    emails = fields.Str(required=True)
+    semester_id = fields.Int(required=True)
+    faculty_list = fields.Str(required=True)
+    topics_description = fields.Str(required=False)
+    # topics_description_s = fields.Str(required=False)
+    # topics_description_f = fields.Str(required=False)
+    course_id = fields.Int(required=False)
+    
+
 
 
 class CourseSchema(Schema):
