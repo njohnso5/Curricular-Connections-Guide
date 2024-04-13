@@ -143,9 +143,7 @@ class SemesterList(MethodView):
                             print(db_faculty.name)
                             db_faculty.email = email
                             faculty_dao.insert_faculty(db_faculty)
-                        else:
-                            db_faculty.name = names[emails_string.index(email)]
-                            faculty_dao.update_faculty(db_faculty)
+
                         if db_faculty not in faculty_list:
                             faculty_list.append(db_faculty)        
                             
