@@ -15,8 +15,15 @@ import Data_model.theme_dao as theme_dao
 import Data_model.faculty_dao as faculty_dao
 from Data_model.models import db
 from werkzeug.utils import secure_filename
-import pandas
+import pandas, re
 from Utilities import logging
+
+def validate_email(email):
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    if re.match(pattern, email):
+        return True
+    else:
+        return False
 
 # Build this blueprint of routes with the '/course' prefix
 semester_controller = Blueprint('semester_api', __name__, url_prefix='/semesters')
@@ -125,7 +132,7 @@ class SemesterList(MethodView):
                     for email in emails_string:
                         print(email, "line 121")
                         print(pandas.isna(email))
-                        if pandas.isna(email):
+                        if pandas.isna(email) or not validate_email(email):
                             continue
                         db_faculty = faculty_dao.get_faculty_by_name(faculty_dao.Faculty.email==email)
                         print(db_faculty)

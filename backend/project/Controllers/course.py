@@ -9,9 +9,15 @@ import Data_model.course_dao as course_dao
 import Data_model.theme_dao as theme_dao
 import Data_model.faculty_dao as faculty_dao
 import Data_model.subject_dao as subject_dao
-import pandas
+import pandas, re
 from Utilities import logging
 
+def validate_email(email):
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    if re.match(pattern, email):
+        return True
+    else:
+        return False
 
 # Build this blueprint of routes with the '/course' prefix
 course_controller = Blueprint('course_api', __name__, url_prefix='/courses')
@@ -66,7 +72,7 @@ class CourseList(MethodView):
 
         faculty_list = []
         for email in course_data.get("emails").split(";"):
-            if pandas.isna(email):
+            if pandas.isna(email) or not validate_email(email):
                 continue
 
             db_faculty = faculty_dao.get_faculty_by_name(faculty_dao.Faculty.email==email)
@@ -126,7 +132,7 @@ class CourseList(MethodView):
         faculty_list = []
         print(emails)
         for email in emails:
-            if pandas.isna(email):
+            if pandas.isna(email) or not validate_email(email):
                 continue
             # Risk of updating faculty email, it will create a new faculty with the same name
             db_faculty = faculty_dao.get_faculty_by_name(faculty_dao.Faculty.email==email)
