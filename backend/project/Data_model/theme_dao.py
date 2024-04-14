@@ -202,8 +202,8 @@ def search_courses_by_themes(themes: list[int]) -> list[Course]:
         .distinct()
         .subquery()
     )
-
-    filter = Course.id.in_(subquery)
+    # Filter for courses that match the subquery and the semester is active
+    filter = Course.id.in_(subquery) & Course.semester.has(active=True)
     # Query for programs that match the subquery
     courses = db.session.query(Course).filter(filter).all()
     return courses
