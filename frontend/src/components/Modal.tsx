@@ -58,39 +58,27 @@ const EditSemesterModalButton: React.FC<ModalButtonProps> = ({ modalTarget, butt
   );
 }
 
-const ChangeActiveSemesterBody: React.FC = () => {
+const ChangeActiveSemesterBody: React.FC = ({semesters, setSemesters, currentActive, setCurrentActive}) => {
 
-  const [currentActive, setCurrentActive] = useState<SemesterForm | null>(null);
   const [selectedSemesterId, setSelectedSemesterId] = useState<number | null>(null);
-  const [semesters, setSemesters] = useState<SemesterForm[] | null>();
-
-  useEffect(() => {
-    SemesterService.getSemesters()
-      .then((response) => {
-        setSemesters(response.data);
-      })
-    SemesterService.getActiveSemester()
-      .then((response) => {
-        console.log(response.data);
-        setCurrentActive(response.data);
-      })
-  }, []);
 
   const handleChange = () => {
     console.log("inside handle change function");
     
     // console.log(selectedSemesterId);
-    if (selectedSemesterId !== null) {
-      const formDatafalse = new FormData();
-      const activeF = false;
-      console.log("Current Active: " + currentActive.id.toString());
-      formDatafalse.append("id", currentActive.id.toString());
-      formDatafalse.append("active", activeF.toString());
-      console.log("Form Data: " + formDatafalse.get("id"));
-      SemesterService.setActive(formDatafalse)
-        .catch((error: any) => {
-          console.error('Error changing active semester:', error);
+    if (selectedSemesterId !== undefined) {
+      if (currentActive !== undefined) {
+        const formDatafalse = new FormData();
+        const activeF = false;
+        console.log("Current Active: " + currentActive.id.toString());
+        formDatafalse.append("id", currentActive.id.toString());
+        formDatafalse.append("active", activeF.toString());
+        console.log("Form Data: " + formDatafalse.get("id"));
+        SemesterService.setActive(formDatafalse)
+          .catch((error: any) => {
+            console.error('Error changing active semester:', error);
         });
+      }
       const formDatatrue = new FormData();
       const activeT = true;
       formDatatrue.append("id", selectedSemesterId.toString());
@@ -129,30 +117,22 @@ const ChangeActiveSemesterBody: React.FC = () => {
   )
 }
 
-const DeleteSemesterBody: React.FC = () => {
+const DeleteSemesterBody: React.FC = ({semesters, setSemesters}) => {
 
   const [selectedSemesterId, setSelectedSemesterId] = useState<number | null>(null);
-  const [semesters, setSemesters] = useState<SemesterForm[] | null>();
-
-  useEffect(() => {
-    SemesterService.getSemesters()
-      .then((response) => {
-        setSemesters(response.data);
-      })
-  }, []);
 
   const handleDelete = () => {
     console.log("inside handle delete function");
     console.log(selectedSemesterId);
-    if (selectedSemesterId !== null) {
+    if (selectedSemesterId !== undefined) {
       // Call the SemesterService or your API function to delete the selected semester
       SemesterService.removeSemester(selectedSemesterId)
-        .then(() => {
+        .then((_response) => {
           // Handle successful deletion (e.g., refresh the list of semesters)
-          setSemesters((prevSemesters: SemesterForm[] | null) =>
-            prevSemesters ? prevSemesters.filter((semester) => semester.id !== selectedSemesterId) : null
+          setSemesters((prevSemesters: SemesterForm[] | undefined) =>
+            prevSemesters ? prevSemesters.filter((semester) => semester.id !== selectedSemesterId) : undefined
           );
-          setSelectedSemesterId(null);
+          setSelectedSemesterId(undefined);
         })
         .catch((error: any) => {
           console.error('Error deleting semester:', error);

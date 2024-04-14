@@ -16,12 +16,18 @@ const NewSemesterTab: React.FC = () => {
 
     const [id, setId] = useState<number | null>(null);
     const [semesters, setSemesters] = useState<SemesterForm[] | null>();
+    const [currentActive, setCurrentActive] = useState<SemesterForm | null>();
 
     useEffect(() => {
 
         SemesterService.getSemesters()
             .then((response) => {
                 setSemesters(response.data);
+            })
+
+        SemesterService.getActiveSemester()
+            .then((response) => {
+                setCurrentActive(response.data);
             })
 
     }, []);
@@ -37,13 +43,10 @@ const NewSemesterTab: React.FC = () => {
     
     };
 
-
-
-
     return (
         <div className="container-fluid">
             <div className='d-flex align-items-center justify-content-between w-100'>
-                <div className="btn-group" role="toolbar">
+                <div className="btn-group flex-grow-1" role="toolbar">
                     <ModalButton modalTarget="uploadModal" buttonMessage="Add a semester" />
                     <Modal modalTarget="uploadModal" modalTitle="CREATE A NEW SEMESTER" modalBody={<ModalNewSemesterBody handleUpload={handleSemesterUpload} />}></Modal>
                     <Modal modalTarget="progressBarModal" modalBody={<SemesterUploadProgressBar />} modalTitle="REQUEST IN PROGRESS">Your request is in process. Please wait.</Modal>
@@ -52,13 +55,13 @@ const NewSemesterTab: React.FC = () => {
                         <button type="button" className={`btn btn-default ${id === semester.id ? 'selected' : ''}`} value={semester.id} onClick={() => handleClick(semester.id)}>{semester.period.period} {semester.year}</button>
                     )) : null}
                 </div>
-                <div>
+                <div className="edit-button">
                     <EditSemesterModalButton modalTarget="EditSemesterModal" buttonMessage="Edit the active semester" />
-                    <Modal modalTarget="EditSemesterModal" modalTitle="EDIT THE ACTIVE SEMESTER" modalBody={<ChangeActiveSemesterBody />} />
+                    <Modal modalTarget="EditSemesterModal" modalTitle="EDIT THE ACTIVE SEMESTER" modalBody={<ChangeActiveSemesterBody semesters={semesters} setSemesters={setSemesters} currentActive={currentActive} setCurrentActive={setCurrentActive}/>} />
                 </div>
-                <div className="delete-button-wrapper">
+                <div>
                     <DeleteSemesterModalButton modalTarget="DeleteSemesterModal" buttonMessage="Delete a semester" />
-                    <Modal modalTarget="DeleteSemesterModal" modalTitle="DELETE A SEMESTER" modalBody={<DeleteSemesterBody />} />
+                    <Modal modalTarget="DeleteSemesterModal" modalTitle="DELETE A SEMESTER" modalBody={<DeleteSemesterBody semesters={semesters} setSemesters={setSemesters}/>} />
                 </div>
             </div>
             {id !== null && <TableBodyRows id={id}/>}

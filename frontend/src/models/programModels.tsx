@@ -33,7 +33,7 @@ interface ProgramForm {
   description: string,
   link: string,
   showings: ProgramFormShowing[],
-  image: File | undefined;
+  image: File | undefined,
 }
 
 export type {

@@ -3,6 +3,8 @@ import ProgramService from "../services/programs-services";
 import { Modal, ModalButton } from "../components/Modal";
 import { Showing, Theme, ProgramData, ProgramFormShowing, ProgramForm } from "../models/programModels";
 import styles from "../css/ProgramPage.module.css";
+import SemesterService from '../services/SemesterService';
+import {SemesterForm} from "../CourseModels/courseModels.tsx";
 
 const TimeTabBar: React.FC<{updatePrograms: Function}> = ({updatePrograms}) => {
   const tabs = document.querySelectorAll(".nav-link");
@@ -379,12 +381,21 @@ const initialForm: ProgramForm = {
   description: "",
   link: "",
   showings: [],
-  image: undefined
+  image: undefined,
 };
 
 const ModalNewProgramBody: React.FC<{updatePrograms: Function}> = ({updatePrograms}) => {
   const [filePreview, setFilePreview] = useState("");
+  const [semesters, setSemesters] = useState<SemesterForm[] | null>();
+  const [selectedSemesterId, setSelectedSemesterId] = useState<Number | undefined>();
   let imageInput = document.getElementById("image-input") as HTMLInputElement;
+
+  useEffect(() => {
+    SemesterService.getSemesters()
+      .then((response) => {
+        setSemesters(response.data);
+      })
+  }, [])
 
   function handleSubmit(event: any) {
     event.preventDefault();
@@ -400,6 +411,9 @@ const ModalNewProgramBody: React.FC<{updatePrograms: Function}> = ({updateProgra
     if (programData.image) {
       formData.append('image', programData.image);
     }
+    console.log("Semester: " + selectedSemesterId);
+    formData.append('semester_id', selectedSemesterId);
+    
 
     ProgramService.uploadProgram(formData)
     .then((response) => {
@@ -455,7 +469,7 @@ const ModalNewProgramBody: React.FC<{updatePrograms: Function}> = ({updateProgra
     updatedShowings.pop();
     setForm({...programData, showings: updatedShowings});
   }
-
+  
   const [programData, setForm] = useState(initialForm);
 
   return (
@@ -464,6 +478,15 @@ const ModalNewProgramBody: React.FC<{updatePrograms: Function}> = ({updateProgra
         <span>Image</span>
         <img className="img-fluid" src={filePreview} />
         <input id="image-input" type="file" className="form-control" name="image" onChange={handleImageSelect} required/>
+      </div>
+      <div className="form-group align-items-center gap-1">
+        <span>Semester</span>
+        <select className="custom-select" name="semester" value={selectedSemesterId | ""} onChange={(e) => setSelectedSemesterId(parseInt(e.target.value, 10))} required>
+          <option value=""></option>
+          {semesters ? semesters.map((semester) => (
+            <option className="dropdown-item" key={semester.semesterId} value={semester.id} name="SemesterId">{semester.period.period} {semester.year}</option>
+          )) : null}
+        </select>
       </div>
       <div className="form-group align-items-center gap-1">
         <span>Title</span>

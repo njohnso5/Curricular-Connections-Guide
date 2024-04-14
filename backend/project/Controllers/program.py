@@ -18,6 +18,7 @@ from pathlib import Path
 import Data_model.program_dao as prog_dao
 import Data_model.showing_dao as show_dao
 import Data_model.theme_dao as theme_dao
+import Data_model.semester_dao as semester_dao
 from werkzeug.exceptions import NotFound
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.datastructures import FileStorage
@@ -64,6 +65,7 @@ class HandleProgram(MethodView):
     @program_router.response(200, ProgramSchema)
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def post(self, program_data):
+        print(program_data)
         try:
             # Extract showings from program data
             showings = json.loads(program_data.pop("showings"))
@@ -80,6 +82,9 @@ class HandleProgram(MethodView):
                 filename = upload_file(request.files["image"], IMAGE_DIR)
 
                 new_prg.image_filename = filename
+
+            semester = semester_dao.get_by_id(program_data.pop("semester_id"))
+            new_prg.semester = semester
 
             # Insert the new program into the database
             prog_dao.insert(new_prg)
