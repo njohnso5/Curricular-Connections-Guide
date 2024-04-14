@@ -15,6 +15,10 @@ class ProgramService {
     return axios.get(API_URL);
   }
 
+  getProgramsBySemester (semester_id: Number) {
+    return axios.get(API_URL + "semester/" + semester_id + "/");
+  }
+
   getProgram (id: Number) {
     return axios.get(API_URL + id + "/");
   }
