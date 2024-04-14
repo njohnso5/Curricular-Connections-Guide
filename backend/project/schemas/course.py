@@ -26,23 +26,6 @@ class CoursePostSchema(Schema):
     # topics_description_s = fields.Str(required=False)
     # topics_description_f = fields.Str(required=False)
     course_id = fields.Int(required=False)
-    
-class CoursePutSchema(Schema):
-    id = fields.Int(dump_only=True)
-    title_short = fields.Str(required=True)
-    title_long = fields.Str(required=True)
-    description = fields.Str(required=True)
-    subject = fields.Str(required=True)
-    catalog_number = fields.Int(required=True)
-    faculty = fields.Str(required=True)
-    emails = fields.Str(required=True)
-    semester_id = fields.Int(required=True)
-    faculty_list = fields.Str(required=True)
-    topics_description = fields.Str(required=False)
-    # topics_description_s = fields.Str(required=False)
-    # topics_description_f = fields.Str(required=False)
-    course_id = fields.Int(required=False)
-    
 
 
 

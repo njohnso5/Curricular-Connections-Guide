@@ -128,7 +128,7 @@ class SemesterList(MethodView):
                     names = str(df.iloc[i, 1 + 8])
                     emails_string = emails.split(";")
                     names_string = names.split(";")
-                    print(names_string)
+                    # print(names_string)
                     count = 0
                     for email in emails_string:
                         # print(email, "line 121")
@@ -140,7 +140,7 @@ class SemesterList(MethodView):
                         if db_faculty is None:
                             db_faculty = Faculty()
                             db_faculty.name = names_string[count]
-                            print(db_faculty.name)
+                            # print(db_faculty.name)
                             db_faculty.email = email
                             faculty_dao.insert_faculty(db_faculty)
 
@@ -199,6 +199,7 @@ class SemesterDetail(MethodView):
             log.call = "DELETE /v1/semesters/" + str(semester) + "/ HTTP/1.1 200"
             log.unity_id = g.user.unity_id
             dao.delete_semester(semester)
+            faculty_dao.delete_unassociated_faculty()
             logging.logAPI(log)
         except SQLAlchemyError as e:
             print(e)

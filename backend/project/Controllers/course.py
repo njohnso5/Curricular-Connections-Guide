@@ -1,7 +1,7 @@
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from sqlalchemy.exc import SQLAlchemyError, ArgumentError
-from schemas import CoursePostSchema, CourseSchema, CoursePutSchema
+from schemas import CoursePostSchema, CourseSchema
 from Data_model.models import db, Course, RoleEnum, Course_to_Faculty, Course_to_Theme, Faculty, Theme, Subject, AdminLog
 from flask import request, g
 from Data_model.permissions import require_roles
@@ -101,15 +101,14 @@ class CourseList(MethodView):
 
         return course
 
-    @course_controller.arguments(CoursePutSchema, location="form")
+    @course_controller.arguments(CoursePostSchema, location="form")
     @course_controller.response(200, CourseSchema)
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def put(self, course_data):
         # print(course_data)
         emails = course_data.get("emails").split(";")
         names = course_data.get("faculty").split(";")
-        faculty_ids = course_data.get("faculty_list").split(";")
-        if len(emails) != len(names) or len(emails) != len(faculty_ids):
+        if len(emails) != len(names) or len(emails) == 0:
             abort(500, message="Emails and names do not match")
         course = course_dao.get_by_id(course_data.get("course_id"))
         course.title_short = course_data.get("title_short")
@@ -132,21 +131,21 @@ class CourseList(MethodView):
         # Check if the faculty has been updated
         faculty_list = []
         # print(emails)
-        for idx, faculty_id in enumerate(faculty_ids):
-            if pandas.isna(faculty_id) or not faculty_id.isdigit():
+        for email in emails:
+            if pandas.isna(email) or not validate_email(email):
                 continue
-            db_faculty = faculty_dao.get_by_id(faculty_id)
+            # Find the faculty by email
+            db_faculty = faculty_dao.get_faculty_by_name(faculty_dao.Faculty.email==email)
+            # If the faculty is not found, create a new faculty object
             if db_faculty is None:
-                abort(500, message="Faculty not found")
-
-            if pandas.isna(emails[idx]) or not validate_email(emails[idx]):
-                continue
-            if db_faculty.email != emails[idx]:
-                db_faculty.email = emails[idx]
-                if db_faculty.name != names[idx]:
-                    db_faculty.name = names[idx]
+                db_faculty = Faculty()
+                db_faculty.email = email
+                db_faculty.name = names[emails.index(email)]
+                faculty_dao.insert_faculty(db_faculty)
+            elif db_faculty.name != names[emails.index(email)]:
+                db_faculty.name = names[emails.index(email)]
                 faculty_dao.update_faculty(db_faculty)
-            
+
             faculty_list.append(db_faculty)
 
         course.faculty = faculty_list
