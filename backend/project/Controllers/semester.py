@@ -15,8 +15,15 @@ import Data_model.theme_dao as theme_dao
 import Data_model.faculty_dao as faculty_dao
 from Data_model.models import db
 from werkzeug.utils import secure_filename
-import pandas
+import pandas, re
 from Utilities import logging
+
+def validate_email(email):
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    if re.match(pattern, email):
+        return True
+    else:
+        return False
 
 # Build this blueprint of routes with the '/course' prefix
 semester_controller = Blueprint('semester_api', __name__, url_prefix='/semesters')
@@ -121,27 +128,27 @@ class SemesterList(MethodView):
                     names = str(df.iloc[i, 1 + 8])
                     emails_string = emails.split(";")
                     names_string = names.split(";")
+                    # print(names_string)
                     count = 0
                     for email in emails_string:
-                        print(email, "line 121")
-                        print(pandas.isna(email))
-                        if pandas.isna(email):
+                        # print(email, "line 121")
+                        # print(pandas.isna(email))
+                        if pandas.isna(email) or not validate_email(email):
                             continue
                         db_faculty = faculty_dao.get_faculty_by_name(faculty_dao.Faculty.email==email)
-                        print(db_faculty)
+                        # print(db_faculty)
                         if db_faculty is None:
                             db_faculty = Faculty()
                             db_faculty.name = names_string[count]
+                            # print(db_faculty.name)
                             db_faculty.email = email
                             faculty_dao.insert_faculty(db_faculty)
-                        else:
-                            db_faculty.name = names[emails_string.index(email)]
-                            faculty_dao.update_faculty(db_faculty)
+
                         if db_faculty not in faculty_list:
                             faculty_list.append(db_faculty)        
                             
                         count +=1            
-                    print(faculty_list)
+                    # print(faculty_list)
                     course.faculty = faculty_list
                     # Adds course to the semester course list
                     course_list.append(course)
@@ -192,6 +199,7 @@ class SemesterDetail(MethodView):
             log.call = "DELETE /v1/semesters/" + str(semester) + "/ HTTP/1.1 200"
             log.unity_id = g.user.unity_id
             dao.delete_semester(semester)
+            faculty_dao.delete_unassociated_faculty()
             logging.logAPI(log)
         except SQLAlchemyError as e:
             print(e)

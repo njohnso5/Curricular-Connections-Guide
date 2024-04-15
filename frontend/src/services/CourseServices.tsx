@@ -18,7 +18,6 @@ class CourseService {
   }
 
   updateCourse (courseForm: FormData) {
-    console.log(courseForm);
     console.log('In updateCourse api call');
     return axios.put(API_URL, courseForm, { headers: { "Content-Type": "multipart/form-data" }})
   }

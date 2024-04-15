@@ -138,7 +138,7 @@ def classify_course_bulk(courses: list[Course], commit: bool = False):
 
     print("Checking courses")
     for course in courses:
-        print(course.title_short)
+        # print(course.title_short)
         clss.set_description(course.description)
         clss.set_course_title(course.title_long)
         try:
@@ -202,8 +202,8 @@ def search_courses_by_themes(themes: list[int]) -> list[Course]:
         .distinct()
         .subquery()
     )
-
-    filter = Course.id.in_(subquery)
+    # Filter for courses that match the subquery and the semester is active
+    filter = Course.id.in_(subquery) & Course.semester.has(active=True)
     # Query for programs that match the subquery
     courses = db.session.query(Course).filter(filter).all()
     return courses

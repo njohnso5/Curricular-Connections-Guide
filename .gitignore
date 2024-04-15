@@ -5,3 +5,4 @@
 *.DS_Store
 image_uploads/
 !image_uploads/.gitkeep
+backend/.coverage

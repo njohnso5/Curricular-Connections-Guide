@@ -1,6 +1,6 @@
-from Data_model.models import db, Faculty
+from Data_model.models import db, Faculty, Course_to_Faculty
 from flask import current_app
-
+from sqlalchemy import exists
 # Retrieve every faculty from the db
 def get_all() -> list[Faculty] or None:
     
@@ -51,4 +51,18 @@ def get_faculty_by_name(expression : bool) -> list[Faculty]:
     
     return Faculty.query.filter(expression).first()  
     
+
+
+
+def delete_unassociated_faculty():
+    # Delete all faculty that are not in the Course_to_Faculty table
+    faculties = Faculty.query.all()
+    for faculty in faculties:
+
+        # Check if the faculty id is in the Course_to_Faculty table
+        is_associated = db.session.query(exists().where(Course_to_Faculty.c.faculty_id == faculty.id)).scalar()
+        if not is_associated:
+            db.session.delete(faculty)
     
+        
+    db.session.commit()
