@@ -9,8 +9,8 @@ import SemesterService from '../../services/SemesterService';
 import { AxiosResponse } from 'axios';
 
 const SearchPage: React.FC = () => {
-    const [results, setResults] = React.useState<ProgramData[] | Course[]>([])
-    const [activeSemesterId, setActiveSemesterId] = React.useState<Number | undefined>();
+    const [results, setResults] = React.useState<ProgramData[] | Course[]>([]);
+    const [activeSemester, setActiveSemester] = React.useState<SemesterForm | null>();
 
     const displayResults = (results: ProgramData[] | Course[]) => {
         if (results.length > 0) {
@@ -29,15 +29,10 @@ const SearchPage: React.FC = () => {
     useEffect(() => {
         SemesterService.getActiveSemester()
             .then((response: AxiosResponse<SemesterForm>) => {
-                setActiveSemesterId(...activeSemesterId, parseInt(response.data.id, 10));
-            })
-        .catch(error => {
-            console.log(error);
-        })
-        console.log(activeSemesterId);
-        programsServices.getProgramsBySemester(activeSemesterId)
-            .then((response: AxiosResponse<ProgramData[]>) => {
-                setResults(response.data);
+                programsServices.getProgramsBySemester(response.data.id)
+                    .then((response: AxiosResponse<ProgramData[]>) => {
+                    setResults(response.data);
+                })
             })
         .catch(error => {
             console.log(error);

@@ -210,10 +210,11 @@ class RelatedCourses(MethodView):
         except ValueError:
             abort(422, message="Bad query parameters")
 
-@program_router.route("/semester/<int:semesterid>/")
+@program_router.route("/semester/<int:semester_id>/")
 class HandleBySemester(MethodView):
     @program_router.response(200, ProgramSchema(many=True))
     def get(self, semester_id):
+        print("Semester id: " + str(semester_id))
         res = prog_dao.get_by_semester(semester_id)
         return res
 
