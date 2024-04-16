@@ -58,7 +58,7 @@ const EditSemesterModalButton: React.FC<ModalButtonProps> = ({ modalTarget, butt
   );
 }
 
-const ChangeActiveSemesterBody: React.FC = ({semesters, setSemesters, currentActive, setCurrentActive}) => {
+const ChangeActiveSemesterBody: React.FC = ({handleSemesterChange, semesters, setSemesters, currentActive, setCurrentActive}) => {
 
   const [selectedSemesterId, setSelectedSemesterId] = useState<number | null>(null);
 
@@ -93,7 +93,8 @@ const ChangeActiveSemesterBody: React.FC = ({semesters, setSemesters, currentAct
         .catch((error: any) => {
           console.error('Error changing active semester:', error);
         });
-
+      
+      handleSemesterChange();
     }
   };
 
