@@ -91,6 +91,7 @@ def classify_program(program: Program, commit: bool = False):
     clss = Classifier()
     clss.set_description(program.description)
     clss.set_themes(themes)
+    clss.preprocess_themes()
 
     predicted_themes = clss.classify()
 
@@ -110,6 +111,7 @@ def classify_course(course: Course, commit: bool = False):
 
     clss = Classifier()
     clss.set_themes(themes)
+    clss.preprocess_themes()
     clss.set_description(course.description)
     clss.set_course_title(course.title_long)
     predicted_themes = clss.classify()
@@ -132,9 +134,11 @@ def classify_course_bulk(courses: list[Course], commit: bool = False):
 
     clss = Classifier()
     clss.set_themes(themes)
+    clss.preprocess_themes()
+
     print("Checking courses")
     for course in courses:
-        print(course.title_short)
+        # print(course.title_short)
         clss.set_description(course.description)
         clss.set_course_title(course.title_long)
         try:
@@ -198,8 +202,8 @@ def search_courses_by_themes(themes: list[int]) -> list[Course]:
         .distinct()
         .subquery()
     )
-
-    filter = Course.id.in_(subquery)
+    # Filter for courses that match the subquery and the semester is active
+    filter = Course.id.in_(subquery) & Course.semester.has(active=True)
     # Query for programs that match the subquery
     courses = db.session.query(Course).filter(filter).all()
     return courses

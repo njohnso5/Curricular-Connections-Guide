@@ -60,7 +60,9 @@ const EditSemesterModalButton: React.FC<ModalButtonProps> = ({ modalTarget, butt
 
 const ChangeActiveSemesterBody: React.FC = ({handleSemesterChange, semesters, setSemesters, currentActive, setCurrentActive}) => {
 
-  const [selectedSemesterId, setSelectedSemesterId] = useState<number | null>(null);
+
+  const [selectedSemesterId, setSelectedSemesterId] = useState<number | undefined>(undefined);
+  const [semesters, setSemesters] = useState<SemesterForm[] | undefined>();
 
   const handleChange = () => {
     console.log("inside handle change function");
@@ -159,7 +161,7 @@ const DeleteSemesterBody: React.FC = ({semesters, setSemesters, currentActive, s
               <option className="dropdown-item"></option>
               {semesters ? semesters.map((semester) => (
                 <option className="dropdown-item" key={semester.semesterId} value={semester.id} name="SemesterId">{semester.period.period} {semester.year}</option>
-              )) : null}
+              )) : undefined}
             </select>
           </div>
         </div>
@@ -174,8 +176,8 @@ const DeleteSemesterBody: React.FC = ({semesters, setSemesters, currentActive, s
 }
 
 const DeleteThemeBody: React.FC = () => {
-  const [selectedThemeId, setSelectedThemeId] = useState<Number | null>(null);
-  const [themes, setThemes] = useState<Theme[] | null>();
+  const [selectedThemeId, setSelectedThemeId] = useState<Number | undefined>(undefined);
+  const [themes, setThemes] = useState<Theme[] | undefined>();
 
   useEffect(() => {
     themesService.getTags().then((response) => {setThemes(response.data)});
@@ -185,14 +187,15 @@ const DeleteThemeBody: React.FC = () => {
     console.log("inside handle delete function");
     console.log(selectedThemeId);
 
-    if(selectedThemeId != null) {
+    if(selectedThemeId != undefined) {
       themesService.removeTheme(selectedThemeId)
         .then(() => {
-          setThemes((prevThemes) => prevThemes ? prevThemes.filter((theme) => theme.id !== selectedThemeId) : null);
+          setThemes((prevThemes) => prevThemes ? prevThemes.filter((theme) => theme.id !== selectedThemeId) : undefined);
         })
         .catch((error) => {
           console.log("Error deleting theme", error);
         });
+      location.reload();
     }
   };
 
@@ -207,7 +210,7 @@ const DeleteThemeBody: React.FC = () => {
               <option className="dropdown-item"></option>
               {themes ? themes.map((theme) => (
                 <option className="dropdown-item" key={theme.themeId} value={theme.id} name="ThemeId">{theme.name}</option>
-              )) : null}
+              )) : undefined}
             </select>
           </div>
         </div>
@@ -244,7 +247,7 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
     year: 2024,
     active: false,
     period_id: -1,
-    catalog: null
+    catalog: undefined
   });
   useEffect(() => {
     console.log(semesterData.active);
@@ -365,7 +368,7 @@ interface ModalNewThemeBodyProps {
 const ModalNewThemeBody: React.FC<ModalNewThemeBodyProps> =(props) => {
   const[themeData, setThemeData] = useState<Theme>({
     id: -1,
-    name: null
+    name: undefined
   });
 
   function handleSubmit(event: React.FormEvent) {
@@ -382,6 +385,8 @@ const ModalNewThemeBody: React.FC<ModalNewThemeBodyProps> =(props) => {
       .catch((error) => {
         console.error(error);
       });
+    
+    location.reload();
   }
 
   return (
@@ -443,7 +448,7 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
     // email: string;
     // semester_id: number;
     // 
-    id: null,
+    id: undefined,
     title_short: "",
     title_long: "",
     description: "",
@@ -451,7 +456,7 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
     // topics_description_s: "",
     // topics_description_f: "",
     subject: "",
-    catalog_number: null,
+    catalog_number: undefined,
     faculty: "",
     emails: "",
     semester_id: semesterId
@@ -484,7 +489,7 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
 
         // Clear the form after adding the course
         setCourseData({
-          id: null,
+          id: undefined,
           title_short: "",
           title_long: "",
           description: "",
@@ -492,7 +497,7 @@ const ModalAddCourseBody: React.FC<{ semesterId: number }> = ({ semesterId, upda
           // topics_description_s: "",
           // topics_description_f: "",
           subject: "",
-          catalog_number: null,
+          catalog_number: undefined,
           faculty: "",
           emails: "",
           semester_id: semesterId
@@ -576,10 +581,11 @@ const ModalEditCourseBody: React.FC< { course: Course, updateCoursesList: ()=> v
 
   }, [course]);
   if(!localCourse) {
-    return null;
+    return undefined;
   }
   const submitForm = () => {
     if (localCourse) {
+      // console.log(localCourse);
       const formData = new FormData();
       formData.append('course_id', localCourse.id.toString());
       formData.append('title_short', localCourse.title_short.toString());
@@ -594,6 +600,7 @@ const ModalEditCourseBody: React.FC< { course: Course, updateCoursesList: ()=> v
       formData.append('emails', emails.toString());
       formData.append('semester_id', localCourse.semester_id.toString());
 
+      console.log([...formData.entries()]);
       CourseService.updateCourse(formData)
         .then(() => {
           updateForm();
@@ -670,7 +677,7 @@ const ModalDeleteCourseBody: React.FC<{ courseIds: number []; updateCoursesList:
 
     // console.log("inside handle delete function");
     // console.log(courseIds);
-    if (courseIds !== null && courseIds.length > 0) {
+    if (courseIds !== undefined && courseIds.length > 0) {
       // Call the CourseService or your API function to delete the selected course
       CourseService.removeCourses(courseIds)
         .then(() => {
@@ -722,7 +729,7 @@ const SemesterUploadComplete: React.FC<ModalProps> = ({modalTarget, modalTitle, 
         <div className="progress-bar progress-bar-striped progress-bar-animated" style={{width: "100%"}}></div>
       </div>
       <div className="text-center mt-3">
-        <button class="btn btn-primary btn-close" id="closebutton" type="button" aria-label="Close">Close</button>
+        <button className="btn btn-primary btn-close" id="closebutton" type="button" aria-label="Close">Close</button>
       </div>
     </React.Fragment>
   )

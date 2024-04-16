@@ -25,8 +25,8 @@ def before_request():
     if g.user != None:
         identity = Identity(g.user.unity_id)
         identity_changed.send(app, identity=identity)
-    user = Administrator.query.filter_by(unity_id="test").first()
-    if user != None:
+    # Need this code here for the test cases to bypass the admin authorization
+    if os.environ['DEBUG'] == 'True':
         identity = Identity("test")
         identity.auth_type="admin"
         identity.provides.add(RoleNeed(RoleEnum.ADMIN))
@@ -40,7 +40,7 @@ def create_app(database_uri=get_database_uri()):
     app.config["CACHE_TYPE"] = "SimpleCache"
     DIR = Path(__file__, "..").resolve()
     IMAGE_PATH = DIR.joinpath("image_uploads/")
-    
+    os.environ['DEBUG'] = "False"
     if not os.path.exists(IMAGE_PATH):
         IMAGE_PATH.mkdir()
 
@@ -48,11 +48,9 @@ def create_app(database_uri=get_database_uri()):
     
     with app.app_context():
         db.create_all()
-
     from Controllers.api_controller import api
     app.before_request(before_request)
     app.register_blueprint(api)
-
     return app
 
 app = create_app()

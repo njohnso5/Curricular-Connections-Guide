@@ -15,6 +15,8 @@ from schemas import (
 
 # Import data access objects (DAOs) from the Data_model module
 from Data_model import theme_dao, program_dao, showing_dao, course_dao
+from Data_model.models import UserLog
+from Utilities import logging
 
 # Create a Blueprint for the search-related APIs
 search_controller = Blueprint("search_api", __name__, url_prefix="/search")
@@ -23,11 +25,14 @@ search_controller = Blueprint("search_api", __name__, url_prefix="/search")
 @search_controller.route("/")
 class ProgramSearch(MethodView):
     # Define endpoint for POST requests with search criteria
-    @search_controller.arguments(SearchProgramSchema, location="form")
+    @search_controller.arguments(SearchProgramSchema)
     @search_controller.response(200, ProgramSchema(many=True))
     def post(self, search_data: dict):
         # Perform a search for programs using data from the request
+        log = UserLog()
+        log.query = str(search_data)
         programs = program_dao.search(**search_data)
+        logging.logQuery(log)
         return programs
 
 # Endpoint for searching courses based on specified themes

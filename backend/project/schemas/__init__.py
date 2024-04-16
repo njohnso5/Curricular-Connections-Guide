@@ -6,3 +6,4 @@ from schemas.semester import SemesterPostSchema, SemesterSchema, SemesterUpdateS
 from schemas.program import DepartmentListSchema, ProgramPostSchema, ProgramSchema, ProgramPutSchema
 from schemas.search import SearchCourseSchema, SearchProgramSchema
 from schemas.administratorsSchema import RoleSchema, AdministratorsSchema, AdministratorPostSchema
+from schemas.logging import AdminLogSchema, UserLogSchema

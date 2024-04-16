@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import CourseService from "../services/CourseServices.tsx"
 import SemesterService from '../services/SemesterService';
 import "../css/CoursePage.css"
 import { Course, SemesterForm } from "../CourseModels/courseModels.tsx";
 import { Modal, ModalButton, ModalNewSemesterBody, DeleteSemesterModalButton, DeleteSemesterBody, ModalAddCourseBody, ModalEditCourseBody, ModalDeleteCourseBody, SemesterUploadProgressBar, SemesterUploadComplete, ChangeActiveSemesterBody, EditSemesterModalButton } from "../components/Modal.tsx";
 import CourseModal from './Program/CourseModal.tsx';
-
+import { ProgressBar } from 'react-bootstrap';
+import EditThemes from '../components/EditThemes.tsx';
 interface TableBodyRowsProps {
     id: number;
 }
@@ -17,6 +17,7 @@ const NewSemesterTab: React.FC = () => {
     const [id, setId] = useState<number | null>(null);
     const [semesters, setSemesters] = useState<SemesterForm[] | null>();
     const [currentActive, setCurrentActive] = useState<SemesterForm | null>();
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
 
@@ -43,8 +44,9 @@ const NewSemesterTab: React.FC = () => {
     }
 
     const handleClick = (id: number) => {
+        // Set loading to true when a semester is clicked
+        setIsLoading(true);
         setId(id);
-    
     };
 
     const reloadButtons = () => {
@@ -82,12 +84,14 @@ const NewSemesterTab: React.FC = () => {
                     <Modal modalTarget="DeleteSemesterModal" modalTitle="DELETE A SEMESTER" modalBody={<DeleteSemesterBody semesters={semesters} setSemesters={setSemesters} currentActive={currentActive} setCurrentActive={setCurrentActive}/>} />
                 </div>
             </div>
-            {id !== null && <TableBodyRows id={id}/>}
-        </div >
+
+            {isLoading && <ProgressBar animated now={75} label={'Loading classes'} />}
+            {id !== null && <TableBodyRows id={id} setIsLoading={setIsLoading}/>}
+        </div>
     )
 }
 
-const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
+const TableBodyRows: React.FC<TableBodyRowsProps> = ({id, setIsLoading}) => {
     const [course, setCourse] = useState<Course | undefined>(undefined);
     const [courseId, setCourseId] = useState<number | null>(null);
     const [courses, setCourses] = useState<Course[] | null>();
@@ -97,23 +101,39 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
     /** Whether all courses are selected */
     const [selectedAll, setSelectedAll] = useState(false);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const coursesPerPage = 10;
+    const pageNeighbours = 3;
+    // Calculate the total number of pages
+    const totalPages = Math.ceil((courses ? courses.length : 0) / coursesPerPage);
 
+    // Calculate the page numbers to show
+    const startPage = Math.max(1, currentPage - pageNeighbours);
+    const endPage = Math.min(totalPages, currentPage + pageNeighbours);
+    const pagesToShow = [...Array((endPage - startPage) + 1)].map((_, i) => startPage + i);
+
+    // Get the courses for the current page
+    const currentCourses = courses ? courses.slice((currentPage - 1) * coursesPerPage, currentPage * coursesPerPage) : [];
     
     useEffect(() => {
         
         // Set selected all to false when the id changes, so the radio and checkboxes are unchecked
         setSelectedAll(false);
         setSelectedCourseIds([]);
-
+        setCurrentPage(1);
         SemesterService.getCourses(id)
             .then((response) => {
                 setCourses((prevCourses) => {
-                    console.log(prevCourses);
+                    // console.log(prevCourses);
+                    setIsLoading(false);
                     return response.data;
                 });
             });
     }, [id]);
 
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+    }
 
     const handleClick = (courseId: number) => {
         setCourseId(courseId);
@@ -189,6 +209,7 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
 
         // Update the selected courses
         setSelectedCourseIds([]);
+        window.$("#editThemesModal").modal("hide");
       };
 
 
@@ -197,7 +218,7 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
             <table className="table">
                 <thead>
                     <tr>
-                        <th><input type="radio" class="radio"
+                        <th><input type="radio" className="radio"
                             checked={selectedAll}
                             onClick={() => {handleSelectedAll()}}
                         onChange={()=> {}}></input></th>
@@ -208,7 +229,7 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
                 </thead>
                 <tbody>
                     
-                    {courses && courses.map((course) => (
+                    {courses && currentCourses.map(course => (
                         
                         <tr key={course.id} value={course.id} data-toggle="modal" data-target="#courseInfoDisplay">
                             <th onClick={(e) => {handleClickCheckbox(e, course.id)}}>
@@ -231,6 +252,10 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
                     <Modal modalTarget="addCourseModal" modalTitle="ADD A COURSE" modalBody={<ModalAddCourseBody  semesterId={id} updateCoursesList={updateCoursesList}/>} />
                 </div>
                 <div>
+                    <ModalButton disabled={selectedCourseIds.length !== 1} modalTarget="editThemesModal" buttonMessage="Edit themes" />
+                    <Modal modalTarget="editThemesModal" modalTitle="EDIT A THEME" modalBody={<EditThemes obj={course} update={updateCoursesList} />} />
+                </div>
+                <div>
                     <ModalButton disabled={selectedCourseIds.length !== 1} modalTarget="editCourseModal" buttonMessage="Edit course" />
                     <Modal modalTarget="editCourseModal" modalTitle="EDIT A COURSE" modalBody={<ModalEditCourseBody course={course} updateCoursesList={updateCoursesList} />} />
                 </div>
@@ -241,22 +266,17 @@ const TableBodyRows: React.FC<TableBodyRowsProps> = ({ id}) => {
 
             </div>
             <div>
-                <nav aria-label="...">
-                    <ul class="pagination">
-                        <li class="page-item disabled">
-                            <span class="page-link">Previous</span>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item active">
-                            <span class="page-link">
-                                2
-                                <span class="sr-only">(current)</span>
-                            </span>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
+                <nav>
+                    <ul className="pagination">
+                        {startPage > 1 && <li className="page-item"><a className="page-link" onClick={() => handlePageChange(1)}>1</a></li>}
+                        {startPage > 2 && <li className="page-item"><span className="page-link">...</span></li>}
+                        {pagesToShow.map(page => (
+                            <li key={page} className={`page-item ${page === currentPage ? 'active' : ''}`}>
+                                <a className="page-link" onClick={() => handlePageChange(page)}>{page}</a>
+                            </li>
+                        ))}
+                        {endPage < totalPages - 1 && <li className="page-item"><span className="page-link">...</span></li>}
+                        {endPage < totalPages && <li className="page-item"><a className="page-link" onClick={() => handlePageChange(totalPages)}>{totalPages}</a></li>}
                     </ul>
                 </nav>
             </div>

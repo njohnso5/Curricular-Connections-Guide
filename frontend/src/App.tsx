@@ -4,6 +4,7 @@ import UtilityBar from './components/UtilityBar'
 import PageContent from './components/PageContent'
 import ProgramPage from './pages/ProgramPage'
 import CoursePage from './pages/CoursePage'
+import LoggingPage from './pages/LoggingPage';
 import AuthorizationPage from './pages/Authorization/AuthorizationPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useUser, useUserUpdate } from './hooks/UserContext';
@@ -50,6 +51,7 @@ function App() {
                 <Route path="courses" element={<PageContent pageTitle="Manage Courses" page={<CoursePage />} />} />
                 <Route path="themes" element={<PageContent pageTitle="Manage Themes" page={<ThemePage />} />} />
                 <Route path="administrators" element={<PageContent pageTitle="Administrators" page={<AuthorizationPage />} />}/>
+                <Route path="logging" element={<PageContent pageTitle="Logging" page={<LoggingPage />}/>}/>
               </Route>
           </Route>
           <Route element={<UtilityBar />}>

@@ -5,6 +5,8 @@ import { Showing, Theme, ProgramData, ProgramFormShowing, ProgramForm } from "..
 import styles from "../css/ProgramPage.module.css";
 import SemesterService from '../services/SemesterService';
 import {SemesterForm} from "../CourseModels/courseModels.tsx";
+import programsServices from "../services/programs-services";
+import EditThemes from "../components/EditThemes";
 
 const TimeTabBar: React.FC<{updatePrograms: Function}> = ({updatePrograms}) => {
   const tabs = document.querySelectorAll(".nav-link");
@@ -72,7 +74,7 @@ function listShowingDates(showings: Showing[]) {
   return dateString;
 }
 
-const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
+export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
   const [filePreview, setFilePreview] = useState();
   const [newProgram, setNewProgram] = useState<ProgramData>();
   const [semesters, setSemesters] = useState<SemesterForm[] | undefined>();
@@ -92,7 +94,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
     console.log(program);
   }, [program]);
   if(newProgram == undefined) {
-    return null;
+    return undefined;
   }
   function handleUpdate(event: any) {
     event.preventDefault();
@@ -246,7 +248,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
   )
 }
 
-const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function, showEditProgramBody: ()=> void}> = ({program, updatePrograms, showEditProgramBody}) => {
+const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function, showEditProgramBody: Function, showEditTheme: Function}> = ({program, updatePrograms, showEditProgramBody, showEditTheme}) => {
     function handleDelete(event: any) {
       event.preventDefault();
       if (program) {
@@ -267,7 +269,12 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
       console.log("closeProgramDisplay");
       showEditProgramBody();
     }
-  if (program == null) {
+
+    function showEditThemeDisplay() {
+      showEditTheme();
+    }
+
+  if (program == undefined) {
     return (
     <>
       <p>Could not find program with the requested ID :/</p>
@@ -278,18 +285,18 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
   } else {
     return (
       <>
-        {program.image_filename != null ? (
+        {program.image_filename != undefined ? (
           <div className="form-group align-items-center gap-1">
             <span className={styles.programDisplayLabel}>Image:</span>
             <img className="img-fluid" src={`/api/v1/program/${program.id}/image/`} />
           </div>
-          ) : null}
-        {program.link != null && program.link != undefined && program.link != '' ? (
+          ) : undefined}
+        {program.link != undefined && program.link != undefined && program.link != '' ? (
           <div className="form-group align-items-center gap-1">
             <span className={styles.programDisplayLabel}>Link:</span>
             <p><a href={program.link} target="_blank">{program.link}</a></p>
           </div>
-          ) : null}
+          ) : undefined}
         <div className="form-group align-items-center gap-1">
           <span className={styles.programDisplayLabel}>Semester:</span>
           <p>{program.semester.period.period} {program.semester.year}</p>
@@ -325,6 +332,7 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
           }) : <p>No showings at this time</p>}
         </div>
         <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" onClick={showEditThemeDisplay}> Edit Themes </button>
           <button type="button" className="btn btn-secondary" onClick={closeProgramDisplay}> Edit Program </button>
           
           <button type="button" className="btn btn-secondary" onClick={handleDelete}>Delete Program</button>
@@ -339,6 +347,7 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
 
   const handleProgramSelection = (program: ProgramData) => {
     setCurrentProgram(program);
+    console.log("handleProgramSelection", program);
   };
 
   function findProgramById(programId: number | undefined) {
@@ -346,7 +355,7 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
       return undefined;
     }
 
-    if (programs != null && programs != undefined) {
+    if (programs != undefined && programs != undefined) {
       for (let i = 0; i < programs.length; i++) {
         if (programs[i].id == programId) {
           return programs[i];
@@ -365,6 +374,20 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
     // Make editProgramModal scroll able
     window.$("#editProgramModal").css("overflow-y", "scroll");
 
+  }
+  function showEditTheme() {
+    console.log("showEditTheme");
+    // Close the programDisplay modal
+    window.$("#programDisplay").modal("hide");
+    // Open the editTheme modal
+    window.$("#editTheme").modal("show");
+  }
+  function updatedThemes() {
+    console.log("updatedThemes");
+    window.$("#editTheme").modal("hide");
+    ProgramService.getAllPrograms().then(response => {
+      updatePrograms(response.data);
+    })
   }
   return (
     <>
@@ -391,7 +414,7 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
                         <span key={theme.id} className={`badge badge-pill badge-primary ${styles.tag}`}>{theme.name}</span>
                       );
                     }) : <p>No themes at this time</p>}
-                    {program.themes.length > 4 ? <span>...</span> : null}
+                    {program.themes.length > 4 ? <span>...</span> : undefined}
                 </td>
                 </tr>
               );
@@ -399,10 +422,58 @@ const ProgramPreviewTable: React.FC<{programs: ProgramData[], updatePrograms: Fu
           </tbody>
         </table>
       </div>
-      <Modal modalTarget="programDisplay" modalTitle={currentProgram?.title} modalBody={<ProgramDisplayModalBody program={findProgramById(currentProgram?.id)} updatePrograms={updatePrograms} showEditProgramBody={showEditProgramBody} />} />
+      <Modal modalTarget="programDisplay" modalTitle={currentProgram?.title} modalBody={<ProgramDisplayModalBody program={findProgramById(currentProgram?.id)} updatePrograms={updatePrograms} showEditProgramBody={showEditProgramBody} showEditTheme={showEditTheme} />} />
       <Modal modalTarget="editProgramModal" modalTitle={currentProgram?.title} modalBody={<ModalEditProgramBody program={currentProgram} updatePrograms={updatePrograms} />} />
+      <Modal modalTarget="editTheme" modalTitle="Edit Theme" modalBody={<EditThemes obj={currentProgram} update={updatedThemes} />} />
     </>
   );
+}
+
+
+
+const EmailProfessorsBody: React.FC = () => {
+  const [selectedProgramId, setSelectedProgramId] = useState<Number | undefined>(undefined);
+  const [programs, setPrograms] = useState<ProgramData[] | undefined>();
+
+  useEffect(() => {
+    programsServices.getAllPrograms().then((response) => {setPrograms(response.data)});
+  }, []);
+
+  const handleEmail = () => {
+    console.log(selectedProgramId)
+    if(selectedProgramId != undefined) {
+      programsServices.postEmails(selectedProgramId)
+        .then(() => {})
+        .catch((error) => {
+          console.log("Error getting programs", error);
+        });
+    }
+  };
+
+  return (
+    <form>
+      <div className="row">
+        <div className="col-md-6">
+          <div className="dropdown">
+            <label className="chooseSeason">Programs : </label>
+            <select className="chooseSeason" value={selectedProgramId || ''}
+              onChange={(e) => setSelectedProgramId(parseInt(e.target.value, 10))}>
+              <option className="dropdown-item"></option>
+              {programs ? programs.map((program) => (
+                <option className="dropdown-item" key={program.id} value={program.id} name="ThemeId">{program.title}</option>
+              )) : undefined}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div className="col-md-6">
+        <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={handleEmail}>
+          Notify Professor
+        </button>
+      </div>
+    </form>
+  )
+
 }
 
 const initialForm: ProgramForm = {
@@ -599,7 +670,7 @@ const ProgramPage: React.FC = () => {
       .then(response => {
         setProgramList(response.data);
         response.data.forEach((program) => {
-          console.log(program);
+          // console.log(program);
         });
       })
       .catch(() => {
@@ -618,6 +689,8 @@ const ProgramPage: React.FC = () => {
       <ProgramPreviewTable programs={programList} updatePrograms={setProgramList}/>
       <ModalButton modalTarget="newProgram" buttonMessage="Create Program" />
       <Modal modalTarget="newProgram" modalTitle="Create Program" modalBody={<ModalNewProgramBody updatePrograms={setProgramList} />} />
+      <ModalButton modalTarget="notifyProfessors" buttonMessage="Notify Professors" />
+      <Modal modalTarget="notifyProfessors" modalTitle="Notify Professors" modalBody={<EmailProfessorsBody />} />
     </>
   );
 }

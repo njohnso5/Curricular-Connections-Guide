@@ -1,7 +1,7 @@
 # Import necessary modules and classes
-from flask import request, send_from_directory
+from flask import request, send_from_directory, g
 from Data_model.permissions import require_roles
-from Data_model.models import RoleEnum
+from Data_model.models import RoleEnum, AdminLog
 from schemas import (
     ProgramPostSchema,
     ProgramSchema,
@@ -13,7 +13,11 @@ from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from datetime import datetime
 import os
+import ast
 import json
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from pathlib import Path
 import Data_model.program_dao as prog_dao
 import Data_model.showing_dao as show_dao
@@ -29,6 +33,7 @@ from Data_model.permissions import (
     superuser_permission,
     ccg_permission,
 )
+from Utilities import logging
 
 # Create a Blueprint for the program API with a specified URL prefix
 program_router = Blueprint("program_api", __name__, url_prefix="/program")
@@ -87,7 +92,11 @@ class HandleProgram(MethodView):
             new_prg.semester = semester
 
             # Insert the new program into the database
+            log = AdminLog()
+            log.call = "POST /v1/program/ HTTP/1.1 200"
+            log.unity_id = g.user.unity_id
             prog_dao.insert(new_prg)
+            logging.logAPI(log)
 
             # Classify program themes and commit changes
             theme_dao.classify_program(new_prg, commit=True)
@@ -112,7 +121,11 @@ class HandleProgram(MethodView):
 
             # Update the program without modifying showings yet
             program = prog_dao.get_by_id(programid)
+            log = AdminLog()
+            log.call = "PUT /v1/programs/" + str(programid) + "/ HTTP/1.1 200"
+            log.unity_id = g.user.unity_id
             result = prog_dao.update(program_data, programid)
+            logging.logAPI(log)
             
             if len(program.showings) > len(showings):
                 flag = True
@@ -169,7 +182,11 @@ class HandleProgramID(MethodView):
         if filename is not None and os.path.exists(IMAGE_DIR.joinpath(filename)):
             os.remove(IMAGE_DIR.joinpath(filename))
             # Path.unlink(IMAGE_DIR.joinpath(filename))
+        log = AdminLog()
+        log.call = "DELETE /v1/programs/" + str(programid) + "/ HTTP/1.1 200"
+        log.unity_id = g.user.unity_id
         prog_dao.delete(programid)
+        logging.logAPI(log)
 
         return
 
@@ -189,6 +206,66 @@ class ProgramImage(MethodView):
 
         # Return the stored image file
         return send_from_directory(IMAGE_DIR, filename, mimetype="image/gif")
+
+# Define a class for handling program images
+@program_router.route("/<int:programid>/email/")
+class SendEmail(MethodView):
+    def post(self, programid):
+        program = prog_dao.get_by_id(programid)
+        title = program.title
+        if program.link != "":
+            title = """<a href=" """ + program.link + """">""" + program.title + """</a>"""
+        courses = RelatedCourses.get(self, programid)
+        emails = []
+        for course in ast.literal_eval(courses.data.decode('utf-8')):
+            faculties = course.get("faculty")
+            for faculty in faculties:
+                emails.append(faculty.get("email"))
+        # set up intialization
+        host = "smtp.gmail.com"
+        port = 587
+        sender = "testappemail123321123321@gmail.com"
+        receiever = emails
+        password = "xnna kllc pltu yfkp"
+        message = MIMEMultipart()
+        message['Subject'] = "Curicular Connections Guide"
+        body = """
+        <html>
+            <body>
+                <p>Greetings Faculty or Arts Partner,</p>
+
+                <p>
+                    In 2024, computer science students teamed up with Arts NC State to create an automated platform to connect course content to relevant art programming on campus as
+                    part of the <a href="https://arts.ncsu.edu/about/for-nc-state-faculty/">Curricular Connections Guide.</a>\nYou are receiving this email because a course you teach may be connected to\n
+                </p>
+                <p>""" + title + """</p>
+                <p>If you think there is a connection, please reach out to Amy Sawyers-Williams acsawyer@ncsu.edu about the opportunity for any of the following:<br>
+                - Free tickets for your students to see the event (if ticketed)<br>
+                - Offering extra credit for your students to attend the event<br>
+                - Inviting an artist to visit your class and talk about the art form and/or issues</p>
+
+                <p>We are still in the early stages of this automated program, so if you receive this in error, we apologize. Please let us know so we can update the system.</p>
+
+                <p>If you do take action to connect your course, please reach out to Amy Sawyers-Williams so she can record this in her records: acsawyer@ncsu.edu.</p>
+                <p>Thanks!<br>
+                Amy Sawyers-Williams<br>
+                Manager of Arts Outreach and Engagement<br>
+                NC State University</p>
+            </body>
+        </html>
+        """
+        message.attach(MIMEText(body, 'html'))
+        smtp = smtplib.SMTP(host, port)
+        # Start connection to server
+        smtp.starttls()
+        #log in
+        smtp.login(sender, password)
+        #Send mail
+        smtp.sendmail(sender, receiever, message.as_string())
+        #end connection
+        smtp.quit()
+        return program
+
 
 
 @program_router.route("/<int:programid>/courses/")

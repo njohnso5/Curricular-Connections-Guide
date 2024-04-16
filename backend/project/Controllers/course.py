@@ -2,15 +2,22 @@ from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from sqlalchemy.exc import SQLAlchemyError, ArgumentError
 from schemas import CoursePostSchema, CourseSchema
-from Data_model.models import db, Course, RoleEnum, Course_to_Faculty, Course_to_Theme, Faculty, Theme, Subject
-from flask import request
+from Data_model.models import db, Course, RoleEnum, Course_to_Faculty, Course_to_Theme, Faculty, Theme, Subject, AdminLog
+from flask import request, g
 from Data_model.permissions import require_roles
 import Data_model.course_dao as course_dao
 import Data_model.theme_dao as theme_dao
 import Data_model.faculty_dao as faculty_dao
 import Data_model.subject_dao as subject_dao
-import pandas
+import pandas, re
+from Utilities import logging
 
+def validate_email(email):
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    if re.match(pattern, email):
+        return True
+    else:
+        return False
 
 # Build this blueprint of routes with the '/course' prefix
 course_controller = Blueprint('course_api', __name__, url_prefix='/courses')
@@ -65,7 +72,7 @@ class CourseList(MethodView):
 
         faculty_list = []
         for email in course_data.get("emails").split(";"):
-            if pandas.isna(email):
+            if pandas.isna(email) or not validate_email(email):
                 continue
 
             db_faculty = faculty_dao.get_faculty_by_name(faculty_dao.Faculty.email==email)
@@ -81,8 +88,12 @@ class CourseList(MethodView):
             course.faculty = faculty_list
         # Finish building the course object and add it to the db
         try:
+            log = AdminLog()
+            log.call = "POST /v1/courses/ HTTP/1.1 200"
+            log.unity_id = g.user.unity_id
             course_dao.insert_course(course)
             theme_dao.classify_course(course, commit=True)
+            logging.logAPI(log)
         except SQLAlchemyError:
             abort(500, message="An error occured inserting the course")
         except ArgumentError:
@@ -97,7 +108,7 @@ class CourseList(MethodView):
         # print(course_data)
         emails = course_data.get("emails").split(";")
         names = course_data.get("faculty").split(";")
-        if len(emails) != len(names):
+        if len(emails) != len(names) or len(emails) == 0:
             abort(500, message="Emails and names do not match")
         course = course_dao.get_by_id(course_data.get("course_id"))
         course.title_short = course_data.get("title_short")
@@ -119,18 +130,19 @@ class CourseList(MethodView):
         
         # Check if the faculty has been updated
         faculty_list = []
-        print(emails)
+        # print(emails)
         for email in emails:
-            if pandas.isna(email):
+            if pandas.isna(email) or not validate_email(email):
                 continue
-            # Risk of updating faculty email, it will create a new faculty with the same name
+            # Find the faculty by email
             db_faculty = faculty_dao.get_faculty_by_name(faculty_dao.Faculty.email==email)
+            # If the faculty is not found, create a new faculty object
             if db_faculty is None:
                 db_faculty = Faculty()
                 db_faculty.email = email
                 db_faculty.name = names[emails.index(email)]
                 faculty_dao.insert_faculty(db_faculty)
-            else:
+            elif db_faculty.name != names[emails.index(email)]:
                 db_faculty.name = names[emails.index(email)]
                 faculty_dao.update_faculty(db_faculty)
 
@@ -138,7 +150,11 @@ class CourseList(MethodView):
 
         course.faculty = faculty_list
         try:
+            log = AdminLog()
+            log.call = "PUT /v1/courses/" + str(course) + "/ HTTP 1.1 200"
+            log.unity_id = g.user.unity_id
             course_dao.update_course(course)
+            logging.logAPI(log)
             theme_dao.classify_course(course, commit=True)
         except SQLAlchemyError:
             abort(500, message="An error occured updating the course")
@@ -166,7 +182,11 @@ class DeleteCourses(MethodView):
             data = request.get_json()
             course_ids = data.get('courseIds', [])
             for course_id in course_ids:
+                log = AdminLog()
+                log.call = "DELETE /v1/courses/" + str(course_id) + "/ HTTP 1.1 200"
+                log.unity_id = g.user.unity_id
                 course_dao.delete_course(course_id)
+                logging.logAPI(log)
         except SQLAlchemyError as e:
             print(e)
             abort(400, message="Error deleting courses")
