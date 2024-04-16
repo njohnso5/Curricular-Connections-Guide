@@ -62,7 +62,7 @@ const ChangeActiveSemesterBody: React.FC = ({handleSemesterChange, semesters, se
 
 
   const [selectedSemesterId, setSelectedSemesterId] = useState<number | undefined>(undefined);
-  const [semesters, setSemesters] = useState<SemesterForm[] | undefined>();
+  //const [semesters, setSemesters] = useState<SemesterForm[] | undefined>();
 
   const handleChange = () => {
     console.log("inside handle change function");

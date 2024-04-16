@@ -99,11 +99,9 @@ def search(**kwargs) -> list[Program]:
     searchByCourse: bool = kwargs.get("searchByCourse")
     filters: list[BinaryExpression[bool]] = [] # A list of SQLAlchemy filter expressions
     themes_subquery = None
-
     # Return all programs if no search parameters are given
     if not (themes or title or dates or departments):
         return get_all()
-
     # print(title)
     # Title can be course subject + " " + course number or course_title_long
     if searchByCourse and title:
@@ -183,9 +181,7 @@ def search(**kwargs) -> list[Program]:
                     func.date(Showing.datetime).in_(parsed_dates)
                 )
             )
-            
     # Combine the filters to function as an AND statement in SQL
     crit_query = db.session.query(Program).filter(*filters)
-
     return crit_query.all()
 

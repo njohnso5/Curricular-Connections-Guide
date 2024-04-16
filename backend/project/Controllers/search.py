@@ -2,7 +2,7 @@
 from flask import request, send_from_directory
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
-
+import json
 # Import schemas for data validation and serialization
 from schemas import (
     ThemeSearchSchema,
