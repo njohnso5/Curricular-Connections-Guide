@@ -10,7 +10,6 @@ import { AxiosResponse } from 'axios';
 
 const SearchPage: React.FC = () => {
     const [results, setResults] = React.useState<ProgramData[] | Course[]>([]);
-    const [activeSemester, setActiveSemester] = React.useState<SemesterForm | null>();
 
     const displayResults = (results: ProgramData[] | Course[]) => {
         if (results.length > 0) {

@@ -75,14 +75,21 @@ function listShowingDates(showings: Showing[]) {
 const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
   const [filePreview, setFilePreview] = useState();
   const [newProgram, setNewProgram] = useState<ProgramData>();
+  const [semesters, setSemesters] = useState<SemesterForm[] | undefined>();
+  const [selectedSemesterId, setSelectedSemesterId] = useState<Number | undefined>();
   // Handles the Update button functionality from the Modal-footer module
   useEffect(() => {
     setNewProgram(program);
+    SemesterService.getSemesters()
+      .then((response) => {
+        setSemesters(response.data);
+      })
     /*You need this check here or else when the program page loads it will try to get an id 
       field from an undefined object*/
     if (program != undefined) {
       setFilePreview(`/api/v1/program/${program.id}/image/`)
     }
+    console.log(program);
   }, [program]);
   if(newProgram == undefined) {
     return null;
@@ -102,6 +109,7 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
       if (newProgram.image) {
         formData.append('image', newProgram.image);
       }
+      formData.append('semester_id', newProgram.semester_id);
       console.log("formData: ", formData);
       // Call the updateProgram method from ProgramService
       ProgramService.updateProgram(formData) // Gives updateProgram all of the ProgramData
@@ -125,6 +133,15 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
     const {name, value} = event.target;
     updatedShowings[index] = {...updatedShowings[index], [name]: value};
     setNewProgram((newProgram) => ({...newProgram, showings: updatedShowings}));
+  }
+
+  function handleSemesterChange(event: any) {
+    const id = parseInt(event.target.value, 10);
+    setSelectedSemesterId(id);
+    setNewProgram({
+      ...newProgram,
+      id
+    });
   }
 
   const addShowing = (event: any) => {
@@ -165,6 +182,15 @@ const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePr
         <div className="form-group align-items-center gap-1">
           <span>Title</span>
           <input type="text" className="form-control" name="title" value={newProgram.title} onChange={(e) => setNewProgram({ ...newProgram, title: e.target.value})}  required/>
+        </div>
+        <div className="form-group align-items-center gap-1">
+          <span>Semester</span>
+          <select className="custom-select" name="semester" value={newProgram.semester.id} onChange={handleSemesterChange} required>
+            <option value=""></option>
+            {semesters ? semesters.map((semester) => (
+              <option className="dropdown-item" key={semester.semesterId} value={semester.id} name="SemesterId">{semester.period.period} {semester.year}</option>
+            )) : null}
+          </select>
         </div>
         <div className="form-group align-items-center gap-1">
           <span>Department</span>
@@ -264,6 +290,10 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
             <p><a href={program.link} target="_blank">{program.link}</a></p>
           </div>
           ) : null}
+        <div className="form-group align-items-center gap-1">
+          <span className={styles.programDisplayLabel}>Semester:</span>
+          <p>{program.semester.period.period} {program.semester.year}</p>
+        </div>
         <div className="form-group align-items-center gap-1">
           <span className={styles.programDisplayLabel}>Department:</span>
           <p>{program.department}</p>
