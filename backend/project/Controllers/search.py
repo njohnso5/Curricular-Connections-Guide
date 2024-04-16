@@ -30,7 +30,7 @@ class ProgramSearch(MethodView):
     def post(self, search_data: dict):
         # Perform a search for programs using data from the request
         log = UserLog()
-        log.query = str(search_data)
+        log.querySearch = str(search_data)
         programs = program_dao.search(**search_data)
         logging.logQuery(log)
         return programs

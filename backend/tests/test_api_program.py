@@ -305,11 +305,12 @@ def test_search(client : FlaskClient):
     response = client.post(BASE_URL, data=p1, content_type="multipart/form-data")
     assert response.status_code == 200
     search = {}
-    search["themes"] = ["History"]
+    search["themes"] = []
     search["departments"] = ""
     search["title"] = "Something"
     search["dates"] = []
     search["searchByRange"] = False
+    search["searchByCourse"] = False
     response = client.post("/v1/search/", json=search)
     assert response.status_code == 200
 
