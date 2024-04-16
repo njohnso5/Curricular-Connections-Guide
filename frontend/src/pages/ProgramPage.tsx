@@ -3,9 +3,10 @@ import ProgramService from "../services/programs-services";
 import { Modal, ModalButton } from "../components/Modal";
 import { Showing, Theme, ProgramData, ProgramFormShowing, ProgramForm } from "../models/programModels";
 import styles from "../css/ProgramPage.module.css";
+import SemesterService from '../services/SemesterService';
+import {SemesterForm} from "../CourseModels/courseModels.tsx";
 import programsServices from "../services/programs-services";
 import EditThemes from "../components/EditThemes";
-
 
 const TimeTabBar: React.FC<{updatePrograms: Function}> = ({updatePrograms}) => {
   const tabs = document.querySelectorAll(".nav-link");
@@ -76,14 +77,21 @@ function listShowingDates(showings: Showing[]) {
 export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, updatePrograms: Function}> = ({program, updatePrograms}) => {
   const [filePreview, setFilePreview] = useState();
   const [newProgram, setNewProgram] = useState<ProgramData>();
+  const [semesters, setSemesters] = useState<SemesterForm[] | undefined>();
+  const [selectedSemesterId, setSelectedSemesterId] = useState<Number | undefined>();
   // Handles the Update button functionality from the Modal-footer module
   useEffect(() => {
     setNewProgram(program);
+    SemesterService.getSemesters()
+      .then((response) => {
+        setSemesters(response.data);
+      })
     /*You need this check here or else when the program page loads it will try to get an id 
       field from an undefined object*/
     if (program != undefined) {
       setFilePreview(`/api/v1/program/${program.id}/image/`)
     }
+    console.log(program);
   }, [program]);
   if(newProgram == undefined) {
     return undefined;
@@ -103,6 +111,7 @@ export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, u
       if (newProgram.image) {
         formData.append('image', newProgram.image);
       }
+      formData.append('semester_id', newProgram.semester_id);
       console.log("formData: ", formData);
       // Call the updateProgram method from ProgramService
       ProgramService.updateProgram(formData) // Gives updateProgram all of the ProgramData
@@ -126,6 +135,15 @@ export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, u
     const {name, value} = event.target;
     updatedShowings[index] = {...updatedShowings[index], [name]: value};
     setNewProgram((newProgram) => ({...newProgram, showings: updatedShowings}));
+  }
+
+  function handleSemesterChange(event: any) {
+    const id = parseInt(event.target.value, 10);
+    setSelectedSemesterId(id);
+    setNewProgram({
+      ...newProgram,
+      id
+    });
   }
 
   const addShowing = (event: any) => {
@@ -166,6 +184,15 @@ export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, u
         <div className="form-group align-items-center gap-1">
           <span>Title</span>
           <input type="text" className="form-control" name="title" value={newProgram.title} onChange={(e) => setNewProgram({ ...newProgram, title: e.target.value})}  required/>
+        </div>
+        <div className="form-group align-items-center gap-1">
+          <span>Semester</span>
+          <select className="custom-select" name="semester" value={newProgram.semester.id} onChange={handleSemesterChange} required>
+            <option value=""></option>
+            {semesters ? semesters.map((semester) => (
+              <option className="dropdown-item" key={semester.semesterId} value={semester.id} name="SemesterId">{semester.period.period} {semester.year}</option>
+            )) : null}
+          </select>
         </div>
         <div className="form-group align-items-center gap-1">
           <span>Department</span>
@@ -270,6 +297,10 @@ const ProgramDisplayModalBody: React.FC<{program: ProgramData | undefined, updat
             <p><a href={program.link} target="_blank">{program.link}</a></p>
           </div>
           ) : undefined}
+        <div className="form-group align-items-center gap-1">
+          <span className={styles.programDisplayLabel}>Semester:</span>
+          <p>{program.semester.period.period} {program.semester.year}</p>
+        </div>
         <div className="form-group align-items-center gap-1">
           <span className={styles.programDisplayLabel}>Department:</span>
           <p>{program.department}</p>
@@ -451,12 +482,21 @@ const initialForm: ProgramForm = {
   description: "",
   link: "",
   showings: [],
-  image: undefined
+  image: undefined,
 };
 
 const ModalNewProgramBody: React.FC<{updatePrograms: Function}> = ({updatePrograms}) => {
   const [filePreview, setFilePreview] = useState("");
+  const [semesters, setSemesters] = useState<SemesterForm[] | null>();
+  const [selectedSemesterId, setSelectedSemesterId] = useState<Number | undefined>();
   let imageInput = document.getElementById("image-input") as HTMLInputElement;
+
+  useEffect(() => {
+    SemesterService.getSemesters()
+      .then((response) => {
+        setSemesters(response.data);
+      })
+  }, [])
 
   function handleSubmit(event: any) {
     event.preventDefault();
@@ -472,6 +512,9 @@ const ModalNewProgramBody: React.FC<{updatePrograms: Function}> = ({updateProgra
     if (programData.image) {
       formData.append('image', programData.image);
     }
+    console.log("Semester: " + selectedSemesterId);
+    formData.append('semester_id', selectedSemesterId);
+    
 
     ProgramService.uploadProgram(formData)
     .then((response) => {
@@ -527,7 +570,7 @@ const ModalNewProgramBody: React.FC<{updatePrograms: Function}> = ({updateProgra
     updatedShowings.pop();
     setForm({...programData, showings: updatedShowings});
   }
-
+  
   const [programData, setForm] = useState(initialForm);
 
   return (
@@ -536,6 +579,15 @@ const ModalNewProgramBody: React.FC<{updatePrograms: Function}> = ({updateProgra
         <span>Image</span>
         <img className="img-fluid" src={filePreview} />
         <input id="image-input" type="file" className="form-control" name="image" onChange={handleImageSelect} required/>
+      </div>
+      <div className="form-group align-items-center gap-1">
+        <span>Semester</span>
+        <select className="custom-select" name="semester" value={selectedSemesterId | ""} onChange={(e) => setSelectedSemesterId(parseInt(e.target.value, 10))} required>
+          <option value=""></option>
+          {semesters ? semesters.map((semester) => (
+            <option className="dropdown-item" key={semester.semesterId} value={semester.id} name="SemesterId">{semester.period.period} {semester.year}</option>
+          )) : null}
+        </select>
       </div>
       <div className="form-group align-items-center gap-1">
         <span>Title</span>

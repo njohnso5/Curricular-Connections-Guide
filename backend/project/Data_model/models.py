@@ -54,6 +54,13 @@ Course_to_Faculty = Table(
     Column("faculty_id", ForeignKey("faculty.id")),
 )
 
+Program_to_Semester = Table(
+    "program_to_semester",
+    db.Model.metadata,
+    Column("semester_id", ForeignKey("semester.id")),
+    Column("program_id", ForeignKey("program.id")),
+)
+
 
 @dataclass
 class Theme(db.Model):
@@ -96,6 +103,8 @@ class Semester(db.Model):
     period_id: Mapped[ForeignKey] = mapped_column(ForeignKey("period.id"))
     courses = relationship("Course", back_populates="semester", lazy=True, cascade="all, delete")
     period = relationship("Period", back_populates="semesters", lazy=True)
+    programs = relationship("Program", back_populates="semester", lazy=True, cascade="all, delete")
+
 
 class Subject(db.Model):
     __table_name__ = "subject"
@@ -142,6 +151,10 @@ class Program(db.Model):
     image_filename: Mapped[String] = mapped_column(String(150), nullable=True)
     showings: Mapped[list["Showing"]] = relationship()
     themes: Mapped[list["Theme"]] = relationship(secondary=Program_to_Theme)
+    semester_id: Mapped[ForeignKey] = mapped_column(
+        ForeignKey("semester.id"), nullable=False
+    )
+    semester = relationship("Semester", back_populates="programs", lazy=True, cascade="all, delete")
 
 
 @dataclass

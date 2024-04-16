@@ -3,12 +3,13 @@ import SearchNavBar from './SearchNavBar';
 import { ProgramData } from '../../models/programModels'
 import ProgramCard from './ProgramCard';
 import styles from "../../css/SearchNavBar.module.css"
-import { Course, isCourse } from '../../CourseModels/courseModels';
+import { Course, isCourse, SemesterForm } from '../../CourseModels/courseModels';
 import programsServices from '../../services/programs-services';
+import SemesterService from '../../services/SemesterService';
 import { AxiosResponse } from 'axios';
 
 const SearchPage: React.FC = () => {
-    const [results, setResults] = React.useState<ProgramData[] | Course[]>([])
+    const [results, setResults] = React.useState<ProgramData[] | Course[]>([]);
 
     const displayResults = (results: ProgramData[] | Course[]) => {
         if (results.length > 0) {
@@ -25,9 +26,13 @@ const SearchPage: React.FC = () => {
     }
     
     useEffect(() => {
-        programsServices.getAllPrograms().then((response: AxiosResponse<ProgramData[]>) => {
-            setResults(response.data);
-        })
+        SemesterService.getActiveSemester()
+            .then((response: AxiosResponse<SemesterForm>) => {
+                programsServices.getProgramsBySemester(response.data.id)
+                    .then((response: AxiosResponse<ProgramData[]>) => {
+                    setResults(response.data);
+                })
+            })
         .catch(error => {
             console.log(error);
         })

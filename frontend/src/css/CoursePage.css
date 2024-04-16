@@ -20,8 +20,8 @@
   cursor: pointer;
 }
 
-.delete-button-wrapper {
-  margin-left: auto;
+.edit-button {
+  margin-right: 1px;
 }
 
 .outer-button-container {

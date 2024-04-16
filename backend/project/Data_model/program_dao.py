@@ -22,6 +22,14 @@ def get_by_id(id: int) -> Program or None:
 
     return program
 
+def get_by_semester(semester_id: int) -> list[Program] or None:
+    programs = db.session.query(Program).filter(Program.semester_id == semester_id)
+    
+    if not programs:
+        raise NotFound("Program not found")
+    
+    return programs
+
 # Search programs by title
 def search_by_title(title: str) -> list[Program] | None:
     search_param = "%{}%".format(title)

@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields
-from schemas import ThemeSchema
+from schemas import ThemeSchema, SemesterSchema
 
 class ShowingSchema(Schema):
     id = fields.Int()
@@ -34,6 +34,7 @@ class ProgramSchema(Schema):
     image_filename = fields.Str()
     themes = fields.List(fields.Nested(ThemeSchema()))
     showings = fields.List(fields.Nested(ShowingSchema()))
+    semester = fields.Nested(SemesterSchema())
 
 class ProgramPostSchema(Schema):
     id = fields.Int()
@@ -42,6 +43,7 @@ class ProgramPostSchema(Schema):
     description = fields.Str(required=True)
     link = fields.Str(required=False)
     showings = fields.Str()
+    semester_id = fields.Int(required=True)
 
 
 class ProgramPutSchema(Schema):
@@ -51,3 +53,4 @@ class ProgramPutSchema(Schema):
     title = fields.Str(required=True)
     description = fields.Str(required=True)
     showings = fields.List(fields.Nested(ShowingPutSchema()), required=True)
+    semester_id = fields.Int(required=True)
