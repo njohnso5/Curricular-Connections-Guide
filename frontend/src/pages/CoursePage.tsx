@@ -22,14 +22,17 @@ const NewSemesterTab: React.FC = () => {
 
         SemesterService.getSemesters()
             .then((response) => {
+                console.log(response.data);
                 setSemesters(response.data);
             })
 
         SemesterService.getActiveSemester()
             .then((response) => {
                 setCurrentActive(response.data);
+                if (response.data.id !== undefined) {
+                    setId(response.data.id);
+                }
             })
-
     }, []);
 
     const handleSemesterUpload = (semester: SemesterForm) => {
@@ -48,11 +51,11 @@ const NewSemesterTab: React.FC = () => {
             <div className='d-flex align-items-center justify-content-between w-100'>
                 <div className="btn-group flex-grow-1" role="toolbar">
                     <ModalButton modalTarget="uploadModal" buttonMessage="Add a semester" />
-                    <Modal modalTarget="uploadModal" modalTitle="CREATE A NEW SEMESTER" modalBody={<ModalNewSemesterBody handleUpload={handleSemesterUpload} />}></Modal>
+                    <Modal modalTarget="uploadModal" modalTitle="CREATE A NEW SEMESTER" modalBody={<ModalNewSemesterBody handleUpload={handleSemesterUpload} currentActive={currentActive} setCurrentActive={setCurrentActive}/>}></Modal>
                     <Modal modalTarget="progressBarModal" modalBody={<SemesterUploadProgressBar />} modalTitle="REQUEST IN PROGRESS">Your request is in process. Please wait.</Modal>
                     <Modal modalTarget="progressBarCompleteModal" modalBody={<SemesterUploadComplete />} modalTitle="REQUEST COMPLETED">Thank you for waiting.</Modal>
                     {semesters ? semesters.map((semester) => (
-                        <button type="button" className={`btn btn-default ${id === semester.id ? 'selected' : ''}`} value={semester.id} onClick={() => handleClick(semester.id)}>{semester.period.period} {semester.year}</button>
+                        <button type="button" className={`btn btn-default ${id === semester.id ? 'selected' : ''}`} value={semester.id} onClick={() => handleClick(semester.id)}>{semester.period.period} {semester.year}{semester.active ? " (Active)" : ""}</button>
                     )) : null}
                 </div>
                 <div className="edit-button">
@@ -61,7 +64,7 @@ const NewSemesterTab: React.FC = () => {
                 </div>
                 <div>
                     <DeleteSemesterModalButton modalTarget="DeleteSemesterModal" buttonMessage="Delete a semester" />
-                    <Modal modalTarget="DeleteSemesterModal" modalTitle="DELETE A SEMESTER" modalBody={<DeleteSemesterBody semesters={semesters} setSemesters={setSemesters}/>} />
+                    <Modal modalTarget="DeleteSemesterModal" modalTitle="DELETE A SEMESTER" modalBody={<DeleteSemesterBody semesters={semesters} setSemesters={setSemesters} currentActive={currentActive} setCurrentActive={setCurrentActive}/>} />
                 </div>
             </div>
             {id !== null && <TableBodyRows id={id}/>}

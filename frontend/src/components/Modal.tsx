@@ -67,13 +67,14 @@ const ChangeActiveSemesterBody: React.FC = ({semesters, setSemesters, currentAct
     
     // console.log(selectedSemesterId);
     if (selectedSemesterId !== undefined) {
-      if (currentActive !== undefined) {
+      console.log(currentActive);
+      if (currentActive.id !== undefined) {
         const formDatafalse = new FormData();
         const activeF = false;
-        console.log("Current Active: " + currentActive.id.toString());
+        // console.log("Current Active: " + currentActive.id.toString());
         formDatafalse.append("id", currentActive.id.toString());
         formDatafalse.append("active", activeF.toString());
-        console.log("Form Data: " + formDatafalse.get("id"));
+        // console.log("Form Data: " + formDatafalse.get("id"));
         SemesterService.setActive(formDatafalse)
           .catch((error: any) => {
             console.error('Error changing active semester:', error);
@@ -83,12 +84,16 @@ const ChangeActiveSemesterBody: React.FC = ({semesters, setSemesters, currentAct
       const activeT = true;
       formDatatrue.append("id", selectedSemesterId.toString());
       formDatatrue.append("active", activeT.toString());
-      console.log("Form Data: " + formDatatrue);
-      console.log("New Active Semester: " + selectedSemesterId.id);
+      // console.log("Form Data: " + formDatatrue);
+      // console.log("New Active Semester: " + selectedSemesterId.id);
       SemesterService.setActive(formDatatrue)
+        .then((response) => {
+          setCurrentActive(response.data);
+        })
         .catch((error: any) => {
           console.error('Error changing active semester:', error);
         });
+
     }
   };
 
@@ -117,7 +122,7 @@ const ChangeActiveSemesterBody: React.FC = ({semesters, setSemesters, currentAct
   )
 }
 
-const DeleteSemesterBody: React.FC = ({semesters, setSemesters}) => {
+const DeleteSemesterBody: React.FC = ({semesters, setSemesters, currentActive, setCurrentActive}) => {
 
   const [selectedSemesterId, setSelectedSemesterId] = useState<number | null>(null);
 
@@ -133,6 +138,8 @@ const DeleteSemesterBody: React.FC = ({semesters, setSemesters}) => {
             prevSemesters ? prevSemesters.filter((semester) => semester.id !== selectedSemesterId) : undefined
           );
           setSelectedSemesterId(undefined);
+          setCurrentActive(undefined);
+          console.log(currentActive);
         })
         .catch((error: any) => {
           console.error('Error deleting semester:', error);
@@ -217,6 +224,8 @@ const DeleteThemeBody: React.FC = () => {
 
 interface ModalNewSemesterBodyProps {
   handleUpload: (semester: SemesterForm) => void;
+  currentActive: SemesterForm;
+  setCurrentActive: (semester: SemesterForm) => void;
 }
 
 // This is the modal that displays when you click the "add a semester button on the courses page"
@@ -278,6 +287,9 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
       console.log("Is active? " + formData.get("active"));
       SemesterService.createSemester(formData)
         .then((_response) => {
+          if (formData.get("active")) {
+            props.setCurrentActive(_response.data);
+          }
           props.handleUpload(_response.data);
           // window.alert("Semester has been uploaded");
           resetData();
