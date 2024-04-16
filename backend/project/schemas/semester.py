@@ -16,4 +16,5 @@ class SemesterSchema(Schema):
     period = fields.Nested(PeriodSchema())
 
 class SemesterUpdateSchema(Schema):
+    id = fields.Int()
     active = fields.Bool()

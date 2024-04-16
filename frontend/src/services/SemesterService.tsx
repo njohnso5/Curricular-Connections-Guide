@@ -5,6 +5,14 @@ class SemesterService {
   getSemesters () {
     return axios.get(API_URL);
   }
+  
+  getActiveSemester () {
+    return axios.get(API_URL + 'active/')
+  }
+
+  setActive (semesterData: FormData) {
+    return axios.put(API_URL + 'active/', semesterData, {headers: { "Content-Type": "multipart/form-data" }});
+  }
 
   createSemester (semesterData: FormData) {
     return axios.post(API_URL, semesterData, {headers: { "Content-Type": "multipart/form-data" }})

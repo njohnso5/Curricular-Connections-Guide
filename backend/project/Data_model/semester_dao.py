@@ -5,6 +5,12 @@ from flask import current_app
 def get_all() -> list[Semester] or None:
     
     return Semester.query.all()
+
+def get_active() -> Semester or None:
+     semester = Semester.query.filter(Semester.active == 1).first()
+     print("Active found: ")
+     print(semester)
+     return semester
     
 # Retrieve every Semester that fits filter from the db
 def get_by_filter(expression : bool) -> list[Semester] or None:
@@ -32,8 +38,13 @@ def update_semester(semester : Semester) -> bool:
     if saved_semester is None:
         return False
     
+    # print('program_dao Saved Semester: ' + str(saved_semester.active))
+    # print('Current Semester: ' + str(semester.active))
+
     db.session.merge(semester)
     db.session.commit()
+
+    print('New Semester: ' + str(Semester.query.get_or_404(semester.id).active))
     
     return True
     
