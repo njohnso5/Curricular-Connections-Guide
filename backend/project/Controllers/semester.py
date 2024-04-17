@@ -99,7 +99,7 @@ class SemesterList(MethodView):
                         db_subject.subject = subject
                         subject_dao.insert(db_subject)
                     # Reads in course information
-                    course.catalog_number = str(df.iloc[i, 1 + 1]).encode(encoding='latin-1')
+                    course.catalog_number = int(float(str(df.iloc[i, 1 + 1]).encode(encoding='latin-1')))
                     course.title_long = df.iloc[i, 1 + 2]
                     course.title_short = df.iloc[i, 1 + 3]
                     # Reads in description or autofills with empty description

@@ -14,12 +14,14 @@ def test_get(client: FlaskClient):
     assert resp.status_code == 200
     assert isinstance(resp.get_json(), list)
     assert len(resp.get_json()) == 0
-
+    response = client.post("/v1/semesters/", data={ "year": 2023, "active": "true", "period_id": 1})
+    assert response.status_code == 200
     p1 = Program()
     p1.department = str(Department.LIVE.value)
     p1.link = ""
     p1.title = "Something"
     p1.description = "This is a test program"
+    p1.semester_id = 1
     p1.showings = []
     with client.application.app_context():
         db.session.add(p1)
@@ -33,10 +35,13 @@ def test_get(client: FlaskClient):
 
 
 def test_get_past(client: FlaskClient):
+    response = client.post("/v1/semesters/", data={ "year": 2023, "active": "true", "period_id": 1})
+    assert response.status_code == 200
     p1 = Program()
     p1.department = str(Department.LIVE.value)
     p1.link = ""
     p1.title = "Something"
+    p1.semester_id = 1
     p1.description = "This is a test program"
     p1.showings = []
 
@@ -71,10 +76,13 @@ def test_get_past(client: FlaskClient):
 
 
 def test_get_upcoming(client: FlaskClient):
+    response = client.post("/v1/semesters/", data={ "year": 2023, "active": "true", "period_id": 1})
+    assert response.status_code == 200
     p1 = Program()
     p1.department = str(Department.LIVE.value)
     p1.link = ""
     p1.title = "Something"
+    p1.semester_id = 1
     p1.description = "This is a test program"
     p1.showings = []
     with client.application.app_context():
@@ -110,11 +118,13 @@ def test_get_id(client: FlaskClient):
     resp = client.get(BASE_URL + "1/")
 
     assert resp.status_code == 404
-
+    response = client.post("/v1/semesters/", data={ "year": 2023, "active": "true", "period_id": 1})
+    assert response.status_code == 200
     p1 = Program()
     p1.department = str(Department.LIVE.value)
     p1.link = ""
     p1.title = "Something"
+    p1.semester_id = 1
     p1.description = "This is a test program"
     p1.showings = []
     with client.application.app_context():
@@ -141,12 +151,14 @@ def test_post(client: FlaskClient):
     get = client.get(BASE_URL)
     assert get.status_code == 200
     assert len(get.json) == 0
-
+    response = client.post("/v1/semesters/", data={ "year": 2023, "active": "true", "period_id": 1})
+    assert response.status_code == 200
     p1 = {}
     p1["department"] = str(Department.LIVE.value)
     p1["link"] = ""
     p1["title"] = "Something"
     p1["description"] = "This is a test program"
+    p1["semester_id"] = 1
     p1["showings"] = '{}'
 
     resp = client.post(
@@ -191,10 +203,13 @@ def test_post_invalid(client: FlaskClient):
 
 
 def test_delete(client: FlaskClient):
+    response = client.post("/v1/semesters/", data={ "year": 2023, "active": "true", "period_id": 1})
+    assert response.status_code == 200
     p1 = {}
     p1["department"] = str(Department.LIVE.value)
     p1["link"] = ""
     p1["title"] = "Something"
+    p1["semester_id"] = 1
     p1["description"] = "This is a test program"
     p1["showings"] = '{}'
 
@@ -224,11 +239,14 @@ def test_put(client: FlaskClient):
     assert resp.status_code == 200
     assert isinstance(resp.get_json(), list)
     assert len(resp.get_json()) == 0
+    response = client.post("/v1/semesters/", data={ "year": 2023, "active": "true", "period_id": 1})
+    assert response.status_code == 200
 
     p1 = Program()
     p1.department = str(Department.LIVE.value)
     p1.link = ""
     p1.title = "Something"
+    p1.semester_id = 1
     p1.description = "This is a test program"
     p1.showings = []
     with client.application.app_context():
@@ -245,6 +263,7 @@ def test_put(client: FlaskClient):
     p2["department"] = str(Department.LIVE.value)
     p2["link"] = ""
     p2["title"] = "Something"
+    p2["semester_id"] = 1
     p2["description"] = "This is an edited test program"
     p2["showings"] = '{}'
     put = client.put(BASE_URL, data=p2, content_type="multipart/form-data")
@@ -253,10 +272,13 @@ def test_put(client: FlaskClient):
     assert put.json["description"] == "This is an edited test program"
     
 def test_put_showings(client : FlaskClient):
+    response = client.post("/v1/semesters/", data={ "year": 2023, "active": "true", "period_id": 1})
+    assert response.status_code == 200
     p1 = Program()
     p1.department = str(Department.LIVE.value)
     p1.link = ""
     p1.title = "Something"
+    p1.semester_id = 1
     p1.description = "This is a test program"
     p1.showings = []
     show1 = Showing(
@@ -282,7 +304,7 @@ def test_put_showings(client : FlaskClient):
     showing2 = {"id": "2","datetime":(datetime.strptime("25/05/22 02:35:5.523", "%d/%m/%y %H:%M:%S.%f")).strftime("%d/%m/%y %H:%M:%S.%f"), "price":"5", "location":"THeater placey place"}
     showing3 = {"id": "3","datetime":(datetime.strptime("25/05/22 02:35:5.523", "%d/%m/%y %H:%M:%S.%f")).strftime("%d/%m/%y %H:%M:%S.%f"), "price":"5", "location":"THeater placey place"}
     showingList = json.dumps([showing1, showing2, showing3])
-    program = {"id": 1, "department": str(Department.LIVE.value), "link": "", "title": "Something", "showings": showingList, "description": "This is an edited test program"}
+    program = {"id": 1, "department": str(Department.LIVE.value), "link": "", "title": "Something", "semester_id":1, "showings": showingList, "description": "This is an edited test program"}
 
     resp = client.put(
         BASE_URL, data=program, content_type="multipart/form-data"
@@ -290,7 +312,9 @@ def test_put_showings(client : FlaskClient):
     assert resp.status_code == 200
 
 def test_image(client : FlaskClient):
-    p1 = {"department": str(Department.LIVE.value), "link":"test", "title":"Something", "description":"This is a test program History", "image": open("tests/test_image.jpeg" ,"rb"),"showings":'{}'}
+    response = client.post("/v1/semesters/", data={ "year": 2023, "active": "true", "period_id": 1})
+    assert response.status_code == 200
+    p1 = {"department": str(Department.LIVE.value), "link":"test", "title":"Something", "semester_id":1, "description":"This is a test program History", "image": open("tests/test_image.jpeg" ,"rb"),"showings":'{}'}
 
     response = client.post(BASE_URL, data=p1, content_type="multipart/form-data")
     assert response.status_code == 200
@@ -300,7 +324,9 @@ def test_image(client : FlaskClient):
     assert response.status_code == 200
 
 def test_search(client : FlaskClient):
-    p1 = {"department": str(Department.LIVE.value), "link":"test", "title":"Something", "description":"This is a test program History", "showings":'{}'}
+    response = client.post("/v1/semesters/", data={ "year": 2023, "active": "true", "period_id": 1})
+    assert response.status_code == 200
+    p1 = {"department": str(Department.LIVE.value), "link":"test", "title":"Something", "semester_id":1, "description":"This is a test program History", "showings":'{}'}
 
     response = client.post(BASE_URL, data=p1, content_type="multipart/form-data")
     assert response.status_code == 200
