@@ -28,9 +28,9 @@ class AdministratorList(MethodView):
             log = AdminLog()
             log.call = "POST /v1/administrators/ HTTP/1.1 200"
             log.unity_id = g.user.unity_id
-            AdministratorDAO.create_administrator(administrator_data)
+            result = AdministratorDAO.create_administrator(administrator_data)
             logging.logAPI(log)
-            return {"message": "Administrator added"}
+            return result
         except SQLAlchemyError:
             abort(500, "Failed to create a new administrator")
 
@@ -45,9 +45,9 @@ class AdministratorDetail(MethodView):
             log = AdminLog()
             log.call = "PUT /v1/administrators/" + str(administrator_id) +"/ HTTP/1.1 200"
             log.unity_id = g.user.unity_id
-            AdministratorDAO.update_administrator(administrator_id, role_data)
+            result = AdministratorDAO.update_administrator(administrator_id, role_data)
             logging.logAPI(log)
-            return {"message": "Administrator edited"}
+            return result
         except SQLAlchemyError:
             abort(500, "Failed to update administrator")
 
