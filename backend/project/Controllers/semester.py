@@ -53,7 +53,11 @@ class SemesterList(MethodView):
         semester.year = semester_data.get("year")
         semester.period_id = semester_data.get("period_id")
         semester.active = semester_data.get("active")
-
+        
+        # Checks if semester already exists
+        print(semester.year, semester.period_id, "line 128")
+        if dao.get_by_filter(db.and_(dao.Semester.year == semester.year, dao.Semester.period_id == semester.period_id)):
+            abort(409, message="Semester already exists")
         try:
             log = AdminLog()
             log.call = "POST /v1/semesters/ HTTP/1.1 200"
