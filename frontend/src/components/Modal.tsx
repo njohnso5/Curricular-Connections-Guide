@@ -62,7 +62,7 @@ const ChangeActiveSemesterBody: React.FC = ({handleSemesterChange, semesters, se
 
 
   const [selectedSemesterId, setSelectedSemesterId] = useState<number | undefined>(undefined);
-  const [semesters, setSemesters] = useState<SemesterForm[] | undefined>();
+  // const [semesters, setSemesters] = useState<SemesterForm[] | undefined>();
 
   const handleChange = () => {
     console.log("inside handle change function");
@@ -78,6 +78,11 @@ const ChangeActiveSemesterBody: React.FC = ({handleSemesterChange, semesters, se
         formDatafalse.append("active", activeF.toString());
         // console.log("Form Data: " + formDatafalse.get("id"));
         SemesterService.setActive(formDatafalse)
+          .then((response) => {
+            setSemesters((prevSemesters: SemesterForm[] | undefined) =>
+              prevSemesters ? prevSemesters.filter((semester) => semester.id !== selectedSemesterId) : response.data
+            );
+          })
           .catch((error: any) => {
             console.error('Error changing active semester:', error);
         });
@@ -90,13 +95,17 @@ const ChangeActiveSemesterBody: React.FC = ({handleSemesterChange, semesters, se
       // console.log("New Active Semester: " + selectedSemesterId.id);
       SemesterService.setActive(formDatatrue)
         .then((response) => {
+          console.log(response.data);
+          setSemesters((prevSemesters: SemesterForm[] | undefined) =>
+            prevSemesters ? prevSemesters.filter((semester) => semester.id !== selectedSemesterId) : response.data
+          );
           setCurrentActive(response.data);
+          handleSemesterChange();
         })
         .catch((error: any) => {
           console.error('Error changing active semester:', error);
         });
       
-      handleSemesterChange();
     }
   };
 
@@ -235,10 +244,6 @@ interface ModalNewSemesterBodyProps {
 // This is the modal that displays when you click the "add a semester button on the courses page"
 // React.FC is used for a component that doesn't take in any props
 const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
-  function showProgress() {
-    window.$("#uploadModal").modal("hide");
-    window.$("#progressBarModal").modal("show");
-  }
 
   // use state to create the semester form.
 
@@ -276,16 +281,15 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
   function handleSubmit(event: React.FormEvent) {
     // do this with axios
     event.preventDefault();
-
-    showProgress();
+    window.$("#uploadModal").modal("hide");
     
-      console.log('here');
-      console.log(semesterData.active);
       const formData = new FormData();
       formData.append('year', semesterData.year.toString());
       formData.append('active', semesterData.active.toString());
       formData.append('period_id', semesterData.period_id.toString());
       if (semesterData.catalog) {
+        console.log("Showing progress indicator")
+        window.$("#progressBarModal").modal("show");
         formData.append('catalog', semesterData.catalog);
       }
       console.log("Is active? " + formData.get("active"));
@@ -355,7 +359,7 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
             </div>
           </div>
         </div>
-        <button type="submit" className="btn btn-primary" onClick={showProgress}>Save changes</button>
+        <button type="submit" className="btn btn-primary">Save changes</button>
       </form>
     </div>
   );

@@ -50,7 +50,7 @@ const NewSemesterTab: React.FC = () => {
     };
 
     const reloadButtons = () => {
-        console.log("Current Active: " + currentActive.id.toString());
+        // console.log("Current Active: " + currentActive.id.toString());
         var semesterNum = 0;
         const buttons = document.querySelectorAll(".semester");
         buttons.forEach((element) => {
