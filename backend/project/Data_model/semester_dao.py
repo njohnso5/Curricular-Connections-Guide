@@ -1,5 +1,7 @@
 from Data_model.models import Semester, db
 from flask import current_app
+from sqlalchemy.sql.elements import BinaryExpression
+
 
 # Retrieve every Semester and its courses from the db
 def get_all() -> list[Semester] or None:
@@ -13,8 +15,7 @@ def get_active() -> Semester or None:
      return semester
     
 # Retrieve every Semester that fits filter from the db
-def get_by_filter(expression : bool) -> list[Semester] or None:
-    
+def get_by_filter(expression : BinaryExpression) -> list[Semester] or None:
     return Semester.query.filter(expression).all()    
 
 # Retrieve a Semester by its id

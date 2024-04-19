@@ -4,8 +4,8 @@ import { AdminLog, UserLog } from "../models/loggingModels";
 import LoggingService from '../services/logging-services';
 
 const TableBodyRowsLog: React.FC = ({log}) => {
-    const [adminLogs, setAdminLogs] = useState<AdminLog[] | null>();
-    const [userLogs, setUserLogs] = useState<UserLog[] | null>();
+    const [adminLogs, setAdminLogs] = useState<AdminLog[] | null>([]);
+    const [userLogs, setUserLogs] = useState<UserLog[] | null>([]);
     /** The ids of the courses that are selected */
     const [selectedCourseIds, setSelectedCourseIds] = useState([]);
     /** Whether all courses are selected */
@@ -85,6 +85,7 @@ const TableBodyRowsLog: React.FC = ({log}) => {
     );
     }
     else if (log === "User Log"&& userLogs.length > 0) {
+        console.log(userLogs)
         return (
             <div>
             <table className="table">
@@ -95,10 +96,10 @@ const TableBodyRowsLog: React.FC = ({log}) => {
                     </tr>
                 </thead>
                 <tbody>
-                {userLogs && currentCourses.map(userLog => (
+                {userLogs && userLogs.map(userLog => (
                         
                         <tr key={userLog.id} value={userLog.id} data-toggle="modal" data-target="#courseInfoDisplay">
-                            <td >{userLog.query} </td>
+                            <td >{userLog.querySearch} </td>
                             <td>{userLog.datetime}</td>
                         </tr>
                     ))}

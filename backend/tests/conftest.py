@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, g
 from flask.testing import FlaskClient
 import pytest
 import os
@@ -9,7 +9,7 @@ sys.path.append("./project") # Append the path of the project to the system path
 # Cd to the backend directory in docker exec and run the following command, 
 # it will run all the tests in project dianctory and generate a coverage report
 # pytest --cov=project tests/
-from Data_model.models import db, RoleEnum, Role, Administrator
+from Data_model.models import db, RoleEnum, Role, Administrator, User
 from app import create_app, db 
 # docker exec -it <container_name_or_id> bash
 
@@ -23,6 +23,12 @@ def app():
         db.create_all()
         db.session.add_all(roles)
         db.session.commit()
+
+    @app.before_request
+    def load_user():
+        print("Loading user")
+        g.user = Administrator(unity_id="msabrams", role_id=1)
+        print(g.user.unity_id)
     yield app
     
 @pytest.fixture()

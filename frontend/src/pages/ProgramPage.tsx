@@ -112,7 +112,7 @@ export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, u
         formData.append('image', newProgram.image);
       }
       formData.append('semester_id', newProgram.semester.id);
-      console.log("formData: ", formData);
+      console.log("formData: ", ...formData);
       // Call the updateProgram method from ProgramService
       ProgramService.updateProgram(formData) // Gives updateProgram all of the ProgramData
       .then(() => {
@@ -124,6 +124,7 @@ export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, u
       .catch(() => {
         console.error("Error editing program")
         window.$("#editProgramModal").modal("hide");
+        alert("There was an error updating the program. Please try again.");
       });
     } else {
       console.log("There was an error finding the program you want to update. Try refreshing the page.")
