@@ -26,7 +26,7 @@ const NewSemesterTab: React.FC = () => {
                 console.log(response.data);
                 setSemesters(response.data);
             })
-
+        console.log(semesters);
         SemesterService.getActiveSemester()
             .then((response) => {
                 setCurrentActive(response.data);
@@ -54,6 +54,7 @@ const NewSemesterTab: React.FC = () => {
     const reloadButtons = () => {
         // console.log("Current Active: " + currentActive.id.toString());
         var semesterNum = 0;
+        console.log(semesters);
         const buttons = document.querySelectorAll(".semester");
         buttons.forEach((element) => {
             console.log("Current Semester Num: " + semesterNum);

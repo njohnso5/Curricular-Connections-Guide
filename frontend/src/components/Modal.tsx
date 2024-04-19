@@ -69,8 +69,9 @@ const ChangeActiveSemesterBody: React.FC = ({handleSemesterChange, semesters, se
   const handleChange = () => {
     console.log("inside handle change function");
     
-    // console.log(selectedSemesterId);
+    console.log(semesters);
     if (selectedSemesterId !== undefined) {
+      console.log(semesters);
       console.log(currentActive);
       if (currentActive.id !== undefined) {
         const formDatafalse = new FormData();
@@ -81,14 +82,16 @@ const ChangeActiveSemesterBody: React.FC = ({handleSemesterChange, semesters, se
         // console.log("Form Data: " + formDatafalse.get("id"));
         SemesterService.setActive(formDatafalse)
           .then((response) => {
-            setSemesters((prevSemesters: SemesterForm[] | undefined) =>
-              prevSemesters ? prevSemesters.filter((semester) => semester.id !== selectedSemesterId) : response.data
-            );
+            // setSemesters([(prev: SemesterForm[]) => prev.filter(item => item.id !== currentActive.id), {...currentActive, active:false}]);
           })
           .catch((error: any) => {
             console.error('Error changing active semester:', error);
         });
       }
+      setCurrentActive({...currentActive, active:false});
+      console.log(currentActive);
+      const rays = [...(semesters.filter(item => item.id !== currentActive.id)), currentActive];
+      console.log(rays);
       const formDatatrue = new FormData();
       const activeT = true;
       formDatatrue.append("id", selectedSemesterId.toString());
@@ -98,9 +101,8 @@ const ChangeActiveSemesterBody: React.FC = ({handleSemesterChange, semesters, se
       SemesterService.setActive(formDatatrue)
         .then((response) => {
           console.log(response.data);
-          setSemesters((prevSemesters: SemesterForm[] | undefined) =>
-            prevSemesters ? prevSemesters.filter((semester) => semester.id !== selectedSemesterId) : response.data
-          );
+          const ca = [...(semesters.filter(item => item.id !== selectedSemesterId.id)), currentActive];
+          setSemesters(ca);
           setCurrentActive(response.data);
           handleSemesterChange();
         })
@@ -109,6 +111,7 @@ const ChangeActiveSemesterBody: React.FC = ({handleSemesterChange, semesters, se
         });
       
     }
+    console.log(semesters);
   };
 
   return (
@@ -299,7 +302,7 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
       console.log("Is active? " + formData.get("active"));
       SemesterService.createSemester(formData)
         .then((_response) => {
-          if (formData.get("active")) {
+          if (formData.get("active") === "true") {
             props.setCurrentActive(_response.data);
           }
           props.handleUpload(_response.data);

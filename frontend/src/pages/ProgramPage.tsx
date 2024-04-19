@@ -138,15 +138,23 @@ export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, u
     setNewProgram((newProgram) => ({...newProgram, showings: updatedShowings}));
   }
 
+  function setNewSemester(newSemester: any) {
+    setNewProgram({
+      ...newProgram,
+      semester: newSemester
+    });
+  }
+
   function handleSemesterChange(event: any) {
     const id = parseInt(event.target.value, 10);
     setSelectedSemesterId(id);
-    setNewProgram({
-      ...newProgram,
-      semester_id: id
-    });
-    console.log("Semester: " + id);
-    console.log("New Program: ", newProgram);
+    console.log(newProgram);
+    SemesterService.getSemester(id)
+    .then((response) => {
+      setNewSemester(response.data);
+  })
+  .catch(() => {});
+   
   }
 
   const addShowing = (event: any) => {

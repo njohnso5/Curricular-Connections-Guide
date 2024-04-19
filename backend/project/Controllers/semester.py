@@ -181,7 +181,7 @@ class ActiveSemester(MethodView):
     @semester_controller.response(200, SemesterSchema)
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def put(self, semester_data):
-        # print("Semester Data: " + str(semester_data))
+        print("Semester Data: " + str(semester_data))
         semester: Semester = dao.get_by_id(int(semester_data.get("id")))
         # print(str(semester.id))
         semester.active = semester_data.get("active")
@@ -266,6 +266,14 @@ class SemesterCourseList(MethodView):
     def get(self, semester_id):
         semester: Semester = dao.get_by_id(semester_id)
         return semester.courses
+    
+@semester_controller.route('/<int:semester_id>/')
+class SingleSemester(MethodView):
+
+    @semester_controller.response(200, SemesterSchema)
+    def get(self, semester_id):
+        semester: Semester = dao.get_by_id(semester_id)
+        return semester
 
 
 @semester_controller.route("/<int:semesterid>/courses/pages/")
