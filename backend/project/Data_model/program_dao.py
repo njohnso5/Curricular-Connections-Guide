@@ -181,7 +181,11 @@ def search(**kwargs) -> list[Program]:
                     func.date(Showing.datetime).in_(parsed_dates)
                 )
             )
+
+    filters.append(Program.semester.has(active=True))
     # Combine the filters to function as an AND statement in SQL
     crit_query = db.session.query(Program).filter(*filters)
+
+    # Return the programs Course.semester.has(active=True)
     return crit_query.all()
 
