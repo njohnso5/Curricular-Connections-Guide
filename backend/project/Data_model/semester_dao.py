@@ -39,13 +39,13 @@ def update_semester(semester : Semester) -> bool:
     if saved_semester is None:
         return False
     
-    # print('program_dao Saved Semester: ' + str(saved_semester.active))
+    print('program_dao Saved Semester: ' + str(saved_semester.year))
     # print('Current Semester: ' + str(semester.active))
 
     db.session.merge(semester)
     db.session.commit()
 
-    print('New Semester: ' + str(Semester.query.get_or_404(semester.id).active))
+    print('New Semester: ' + str(Semester.query.get_or_404(semester.id).year))
     
     return True
     

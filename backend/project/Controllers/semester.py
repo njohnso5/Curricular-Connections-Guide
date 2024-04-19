@@ -181,7 +181,7 @@ class ActiveSemester(MethodView):
     @semester_controller.response(200, SemesterSchema)
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def put(self, semester_data):
-        # print("Semester Data: " + str(semester_data))
+        print("Semester Data: " + str(semester_data))
         semester: Semester = dao.get_by_id(int(semester_data.get("id")))
         # print(str(semester.id))
         semester.active = semester_data.get("active")
