@@ -152,7 +152,7 @@ class Program(db.Model):
     showings: Mapped[list["Showing"]] = relationship()
     themes: Mapped[list["Theme"]] = relationship(secondary=Program_to_Theme)
     semester_id: Mapped[ForeignKey] = mapped_column(
-        ForeignKey("semester.id"), nullable=True
+        ForeignKey("semester.id"), nullable=False
     )
     semester = relationship("Semester", back_populates="programs", lazy=True, cascade="all, delete")
 

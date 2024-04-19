@@ -154,6 +154,7 @@ const DeleteSemesterBody: React.FC = ({semesters, setSemesters, currentActive, s
           setSelectedSemesterId(undefined);
           setCurrentActive(undefined);
           console.log(currentActive);
+          window.location.reload();
         })
         .catch((error: any) => {
           console.error('Error deleting semester:', error);
@@ -177,6 +178,7 @@ const DeleteSemesterBody: React.FC = ({semesters, setSemesters, currentActive, s
           </div>
         </div>
       </div>
+      <h6 className="text-danger">Warning: Deleting a semester will also delete all courses and programs associated with it.</h6>
       <div className="col-md-6">
         <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={handleDelete}>
           Delete Semester

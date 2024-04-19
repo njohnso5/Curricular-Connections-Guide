@@ -34,7 +34,9 @@ const NewSemesterTab: React.FC = () => {
                     setId(response.data.id);
                 }
             })
-
+        if(id !== null) {
+            setIsLoading(true);
+        }
     }, []);
 
     const handleSemesterUpload = (semester: SemesterForm) => {
