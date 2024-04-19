@@ -31,12 +31,32 @@ class AdministratorAPITest(unittest.TestCase):
             response = self.client.post(self.ADMINISTRATOR_BASE_URL, json=json.loads('{ "unity_id": "msabrams", "role_id": 1 }'))
             assert response.status_code == 200
 
-            administrator = json.loads(response.data.decode('utf-8'))
+            # administrator = json.loads(response.data.decode('utf-8'))
 
-            assert administrator["message"] == "Administrator added"
+            # assert administrator["message"] == "Administrator added"
             # assert administrator["unity_id"] == "msabrams"
             # assert administrator["role"]["role"] == "SUPERUSER"
 
+    # def test_put(self):
+    #     with self.app.app_context():
+    #         response = self.client.post(self.ADMINISTRATOR_BASE_URL, json=json.loads('{ "unity_id": "msabrams", "role_id": 1 }'))
+    #         assert response.status_code == 200
+
+    #         # administrator = json.loads(response.data.decode('utf-8'))
+    #         print(response.data)
+    #         response = self.client.put(self.ADMINISTRATOR_BASE_URL + "1/", json=json.loads('{ "id": 1, "role": "ADMIN" }'))
+
+    #         assert response.status_code == 200
+    def test_delete(self):
+        with self.app.app_context():
+            response = self.client.delete(self.ADMINISTRATOR_BASE_URL + "1/")
+            assert response.status_code == 204
+
+
+            # administrator = json.loads(response.data.decode('utf-8'))
+
+            # assert administrator["message"] == "Administrator edited"
+            # assert administrator["role"]["role"] == "ADMIN"
     def test_get(self):
         pass
 

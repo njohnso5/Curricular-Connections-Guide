@@ -340,6 +340,58 @@ def test_search(client : FlaskClient):
     response = client.post("/v1/search/", json=search)
     assert response.status_code == 200
 
+def test_edit_theme(client : FlaskClient):
+    get = client.get(BASE_URL)
+    assert get.status_code == 200
+    assert len(get.json) == 0
+    response = client.post("/v1/semesters/", data={ "year": 2023, "active": "true", "period_id": 1})
+    assert response.status_code == 200
+    p1 = {}
+    p1["department"] = str(Department.LIVE.value)
+    p1["link"] = ""
+    p1["title"] = "Something"
+    p1["description"] = "This is a test program"
+    p1["semester_id"] = 1
+    p1["showings"] = '{}'
+
+    resp = client.post(
+        BASE_URL, data=p1, content_type="multipart/form-data"
+    )
+
+    assert resp.status_code == 200
+    assert isinstance(resp.json, dict)
+    assert resp.json["id"] == 1
+
+    get = client.get(BASE_URL)
+    assert get.status_code == 200
+    assert len(get.json) == 1
+
+    response = client.post("/v1/themes/", data={ "name": "Test" })
+    assert response.status_code == 200
+
+    response = client.post("/v1/themes/", data={ "name": "Test2" })
+    assert response.status_code == 200
+
+    put_data = json.dumps([{"id": 1, "name": "Test"}, {"id": 2, "name": "Test2"}])
+
+    # Send a GET request to the server
+    response = client.get("/v1/themes/program/1/")
+    
+    assert response.status_code == 200
+
+    # Send a PUT request to the server
+    response = client.put("/v1/themes/program/1/", data=put_data, content_type='application/json')
+
+    # Check the response status code
+    assert response.status_code == 200
+
+    # Parse the response data
+    response_data = json.loads(response.data.decode('utf-8'))
+
+    # Check the response data
+    assert response_data["success"] == "Themes updated"
+
+
 # def test_related_course(client : FlaskClient):
 #     response = client.post("/v1/administrators/", json=json.loads('{"unity_id":"test", "role_id":"1"}'))
 #     assert response.status_code == 200

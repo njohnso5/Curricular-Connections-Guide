@@ -199,26 +199,26 @@ class ActiveSemester(MethodView):
 
         return semester
     
-@semester_controller.route('/active/<int:semester_id>/')
-class ChangeActiveSemester(MethodView):
-    # @semester_controller.arguments(SemesterUpdateSchema)
-    @semester_controller.response(200, SemesterSchema)
-    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
-    def put(self, semester_data: dict):
-        semester: Semester = dao.get_by_id(semester_data.get("id"))
-        semester.active = semester_data.get("active")
+# @semester_controller.route('/active/<int:semester_id>/')
+# class ChangeActiveSemester(MethodView):
+#     # @semester_controller.arguments(SemesterUpdateSchema)
+#     @semester_controller.response(200, SemesterSchema)
+#     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
+#     def put(self, semester_data: dict):
+#         semester: Semester = dao.get_by_id(semester_data.get("id"))
+#         semester.active = semester_data.get("active")
 
-        # for field, value in semester_data.items():
-        #     if hasattr(semester, field):
-        #         setattr(semester, field, value)
+#         # for field, value in semester_data.items():
+#         #     if hasattr(semester, field):
+#         #         setattr(semester, field, value)
         
-        print("Current Semester Active? " + str(semester.active))
-        try:
-            dao.update_semester(semester)
-        except SQLAlchemyError:
-            abort(500, message="An error occured updating the semester")
+#         print("Current Semester Active? " + str(semester.active))
+#         try:
+#             dao.update_semester(semester)
+#         except SQLAlchemyError:
+#             abort(500, message="An error occured updating the semester")
 
-        return semester
+#         return semester
     
 @semester_controller.route('/<int:semester_id>/')
 class SemesterDetail(MethodView):

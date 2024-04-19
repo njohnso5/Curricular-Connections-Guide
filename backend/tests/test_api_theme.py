@@ -17,3 +17,4 @@ def test_delete(client: FlaskClient, app: Flask):
     #delete that theme
     response = client.delete("/v1/themes/1/")
     assert response.status_code == 200
+

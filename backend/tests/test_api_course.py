@@ -95,8 +95,40 @@ def test_delete(client: FlaskClient, app: Flask):
     assert response.status_code == 204
 
         
-        
-        
+def test_edit_themes(client: FlaskClient, app: Flask):
+    # Create Semester
 
+    response = client.post("/v1/semesters/", data={"year": "2022", "period_id": "1", "active": "true"})
 
+    assert response.status_code == 200
+
+    # Create Sample Courses
+    response = client.post("/v1/courses/", data={ "title_short": "Automata Theory", "title_long": "Automata Theory Long", "description": "history Nothing Much wbu?", "subject": "CSC", "catalog_number": "333","topics_description":"test", "faculty": "prof", "emails": "p@ncsu.edu", "semester_id": "1"})
+
+    assert response.status_code == 200
+
+    # Create Sample Themes
+    response = client.post("/v1/themes/", data={ "name": "Test" })
+    assert response.status_code == 200
+
+    response = client.post("/v1/themes/", data={ "name": "Test2" })
+    assert response.status_code == 200
+    # Prepare the data for the PUT request
+    put_data = json.dumps([{"id": 1, "name": "Test"}, {"id": 2, "name": "Test2"}])
+
+    # Send a GET request to the server
+    response = client.get("/v1/themes/course/1/")
     
+    assert response.status_code == 200
+
+    # Send a PUT request to the server
+    response = client.put("/v1/themes/course/1/", data=put_data, content_type='application/json')
+
+    # Check the response status code
+    assert response.status_code == 200
+
+    # Parse the response data
+    response_data = json.loads(response.data.decode('utf-8'))
+
+    # Check the response data
+    assert response_data["success"] == "Themes updated"
