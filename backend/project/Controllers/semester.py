@@ -262,6 +262,14 @@ class SemesterCourseList(MethodView):
     def get(self, semester_id):
         semester: Semester = dao.get_by_id(semester_id)
         return semester.courses
+    
+@semester_controller.route('/<int:semester_id>/')
+class SingleSemester(MethodView):
+
+    @semester_controller.response(200, SemesterSchema)
+    def get(self, semester_id):
+        semester: Semester = dao.get_by_id(semester_id)
+        return semester
 
 
 @semester_controller.route("/<int:semesterid>/courses/pages/")

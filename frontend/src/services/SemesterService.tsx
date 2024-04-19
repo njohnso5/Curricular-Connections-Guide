@@ -5,6 +5,10 @@ class SemesterService {
   getSemesters () {
     return axios.get(API_URL);
   }
+
+  getSemester(id:Number) {
+    return axios.get(API_URL + id + "/");
+  }
   
   getActiveSemester () {
     return axios.get(API_URL + 'active/')
