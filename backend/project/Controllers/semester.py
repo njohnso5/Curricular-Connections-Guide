@@ -53,7 +53,11 @@ class SemesterList(MethodView):
         semester.year = semester_data.get("year")
         semester.period_id = semester_data.get("period_id")
         semester.active = semester_data.get("active")
-
+        
+        # Checks if semester already exists
+        print(semester.year, semester.period_id, "line 128")
+        if dao.get_by_filter(db.and_(dao.Semester.year == semester.year, dao.Semester.period_id == semester.period_id)):
+            abort(409, message="Semester already exists")
         try:
             log = AdminLog()
             log.call = "POST /v1/semesters/ HTTP/1.1 200"
@@ -99,7 +103,7 @@ class SemesterList(MethodView):
                         db_subject.subject = subject
                         subject_dao.insert(db_subject)
                     # Reads in course information
-                    course.catalog_number = str(df.iloc[i, 1 + 1]).encode(encoding='latin-1')
+                    course.catalog_number = int(float(str(df.iloc[i, 1 + 1]).encode(encoding='latin-1')))
                     course.title_long = df.iloc[i, 1 + 2]
                     course.title_short = df.iloc[i, 1 + 3]
                     # Reads in description or autofills with empty description

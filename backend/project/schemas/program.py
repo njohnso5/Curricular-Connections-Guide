@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 from schemas import ThemeSchema, SemesterSchema
 
 class ShowingSchema(Schema):
@@ -38,9 +38,9 @@ class ProgramSchema(Schema):
 
 class ProgramPostSchema(Schema):
     id = fields.Int()
-    title = fields.Str(required=True)
+    title = fields.Str(required=True, validate=validate.Length(min=1))
     department = fields.Str(required=True)
-    description = fields.Str(required=True)
+    description = fields.Str(required=True, validate=validate.Length(min=1))
     link = fields.Str(required=False)
     showings = fields.Str()
     semester_id = fields.Int(required=True)
