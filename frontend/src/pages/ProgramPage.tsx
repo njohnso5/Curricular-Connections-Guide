@@ -112,7 +112,7 @@ export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, u
         formData.append('image', newProgram.image);
       }
       formData.append('semester_id', newProgram.semester.id);
-      // console.log("formData: ", ...formData);
+      console.log("formData: ", ...formData);
       // Call the updateProgram method from ProgramService
       ProgramService.updateProgram(formData) // Gives updateProgram all of the ProgramData
       .then(() => {
@@ -145,6 +145,8 @@ export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, u
       ...newProgram,
       id
     });
+    console.log("Semester: " + id);
+    console.log("New Program: ", newProgram);
   }
 
   const addShowing = (event: any) => {

@@ -29,7 +29,7 @@ class ProgramService {
 
   // Handles the update program API behavior
   updateProgram (program: FormData) {
-    // program.id
+    console.log(...program);
     return axios.put(API_URL, program, {headers: { "Content-Type": "multipart/form-data" }});
   }
 
