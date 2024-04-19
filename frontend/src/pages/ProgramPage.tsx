@@ -142,7 +142,7 @@ export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, u
     setSelectedSemesterId(id);
     setNewProgram({
       ...newProgram,
-      id
+      semester_id: id
     });
   }
 
