@@ -1,5 +1,5 @@
-from marshmallow import Schema, fields
-from schemas import ThemeSchema
+from marshmallow import Schema, fields, validate
+from schemas import ThemeSchema, SemesterSchema
 
 class ShowingSchema(Schema):
     id = fields.Int()
@@ -9,6 +9,7 @@ class ShowingSchema(Schema):
     program_id = fields.Int()
 
 class ShowingPostSchema(Schema):
+    id = fields.Int()
     datetime = fields.Str(required=True)
     location = fields.Str(required=True)
     datetime = fields.Str(required=True)
@@ -33,14 +34,16 @@ class ProgramSchema(Schema):
     image_filename = fields.Str()
     themes = fields.List(fields.Nested(ThemeSchema()))
     showings = fields.List(fields.Nested(ShowingSchema()))
+    semester = fields.Nested(SemesterSchema())
 
 class ProgramPostSchema(Schema):
     id = fields.Int()
-    title = fields.Str(required=True)
+    title = fields.Str(required=True, validate=validate.Length(min=1))
     department = fields.Str(required=True)
-    description = fields.Str(required=True)
+    description = fields.Str(required=True, validate=validate.Length(min=1))
     link = fields.Str(required=False)
     showings = fields.Str()
+    semester_id = fields.Int(required=True)
 
 
 class ProgramPutSchema(Schema):
@@ -50,3 +53,4 @@ class ProgramPutSchema(Schema):
     title = fields.Str(required=True)
     description = fields.Str(required=True)
     showings = fields.List(fields.Nested(ShowingPutSchema()), required=True)
+    semester_id = fields.Int(required=True)

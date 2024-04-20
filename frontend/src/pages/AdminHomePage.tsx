@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom'
         {title: "Manage Courses", link: "/admin/courses"},
         {title: "Manage Programs", link: "/admin/programs"},
         {title: "Administrators", link: "/admin/administrators"},
+        {title: "Manage Themes", link: "/admin/themes"},
+        {title: "Logging Details", link: "/admin/logging"}
     ]
 
     return(
@@ -16,7 +18,7 @@ import { Link } from 'react-router-dom'
                     return (
                         <div className="col-md-4">
                             <Link to={page.link}>
-                                <div className="card" style={{height: '150px'}}>
+                                <div className="card mb-4" style={{height: '150px'}}>
                                     <div className="card-body d-flex align-items-center justify-content-center">
                                     {page.title}
                                     </div>

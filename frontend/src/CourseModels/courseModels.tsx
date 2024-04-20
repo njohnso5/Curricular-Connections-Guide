@@ -3,6 +3,7 @@ import { Theme } from "../models/programModels";
 // set a type Course that contains all the data relevant to a course for displaying in rows for table
 export type Faculty = {
     id: number;
+    name: string;
     email: string;
 }
 
@@ -21,6 +22,24 @@ export type Course = {
     themes: Theme[];
     title_long: string;
     title_short: string;
+    topics_description: string;
+    topics_description_s: string;
+    topics_description_f: string;
+}
+
+/**
+ * This is the format of the data that is sent to the server when adding a course
+ */
+export type CourseForm = {
+    id: number | null;
+    title_short: string;
+    title_long: string;
+    description: string;
+    subject: string;
+    catalog_number:number;
+    faculty: string;
+    email: string;
+    semester_id: number;
 }
 
 export type CourseInfo = {

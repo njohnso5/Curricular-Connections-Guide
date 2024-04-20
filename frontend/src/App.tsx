@@ -4,6 +4,7 @@ import UtilityBar from './components/UtilityBar'
 import PageContent from './components/PageContent'
 import ProgramPage from './pages/ProgramPage'
 import CoursePage from './pages/CoursePage'
+import LoggingPage from './pages/LoggingPage';
 import AuthorizationPage from './pages/Authorization/AuthorizationPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useUser, useUserUpdate } from './hooks/UserContext';
@@ -18,6 +19,7 @@ import NotFound from './components/NotFound'
 import SearchPage from './pages/Search/SearchPage';
 import ProgramPageDetail from './pages/Program/ProgramDetailPage';
 import AdministratorNavBar from './components/AdministratorNavBar';
+import ThemePage from './pages/ThemePage';
 
 function App() {
 
@@ -47,7 +49,9 @@ function App() {
                 <Route index element={<AdminHomePage />} />
                 <Route path="programs" element={<PageContent pageTitle="Manage Programs" page={<ProgramPage />} />} />
                 <Route path="courses" element={<PageContent pageTitle="Manage Courses" page={<CoursePage />} />} />
+                <Route path="themes" element={<PageContent pageTitle="Manage Themes" page={<ThemePage />} />} />
                 <Route path="administrators" element={<PageContent pageTitle="Administrators" page={<AuthorizationPage />} />}/>
+                <Route path="logging" element={<PageContent pageTitle="Logging" page={<LoggingPage />}/>}/>
               </Route>
           </Route>
           <Route element={<UtilityBar />}>

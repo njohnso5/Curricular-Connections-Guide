@@ -20,7 +20,10 @@
     "react-select": "5.8.0",
     "react-slick": "^0.29.0",
     "react-tagsinput": "^3.20.3",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "react-switch": "7.0.0",
+    "react-bootstrap": "2.10.2",
+    "cross-fetch": "4.0.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.1.3",

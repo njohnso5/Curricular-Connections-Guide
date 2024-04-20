@@ -3,7 +3,7 @@ from Controllers.program import program_router
 from Controllers.period import period_controller
 from Controllers.semester import semester_controller
 from Controllers.theme import theme_router
-from Controllers.showing import showing_router
+from Controllers.logging import log_controller
 from Controllers.administrator_controller import admin_controller
 from Controllers.user_controller import user_controller
 from Controllers.roles_controller import role_controller

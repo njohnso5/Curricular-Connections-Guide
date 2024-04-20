@@ -19,6 +19,7 @@ interface ProgramData {
   showings: Showing[];
   themes: Theme[];
   image_filename: String | null;
+  semester_id: number;
 }
 
 interface ProgramFormShowing {
@@ -33,7 +34,7 @@ interface ProgramForm {
   description: string,
   link: string,
   showings: ProgramFormShowing[],
-  image: File | undefined;
+  image: File | undefined,
 }
 
 export type {

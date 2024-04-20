@@ -1,7 +1,6 @@
-from Data_model.models import db, Course, Semester
+from Data_model.models import db, Course, Semester, Course_to_Faculty, Course_to_Theme, Theme
 from flask import current_app
 from sqlalchemy import select
-
 # Retrieve every course from the db
 def get_all() -> list[Course] or None:
     
@@ -30,8 +29,9 @@ def insert_course(course : Course) -> bool:
         return True
         
 def insert_many(courses : list[Course]) -> bool:
-        
+        print(str(len(courses)) + " courses are being added to the database")
         db.session.add_all(courses)
+        print("Committing to course DAO")
         db.session.commit()
         return True
 
@@ -50,11 +50,26 @@ def update_course(course : Course) -> bool:
     
     
 # Removes a course from the db by its id
-def delete_course(course : Course) -> bool:
-    cnt = Course.query.filter(Course.id==course.id).delete()
+def delete_course(id : int) -> bool:
+
+    course : Course = get_by_id(id)
+    # print(course)
+    # print(course.themes)
+    # print(course.faculty)
+    temp = course.themes.copy()
+    for theme in temp:
+        course.themes.remove(theme)
+    temp = course.faculty.copy()
+    for faculty in temp:
+        course.faculty.remove(faculty)
+    cnt = Course.query.filter(Course.id==id).delete()
     if cnt == 1:
         db.session.commit()
         return True
     return False    
     
-    
+def update_course_themes(course_id: int, themes: list[Theme]) -> bool:
+    course = Course.query.get_or_404(course_id)
+    course.themes = [Theme.query.get_or_404(theme['id']) for theme in themes]
+    db.session.commit()
+    return True

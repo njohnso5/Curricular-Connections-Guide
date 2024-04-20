@@ -54,6 +54,13 @@ Course_to_Faculty = Table(
     Column("faculty_id", ForeignKey("faculty.id")),
 )
 
+Program_to_Semester = Table(
+    "program_to_semester",
+    db.Model.metadata,
+    Column("semester_id", ForeignKey("semester.id")),
+    Column("program_id", ForeignKey("program.id")),
+)
+
 
 @dataclass
 class Theme(db.Model):
@@ -71,6 +78,10 @@ class Course(db.Model):
     )
     title_long: Mapped[String] = mapped_column(String(500), nullable=False)
     description: Mapped[String] = mapped_column(String(5000), nullable=False)
+    topics_description: Mapped[String] = mapped_column(String(500), nullable=False)
+    # topics_description_s: Mapped[String] = mapped_column(String(500), nullable=False)
+    # topics_description_f: Mapped[String] = mapped_column(String(500), nullable=False)
+
     subject : Mapped["Subject"] = relationship()
     subject_id: Mapped[ForeignKey] = mapped_column(
         ForeignKey("subject.id"), nullable=False
@@ -92,11 +103,26 @@ class Semester(db.Model):
     period_id: Mapped[ForeignKey] = mapped_column(ForeignKey("period.id"))
     courses = relationship("Course", back_populates="semester", lazy=True, cascade="all, delete")
     period = relationship("Period", back_populates="semesters", lazy=True)
+    programs = relationship("Program", back_populates="semester", lazy=True, cascade="all, delete")
+
 
 class Subject(db.Model):
     __table_name__ = "subject"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    subject: Mapped[String] = mapped_column(String(6), nullable=False) 
+    subject: Mapped[String] = mapped_column(String(6), nullable=False)
+
+class AdminLog(db.Model):
+    __table_name__ = "AdminLog"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    unity_id: Mapped[String] = mapped_column(String(20), nullable=False)
+    call: Mapped[String] = mapped_column(String(200), nullable=False)
+    datetime: Mapped[String] = mapped_column(String(200), nullable=False)
+
+class UserLog(db.Model):
+    __table_name__ = "UserLog"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    querySearch: Mapped[String] = mapped_column(String(200), nullable=False)
+    datetime: Mapped[String] = mapped_column(String(200), nullable=False)
 
 class Department(enum.Enum):
     CRAFTS = "Crafts Center"
@@ -125,6 +151,10 @@ class Program(db.Model):
     image_filename: Mapped[String] = mapped_column(String(150), nullable=True)
     showings: Mapped[list["Showing"]] = relationship()
     themes: Mapped[list["Theme"]] = relationship(secondary=Program_to_Theme)
+    semester_id: Mapped[ForeignKey] = mapped_column(
+        ForeignKey("semester.id"), nullable=False
+    )
+    semester = relationship("Semester", back_populates="programs", lazy=True, cascade="all, delete")
 
 
 @dataclass
@@ -171,5 +201,6 @@ class User(db.Model):
 class Faculty(db.Model):
     _table_name__ = "faculty"
     id: Mapped[int] = mapped_column(Integer, nullable=False, primary_key=True)
+    name: Mapped[String] = mapped_column(String(100), nullable=False)
     email: Mapped[String] = mapped_column(String(100), nullable=False)
     

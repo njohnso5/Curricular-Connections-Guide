@@ -3,9 +3,11 @@ from schemas import ThemeSchema
 
 class SearchProgramSchema(Schema):
     themes = fields.List(fields.Str())
-    departments = fields.List(fields.Str())
+    departments = fields.Str()
     title = fields.Str()
     dates = fields.List(fields.Str())
+    searchByRange = fields.Bool(required=True)
+    searchByCourse = fields.Bool(required=True)
     
     
 class SearchCourseSchema(Schema):

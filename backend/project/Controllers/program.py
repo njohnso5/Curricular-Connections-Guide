@@ -1,7 +1,7 @@
 # Import necessary modules and classes
-from flask import request, send_from_directory
+from flask import request, send_from_directory, g
 from Data_model.permissions import require_roles
-from Data_model.models import RoleEnum
+from Data_model.models import RoleEnum, AdminLog
 from schemas import (
     ProgramPostSchema,
     ProgramSchema,
@@ -13,11 +13,16 @@ from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from datetime import datetime
 import os
+import ast
 import json
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from pathlib import Path
 import Data_model.program_dao as prog_dao
 import Data_model.showing_dao as show_dao
 import Data_model.theme_dao as theme_dao
+import Data_model.semester_dao as semester_dao
 from werkzeug.exceptions import NotFound
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.datastructures import FileStorage
@@ -28,6 +33,7 @@ from Data_model.permissions import (
     superuser_permission,
     ccg_permission,
 )
+from Utilities import logging
 
 # Create a Blueprint for the program API with a specified URL prefix
 program_router = Blueprint("program_api", __name__, url_prefix="/program")
@@ -37,7 +43,7 @@ IMAGE_DIR = DIR.joinpath("image_uploads/")
 
 
 # Define a class for handling program-related requests
-@program_router.route("/")
+@program_router.route("/", methods=['GET', 'POST', 'PUT'])
 class HandleProgram(MethodView):
     # Define a method to handle GET requests
     @program_router.response(200, ProgramSchema(many=True))
@@ -64,6 +70,7 @@ class HandleProgram(MethodView):
     @program_router.response(200, ProgramSchema)
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def post(self, program_data):
+        print(program_data)
         try:
             # Extract showings from program data
             showings = json.loads(program_data.pop("showings"))
@@ -75,15 +82,21 @@ class HandleProgram(MethodView):
                 show["datetime"] = parser.parse(show["datetime"])
                 new_show = show_dao.Showing(**show)
                 new_prg.showings.append(new_show)
-
             # Upload program image if provided
             if "image" in request.files:
                 filename = upload_file(request.files["image"], IMAGE_DIR)
 
                 new_prg.image_filename = filename
 
+            semester = semester_dao.get_by_id(program_data.pop("semester_id"))
+            new_prg.semester = semester
+
             # Insert the new program into the database
+            log = AdminLog()
+            log.call = "POST /v1/program/ HTTP/1.1 200"
+            log.unity_id = g.user.unity_id
             prog_dao.insert(new_prg)
+            logging.logAPI(log)
 
             # Classify program themes and commit changes
             theme_dao.classify_program(new_prg, commit=True)
@@ -91,7 +104,55 @@ class HandleProgram(MethodView):
             return new_prg
         except SQLAlchemyError:
             abort(422, message="An SQL error occured during the operation")
+    
+    # Define a method to handle PUT requests for a specific program ID
+    @program_router.arguments(ProgramPostSchema, location="form")
+    @program_router.response(200, ProgramSchema)
+    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
+    def put(self, program_data: dict):
+        try:
+            programid = program_data["id"]
+            # Extract showings from program data
+            showings: dict = json.loads(program_data.pop("showings"))
+            # Upload program image if provided
+            if "image" in request.files:
+                filename = upload_file(request.files["image"], IMAGE_DIR)
+                program_data["image_filename"] = filename
 
+            # Update the program without modifying showings yet
+            program = prog_dao.get_by_id(programid)
+            log = AdminLog()
+            log.call = "PUT /v1/programs/" + str(programid) + "/ HTTP/1.1 200"
+            log.unity_id = g.user.unity_id
+            result = prog_dao.update(program_data, programid)
+            logging.logAPI(log)
+            
+            if len(program.showings) > len(showings):
+                flag = True
+                for sho in program.showings:
+                    for show in showings:
+                        if (show.get("id") == sho.id):
+                            flag = False
+                    if flag:
+                        show_dao.delete(sho.id)
+                    flag = True
+            # Parse each showing in the request data and check their states
+            for show in showings: 
+                db_show = show_dao.get_by_id(show.get("id"))
+                if db_show is None:
+                    dt = show.pop(
+                        "datetime"
+                    )  # Remove the datetime string as it must be parsed first
+                    new_show = show_dao.Showing(**show)
+                    new_show.datetime = parser.parse(dt)
+                    show_dao.add_show_to_program(new_show, programid)
+                # Update an existing showing
+                elif db_show != None:
+                    show_dao.update(show)
+            theme_dao.classify_program(program, commit=True)
+            return result
+        except SQLAlchemyError:
+            abort(500)
 
 # Route to retrieve Departments that the frontend is allowed to use
 @program_router.route("/departments/")
@@ -111,40 +172,6 @@ class HandleProgramID(MethodView):
         res = prog_dao.get_by_id(programid)
         return res
 
-    # Define a method to handle PUT requests for a specific program ID
-    @program_router.arguments(ProgramPutSchema)
-    @program_router.response(200, ProgramSchema)
-    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
-    def put(self, program_data: dict, programid):
-        try:
-            # Extract showings from program data
-            showings: list[dict] = program_data.pop("showings")
-
-            # Update the program without modifying showings yet
-            result = prog_dao.update(program_data, programid)
-
-            # Parse each showing in the request data and check their states
-            for show in showings:
-                # Grab this showing's state if it is set
-                state = show.pop("state") if show.get("state") else None
-
-                # Add a new showing to the program
-                if state == "new":
-                    dt = show.pop(
-                        "datetime"
-                    )  # Remove the datetime string as it must be parsed first
-                    new_show = show_dao.Showing(**show)
-                    new_show.datetime = parser.parse(dt)
-                    show_dao.add_show_to_program(new_show, programid)
-
-                # Update an existing showing
-                elif state == "modified":
-                    id = show.pop("id")
-                    show_dao.update(show, id)
-
-            return result
-        except SQLAlchemyError:
-            abort(422)
 
     # Define a method to handle DELETE requests for a specific program ID
     @program_router.response(200)
@@ -155,7 +182,11 @@ class HandleProgramID(MethodView):
         if filename is not None and os.path.exists(IMAGE_DIR.joinpath(filename)):
             os.remove(IMAGE_DIR.joinpath(filename))
             # Path.unlink(IMAGE_DIR.joinpath(filename))
+        log = AdminLog()
+        log.call = "DELETE /v1/programs/" + str(programid) + "/ HTTP/1.1 200"
+        log.unity_id = g.user.unity_id
         prog_dao.delete(programid)
+        logging.logAPI(log)
 
         return
 
@@ -175,6 +206,66 @@ class ProgramImage(MethodView):
         # Return the stored image file
         return send_from_directory(IMAGE_DIR, filename, mimetype="image/gif")
 
+# Define a class for handling program images
+@program_router.route("/<int:programid>/email/")
+class SendEmail(MethodView):
+    def post(self, programid):
+        program = prog_dao.get_by_id(programid)
+        title = program.title
+        if program.link is not None:
+            title = """<a href=" """ + program.link + """">""" + program.title + """</a>"""
+        courses = RelatedCourses.get(self, programid)
+        emails = []
+        for course in ast.literal_eval(courses.data.decode('utf-8')):
+            faculties = course.get("faculty")
+            for faculty in faculties:
+                emails.append(faculty.get("email"))
+        # set up intialization
+        host = "smtp.gmail.com"
+        port = 587
+        sender = os.environ.get("EMAIL_ADDRESS")
+        receiever = emails
+        password = os.environ.get("EMAIL_PASSWORD")
+        message = MIMEMultipart()
+        message['Subject'] = "Curicular Connections Guide"
+        body = """
+        <html>
+            <body>
+                <p>Greetings Faculty or Arts Partner,</p>
+
+                <p>
+                    In 2024, computer science students teamed up with Arts NC State to create an automated platform to connect course content to relevant art programming on campus as
+                    part of the <a href="https://arts.ncsu.edu/about/for-nc-state-faculty/">Curricular Connections Guide.</a>\nYou are receiving this email because a course you teach may be connected to\n
+                </p>
+                <p>""" + title + """</p>
+                <p>If you think there is a connection, please reach out to Amy Sawyers-Williams acsawyer@ncsu.edu about the opportunity for any of the following:<br>
+                - Free tickets for your students to see the event (if ticketed)<br>
+                - Offering extra credit for your students to attend the event<br>
+                - Inviting an artist to visit your class and talk about the art form and/or issues</p>
+
+                <p>We are still in the early stages of this automated program, so if you receive this in error, we apologize. Please let us know so we can update the system.</p>
+
+                <p>If you do take action to connect your course, please reach out to Amy Sawyers-Williams so she can record this in her records: acsawyer@ncsu.edu.</p>
+                <p>Thanks!<br>
+                Amy Sawyers-Williams<br>
+                Manager of Arts Outreach and Engagement<br>
+                NC State University</p>
+            </body>
+        </html>
+        """
+        message.attach(MIMEText(body, 'html'))
+        smtp = smtplib.SMTP(host, port)
+        # Start connection to server
+        smtp.starttls()
+        #log in
+        smtp.login(sender, password)
+        #Send mail
+        smtp.sendmail(sender, receiever, message.as_string())
+        #end connection
+        smtp.quit()
+        return {"message": "success"}
+
+
 
 @program_router.route("/<int:programid>/courses/")
 class RelatedCourses(MethodView):
@@ -186,12 +277,22 @@ class RelatedCourses(MethodView):
             request.args.get("threshhold") if request.args.get("threshhold") else 5
         )
         try:
-            results = theme_dao.related_courses(
+            print('here')
+            
+            courses = theme_dao.related_courses(
                 programid, common_count=int(threshhold), page=int(page), count=int(count)
             )
-            return results
+            return courses
         except ValueError:
             abort(422, message="Bad query parameters")
+
+@program_router.route("/semester/<int:semester_id>/")
+class HandleBySemester(MethodView):
+    @program_router.response(200, ProgramSchema(many=True))
+    def get(self, semester_id):
+        print("Semester id: " + str(semester_id))
+        res = prog_dao.get_by_semester(semester_id)
+        return res
 
     
 

@@ -1,8 +1,10 @@
 interface SearchQuery {
   title?: string;
-  departments?: string[];
+  departments?: string;
   themes?: string[];
-  date?: string[];
+  dates?: string[];
+  searchByRange?: boolean;
+  searchByCourse?: boolean;
 }
 
 export type {

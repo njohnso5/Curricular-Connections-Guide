@@ -62,18 +62,16 @@ def insert_from_list(themes: list[str]):
 
 
 # Insert a new theme name into the database
-def insert(theme: str):
-    new_theme = Theme()
-    new_theme.name = theme
+def insert(theme: Theme):
 
-    db.session.add(new_theme)
+    db.session.add(theme)
     db.session.commit()
 
-    return new_theme
+    return True
 
 
 # Deletes a theme from the database by its id
-def delete(theme_id):
+def delete(theme_id: int):
     theme = Theme.query.get_or_404(theme_id)
 
     prgs: list[Program] = find_programs(theme_id)
@@ -82,7 +80,7 @@ def delete(theme_id):
     crcs: list[Course] = find_courses(theme_id)
     [c.themes.remove(theme) for c in crcs]
 
-    db.session.remove(theme)
+    Theme.query.filter(Theme.id == theme_id).delete()
     db.session.commit()
 
 
@@ -93,12 +91,15 @@ def classify_program(program: Program, commit: bool = False):
     clss = Classifier()
     clss.set_description(program.description)
     clss.set_themes(themes)
+    clss.preprocess_themes()
 
     predicted_themes = clss.classify()
 
     if commit:
         if object_session(program) is None:
             raise ArgumentError("Program object not part of session")
+        if program.themes is not None:
+            program.themes.clear()
         program.themes.extend(predicted_themes)
         db.session.commit()
     return predicted_themes
@@ -110,13 +111,17 @@ def classify_course(course: Course, commit: bool = False):
 
     clss = Classifier()
     clss.set_themes(themes)
+    clss.preprocess_themes()
     clss.set_description(course.description)
-
+    clss.set_course_title(course.title_long)
     predicted_themes = clss.classify()
 
     if commit:
         if object_session(course) is None:
             raise ArgumentError("Course object not part of session")
+        if(course.themes is not None):
+            course.themes.clear()
+
         course.themes.extend(predicted_themes)
         db.session.commit()
     return predicted_themes
@@ -124,13 +129,18 @@ def classify_course(course: Course, commit: bool = False):
 
 # Discovers a set of themes that are related to a given course. If the commit parameter is True, the theme associations are saved to the database so long as the given Course object is stored in the engine session.
 def classify_course_bulk(courses: list[Course], commit: bool = False):
+    print("Starting theme classification")
     themes = Theme.query.all()
 
     clss = Classifier()
     clss.set_themes(themes)
+    clss.preprocess_themes()
 
+    print("Checking courses")
     for course in courses:
+        # print(course.title_short)
         clss.set_description(course.description)
+        clss.set_course_title(course.title_long)
         try:
             predicted_themes = clss.classify()
         except BaseException:
@@ -138,8 +148,12 @@ def classify_course_bulk(courses: list[Course], commit: bool = False):
         if commit:
             if object_session(course) is None:
                 raise ArgumentError("Course object not part of session")
+
+            if course.themes is not None:
+                course.themes.clear()
             course.themes.extend(predicted_themes)
             db.session.commit()
+    print("Theme DAO completed")
     return True
 
 
@@ -178,18 +192,20 @@ def search_programs_by_themes(themes: list[int]) -> list[Program]:
 
 
 # Returns a set of Program objects, where each Program contains every specified theme.
-def search_courses_by_themes(themes: list[int]) -> list[Program]:
+def search_courses_by_themes(themes: list[int]) -> list[Course]:
     # Subquery to find programs with the specified theme_ids using the Progam_to_Theme association table
     subquery = (
         db.session.query(Course_to_Theme.c.course_id)
-        .filter(Course_to_Theme.c.theme_id.in_(themes))
+        .join(Theme, Course_to_Theme.c.theme_id == Theme.id)
+        .filter(Theme.id.in_(themes))
         .group_by(Course_to_Theme.c.course_id)
-        .having(func.count() == len(themes))
+        .distinct()
         .subquery()
     )
-
+    # Filter for courses that match the subquery and the semester is active
+    filter = Course.id.in_(subquery) & Course.semester.has(active=True)
     # Query for programs that match the subquery
-    courses = db.session.query(Course).filter(Course.id.in_(subquery)).all()
+    courses = db.session.query(Course).filter(filter).all()
     return courses
 
 
@@ -200,26 +216,11 @@ def related_courses(programid: int, common_count: int = 5, page=5, count=5):
     # If the program does not exist, raise a NotFound exception
     if not program:
         raise NotFound("Program not found")
+    # Find the theme IDs associated with the program
+    theme_ids = [theme.id for theme in program.themes]
+    print(theme_ids)
 
-    # Create a subquery to count common themes per course related to the program
-    common_courses_query = (
-        db.session.query(
-            Course.id, func.count(Course_to_Theme.c.theme_id).label("common_count")
-        )
-        .join(Course_to_Theme, Course.id == Course_to_Theme.c.course_id)
-        .filter(Course_to_Theme.c.theme_id.in_([theme.id for theme in program.themes]))
-        .group_by(Course.id)
-        .subquery()
-    )
-
-    # Query to fetch related courses having at least a number of common themes specified by common_count
-    courses = (
-        db.session.query(Course)
-        .join(common_courses_query, Course.id == common_courses_query.c.id)
-        .filter(common_courses_query.c.common_count >= common_count)
-        .order_by(common_courses_query.c.common_count.desc())
-        .paginate(page=page, per_page=count)
-        .items
-    )
-
+    # Find the courses that have the same themes as the program
+    courses = search_courses_by_themes(theme_ids)
+    print(courses)
     return courses

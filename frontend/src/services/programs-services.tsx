@@ -15,6 +15,10 @@ class ProgramService {
     return axios.get(API_URL);
   }
 
+  getProgramsBySemester (semester_id: Number) {
+    return axios.get(API_URL + "semester/" + semester_id + "/");
+  }
+
   getProgram (id: Number) {
     return axios.get(API_URL + id + "/");
   }
@@ -23,12 +27,22 @@ class ProgramService {
     return axios.delete(API_URL + id + "/");
   }
 
+  // Handles the update program API behavior
+  updateProgram (program: FormData) {
+    console.log(...program);
+    return axios.put(API_URL, program, {headers: { "Content-Type": "multipart/form-data" }});
+  }
+
   uploadProgram (programform: FormData) {
     return axios.post(API_URL, programform, {headers: { "Content-Type": "multipart/form-data" }});
   }
 
   getDepartments () {
     return axios.get(API_URL + "departments/")
+  }
+
+  postEmails (id: Number) {
+    return axios.post(API_URL + "/" + id + "/email/")
   }
 
   getRelatedCourses(id: number, page: number, per_page: number, threshold: number) {

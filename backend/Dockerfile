@@ -43,6 +43,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 # Download the SpaCy en_core pipeline for the tagging classifier
 RUN python -m spacy download en
+RUN python -m spacy download en_core_web_md
 
 # Switch to the non-privileged user to run the application.
 USER appuser
