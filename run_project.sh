@@ -47,6 +47,8 @@ if [ "$CREATE_ENV" = true ]; then
     echo "MYSQL_DATABASE=mydatabase" >> .env
     echo "MYSQL_HOST=database" >> .env
     echo "SECRET_KEY=$(generate_password)" >> .env
+    echo "EMAIL_ADDRESS=testappemail123321123321@gmail.com" >> .env
+    echo "EMAIL_PASSWORD=xnna kllc pltu yfkp" >> .env
 fi
 
 # Run docker-compose with or without build and/or detached mode based on arguments

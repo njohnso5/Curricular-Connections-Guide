@@ -70,7 +70,9 @@ if defined CREATE_ENV (
     echo MYSQL_ROOT_PASSWORD=%MYSQL_ROOT_PASSWORD% >> .env
     echo MYSQL_DATABASE=mydatabase >> .env
     echo MYSQL_HOST=database >> .env
-    echo SECRET_KEY=%SECRET_KEY% >> .env 
+    echo SECRET_KEY=%SECRET_KEY% >> .env
+    echo EMAIL_ADDRESS=testappemail123321123321@gmail.com >> .env
+    echo EMAIL_PASSWORD=xnna kllc pltu yfkp >> .env
 )
 
 REM Run docker-compose with or without build and/or detached mode based on arguments
