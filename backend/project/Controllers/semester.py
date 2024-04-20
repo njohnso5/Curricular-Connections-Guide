@@ -53,7 +53,11 @@ class SemesterList(MethodView):
         semester.year = semester_data.get("year")
         semester.period_id = semester_data.get("period_id")
         semester.active = semester_data.get("active")
-
+        
+        # Checks if semester already exists
+        print(semester.year, semester.period_id, "line 128")
+        if dao.get_by_filter(db.and_(dao.Semester.year == semester.year, dao.Semester.period_id == semester.period_id)):
+            abort(409, message="Semester already exists")
         try:
             log = AdminLog()
             log.call = "POST /v1/semesters/ HTTP/1.1 200"
@@ -99,7 +103,7 @@ class SemesterList(MethodView):
                         db_subject.subject = subject
                         subject_dao.insert(db_subject)
                     # Reads in course information
-                    course.catalog_number = str(df.iloc[i, 1 + 1]).encode(encoding='latin-1')
+                    course.catalog_number = int(float(str(df.iloc[i, 1 + 1]).encode(encoding='latin-1')))
                     course.title_long = df.iloc[i, 1 + 2]
                     course.title_short = df.iloc[i, 1 + 3]
                     # Reads in description or autofills with empty description
@@ -179,41 +183,42 @@ class ActiveSemester(MethodView):
     def put(self, semester_data):
         print("Semester Data: " + str(semester_data))
         semester: Semester = dao.get_by_id(int(semester_data.get("id")))
-        print(str(semester.id))
+        # print(str(semester.id))
         semester.active = semester_data.get("active")
 
         # for field, value in semester_data.items():
         #     if hasattr(semester, field):
         #         setattr(semester, field, value)
         
-        print("Current Semester Active? " + str(semester.active))
+        # print("Current Semester Active? " + str(semester.active))
         try:
             dao.update_semester(semester)
+            print("Is semester " + str(semester.id) + " now active? " + str(semester.active))
         except SQLAlchemyError:
             abort(500, message="An error occured updating the semester")
 
         return semester
     
-@semester_controller.route('/active/<int:semester_id>/')
-class ChangeActiveSemester(MethodView):
-    # @semester_controller.arguments(SemesterUpdateSchema)
-    @semester_controller.response(200, SemesterSchema)
-    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
-    def put(self, semester_data: dict):
-        semester: Semester = dao.get_by_id(semester_data.get("id"))
-        semester.active = semester_data.get("active")
+# @semester_controller.route('/active/<int:semester_id>/')
+# class ChangeActiveSemester(MethodView):
+#     # @semester_controller.arguments(SemesterUpdateSchema)
+#     @semester_controller.response(200, SemesterSchema)
+#     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
+#     def put(self, semester_data: dict):
+#         semester: Semester = dao.get_by_id(semester_data.get("id"))
+#         semester.active = semester_data.get("active")
 
-        # for field, value in semester_data.items():
-        #     if hasattr(semester, field):
-        #         setattr(semester, field, value)
+#         # for field, value in semester_data.items():
+#         #     if hasattr(semester, field):
+#         #         setattr(semester, field, value)
         
-        print("Current Semester Active? " + str(semester.active))
-        try:
-            dao.update_semester(semester)
-        except SQLAlchemyError:
-            abort(500, message="An error occured updating the semester")
+#         print("Current Semester Active? " + str(semester.active))
+#         try:
+#             dao.update_semester(semester)
+#         except SQLAlchemyError:
+#             abort(500, message="An error occured updating the semester")
 
-        return semester
+#         return semester
     
 @semester_controller.route('/<int:semester_id>/')
 class SemesterDetail(MethodView):
@@ -261,6 +266,14 @@ class SemesterCourseList(MethodView):
     def get(self, semester_id):
         semester: Semester = dao.get_by_id(semester_id)
         return semester.courses
+    
+@semester_controller.route('/<int:semester_id>/')
+class SingleSemester(MethodView):
+
+    @semester_controller.response(200, SemesterSchema)
+    def get(self, semester_id):
+        semester: Semester = dao.get_by_id(semester_id)
+        return semester
 
 
 @semester_controller.route("/<int:semesterid>/courses/pages/")

@@ -196,7 +196,6 @@ class HandleProgramID(MethodView):
 class ProgramImage(MethodView):
     def get(self, programid):
         # Get the program and its image filename
-        print("here")
         program = prog_dao.get_by_id(programid)
         filename = program.image_filename
 
@@ -213,7 +212,7 @@ class SendEmail(MethodView):
     def post(self, programid):
         program = prog_dao.get_by_id(programid)
         title = program.title
-        if program.link != "":
+        if program.link is not None:
             title = """<a href=" """ + program.link + """">""" + program.title + """</a>"""
         courses = RelatedCourses.get(self, programid)
         emails = []
@@ -224,9 +223,9 @@ class SendEmail(MethodView):
         # set up intialization
         host = "smtp.gmail.com"
         port = 587
-        sender = "testappemail123321123321@gmail.com"
+        sender = os.environ.get("EMAIL_ADDRESS")
         receiever = emails
-        password = "xnna kllc pltu yfkp"
+        password = os.environ.get("EMAIL_PASSWORD")
         message = MIMEMultipart()
         message['Subject'] = "Curicular Connections Guide"
         body = """
@@ -264,7 +263,7 @@ class SendEmail(MethodView):
         smtp.sendmail(sender, receiever, message.as_string())
         #end connection
         smtp.quit()
-        return program
+        return {"message": "success"}
 
 
 

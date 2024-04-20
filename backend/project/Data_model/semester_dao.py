@@ -1,5 +1,7 @@
 from Data_model.models import Semester, db
 from flask import current_app
+from sqlalchemy.sql.elements import BinaryExpression
+
 
 # Retrieve every Semester and its courses from the db
 def get_all() -> list[Semester] or None:
@@ -13,8 +15,7 @@ def get_active() -> Semester or None:
      return semester
     
 # Retrieve every Semester that fits filter from the db
-def get_by_filter(expression : bool) -> list[Semester] or None:
-    
+def get_by_filter(expression : BinaryExpression) -> list[Semester] or None:
     return Semester.query.filter(expression).all()    
 
 # Retrieve a Semester by its id
@@ -38,13 +39,13 @@ def update_semester(semester : Semester) -> bool:
     if saved_semester is None:
         return False
     
-    # print('program_dao Saved Semester: ' + str(saved_semester.active))
+    print('program_dao Saved Semester: ' + str(saved_semester.year))
     # print('Current Semester: ' + str(semester.active))
 
     db.session.merge(semester)
     db.session.commit()
 
-    print('New Semester: ' + str(Semester.query.get_or_404(semester.id).active))
+    print('New Semester: ' + str(Semester.query.get_or_404(semester.id).year))
     
     return True
     

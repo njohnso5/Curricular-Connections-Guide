@@ -26,7 +26,7 @@ const NewSemesterTab: React.FC = () => {
                 console.log(response.data);
                 setSemesters(response.data);
             })
-
+        console.log(semesters);
         SemesterService.getActiveSemester()
             .then((response) => {
                 setCurrentActive(response.data);
@@ -34,7 +34,9 @@ const NewSemesterTab: React.FC = () => {
                     setId(response.data.id);
                 }
             })
-
+        if(id !== null) {
+            setIsLoading(true);
+        }
     }, []);
 
     const handleSemesterUpload = (semester: SemesterForm) => {
@@ -49,19 +51,12 @@ const NewSemesterTab: React.FC = () => {
         setId(id);
     };
 
-    const reloadButtons = () => {
-        console.log("Current Active: " + currentActive.id.toString());
-        var semesterNum = 0;
-        const buttons = document.querySelectorAll(".semester");
-        buttons.forEach((element) => {
-            console.log("Current Semester Num: " + semesterNum);
-            console.log(semesters[semesterNum].period.period);
-            const buttonText = semesters[semesterNum].period.period + " " + semesters[semesterNum].year.toString() + " " + (currentActive.id == semesters[semesterNum].id ? " (Active)" : "");
-            console.log(buttonText);
-            element.innerHTML = buttonText;
-            semesterNum++;
-        })
-    }
+    const isActive = (semesterCheck) => {
+        if (currentActive === undefined) {
+            return "";
+        }
+        return semesterCheck.id === currentActive.id ? " (Active)" : ""
+    };
 
     return (
         <div className="container-fluid">
@@ -72,12 +67,12 @@ const NewSemesterTab: React.FC = () => {
                     <Modal modalTarget="progressBarModal" modalBody={<SemesterUploadProgressBar />} modalTitle="REQUEST IN PROGRESS">Your request is in process. Please wait.</Modal>
                     <Modal modalTarget="progressBarCompleteModal" modalBody={<SemesterUploadComplete />} modalTitle="REQUEST COMPLETED">Thank you for waiting.</Modal>
                     {semesters ? semesters.map((semester) => (
-                        <button type="button" className={`semester btn btn-default ${id === semester.id ? 'selected' : ''}`} value={semester.id} onClick={() => handleClick(semester.id)}>{semester.period.period} {semester.year}{semester.active ? " (Active)" : ""}</button>
+                        <button type="button" className={`semester btn btn-default ${id === semester.id ? 'selected' : ''}`} value={semester.id} onClick={() => handleClick(semester.id)}>{semester.period.period} {semester.year}{isActive(semester)}</button>
                     )) : null}
                 </div>
                 <div className="edit-button">
                     <EditSemesterModalButton modalTarget="EditSemesterModal" buttonMessage="Edit the active semester" />
-                    <Modal modalTarget="EditSemesterModal" modalTitle="EDIT THE ACTIVE SEMESTER" modalBody={<ChangeActiveSemesterBody handleSemesterChange={reloadButtons} semesters={semesters} setSemesters={setSemesters} currentActive={currentActive} setCurrentActive={setCurrentActive}/>} />
+                    <Modal modalTarget="EditSemesterModal" modalTitle="EDIT THE ACTIVE SEMESTER" modalBody={<ChangeActiveSemesterBody setId={setId} semesters={semesters} setSemesters={setSemesters} currentActive={currentActive} setCurrentActive={setCurrentActive}/>} />
                 </div>
                 <div>
                     <DeleteSemesterModalButton modalTarget="DeleteSemesterModal" buttonMessage="Delete a semester" />

@@ -111,8 +111,8 @@ export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, u
       if (newProgram.image) {
         formData.append('image', newProgram.image);
       }
-      formData.append('semester_id', newProgram.semester_id);
-      console.log("formData: ", formData);
+      formData.append('semester_id', newProgram.semester.id);
+      console.log("formData: ", ...formData);
       // Call the updateProgram method from ProgramService
       ProgramService.updateProgram(formData) // Gives updateProgram all of the ProgramData
       .then(() => {
@@ -124,6 +124,7 @@ export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, u
       .catch(() => {
         console.error("Error editing program")
         window.$("#editProgramModal").modal("hide");
+        alert("There was an error updating the program. Please try again.");
       });
     } else {
       console.log("There was an error finding the program you want to update. Try refreshing the page.")
@@ -137,13 +138,23 @@ export const ModalEditProgramBody: React.FC<{program: ProgramData | undefined, u
     setNewProgram((newProgram) => ({...newProgram, showings: updatedShowings}));
   }
 
+  function setNewSemester(newSemester: any) {
+    setNewProgram({
+      ...newProgram,
+      semester: newSemester
+    });
+  }
+
   function handleSemesterChange(event: any) {
     const id = parseInt(event.target.value, 10);
     setSelectedSemesterId(id);
-    setNewProgram({
-      ...newProgram,
-      id
-    });
+    console.log(newProgram);
+    SemesterService.getSemester(id)
+    .then((response) => {
+      setNewSemester(response.data);
+  })
+  .catch(() => {});
+   
   }
 
   const addShowing = (event: any) => {

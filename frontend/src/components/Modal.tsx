@@ -58,18 +58,20 @@ const EditSemesterModalButton: React.FC<ModalButtonProps> = ({ modalTarget, butt
   );
 }
 
-const ChangeActiveSemesterBody: React.FC = ({handleSemesterChange, semesters, setSemesters, currentActive, setCurrentActive}) => {
+const ChangeActiveSemesterBody:React.FC = ({setId, semesters, setSemesters, currentActive, setCurrentActive}) => {
 
 
   const [selectedSemesterId, setSelectedSemesterId] = useState<number | undefined>(undefined);
-  const [semesters, setSemesters] = useState<SemesterForm[] | undefined>();
-
+  let sem = semesters;
+  const changeSemList = (id, newSem) => {
+    sem = [...(sem.filter(item => item.id !== id)), newSem];
+    return sem;
+  };
+  // const [semesters, setSemesters] = useState<SemesterForm[] | undefined>();
   const handleChange = () => {
     console.log("inside handle change function");
     
-    // console.log(selectedSemesterId);
     if (selectedSemesterId !== undefined) {
-      console.log(currentActive);
       if (currentActive.id !== undefined) {
         const formDatafalse = new FormData();
         const activeF = false;
@@ -78,6 +80,11 @@ const ChangeActiveSemesterBody: React.FC = ({handleSemesterChange, semesters, se
         formDatafalse.append("active", activeF.toString());
         // console.log("Form Data: " + formDatafalse.get("id"));
         SemesterService.setActive(formDatafalse)
+          .then((response) => {
+            const sem = {...currentActive, active:false};
+            setSemesters([...(semesters.filter(item => item.id !== currentActive.id)), sem]);
+            changeSemList(currentActive.id, sem);
+          })
           .catch((error: any) => {
             console.error('Error changing active semester:', error);
         });
@@ -91,12 +98,13 @@ const ChangeActiveSemesterBody: React.FC = ({handleSemesterChange, semesters, se
       SemesterService.setActive(formDatatrue)
         .then((response) => {
           setCurrentActive(response.data);
+          setId(selectedSemesterId);
+          setSemesters(changeSemList(selectedSemesterId, response.data));
         })
         .catch((error: any) => {
           console.error('Error changing active semester:', error);
         });
       
-      handleSemesterChange();
     }
   };
 
@@ -143,6 +151,7 @@ const DeleteSemesterBody: React.FC = ({semesters, setSemesters, currentActive, s
           setSelectedSemesterId(undefined);
           setCurrentActive(undefined);
           console.log(currentActive);
+          window.location.reload();
         })
         .catch((error: any) => {
           console.error('Error deleting semester:', error);
@@ -166,6 +175,7 @@ const DeleteSemesterBody: React.FC = ({semesters, setSemesters, currentActive, s
           </div>
         </div>
       </div>
+      <h6 className="text-danger">Warning: Deleting a semester will also delete all courses and programs associated with it.</h6>
       <div className="col-md-6">
         <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={handleDelete}>
           Delete Semester
@@ -235,10 +245,6 @@ interface ModalNewSemesterBodyProps {
 // This is the modal that displays when you click the "add a semester button on the courses page"
 // React.FC is used for a component that doesn't take in any props
 const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
-  function showProgress() {
-    window.$("#uploadModal").modal("hide");
-    window.$("#progressBarModal").modal("show");
-  }
 
   // use state to create the semester form.
 
@@ -276,22 +282,21 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
   function handleSubmit(event: React.FormEvent) {
     // do this with axios
     event.preventDefault();
-
-    showProgress();
+    window.$("#uploadModal").modal("hide");
     
-      console.log('here');
-      console.log(semesterData.active);
       const formData = new FormData();
       formData.append('year', semesterData.year.toString());
       formData.append('active', semesterData.active.toString());
       formData.append('period_id', semesterData.period_id.toString());
       if (semesterData.catalog) {
+        console.log("Showing progress indicator")
+        window.$("#progressBarModal").modal("show");
         formData.append('catalog', semesterData.catalog);
       }
       console.log("Is active? " + formData.get("active"));
       SemesterService.createSemester(formData)
         .then((_response) => {
-          if (formData.get("active")) {
+          if (formData.get("active") === "true") {
             props.setCurrentActive(_response.data);
           }
           props.handleUpload(_response.data);
@@ -355,7 +360,7 @@ const ModalNewSemesterBody: React.FC<ModalNewSemesterBodyProps> = (props) => {
             </div>
           </div>
         </div>
-        <button type="submit" className="btn btn-primary" onClick={showProgress}>Save changes</button>
+        <button type="submit" className="btn btn-primary">Save changes</button>
       </form>
     </div>
   );

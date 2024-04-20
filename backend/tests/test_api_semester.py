@@ -63,3 +63,25 @@ def test_course_upload(client: FlaskClient, app: Flask):
 
 
 
+def test_setActiveSemester(client: FlaskClient, app: Flask):
+    # Add semester to database
+    response = client.post("/v1/semesters/", data={ "year": 2023, "active": "true", "period_id": 1})
+    assert response.status_code == 200
+
+    # Get semester from database
+    response = client.get(SEMESTER_BASE_URL)
+    assert response.status_code == 200
+    
+    # Check fields of semester
+    semester_data = SemesterSchema(many=True).load(response.json)
+    
+    assert type(semester_data) == list
+    #set the active semester
+    semesterId = str(semester_data[0]["id"])
+    response = client.put(SEMESTER_BASE_URL + semesterId + "/", data={ "active": "true"})
+    assert response.status_code == 200
+    #get the semester and check to see if it is active
+    response = client.get(SEMESTER_BASE_URL)
+    assert response.status_code == 200
+    semester_data = SemesterSchema(many=True).load(response.json)
+    assert semester_data[0]["active"] == True

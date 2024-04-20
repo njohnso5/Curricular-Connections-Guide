@@ -21,7 +21,7 @@ class AdministratorList(MethodView):
         return AdministratorDAO.get_administrators()
     
     @admin_controller.arguments(AdministratorPostSchema)
-    @admin_controller.response(200, AdministratorsSchema)
+    @admin_controller.response(200)
     @require_roles([RoleEnum.ADMIN]).require(http_exception=403)
     def post(self, administrator_data):
         try:

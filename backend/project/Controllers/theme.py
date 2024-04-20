@@ -70,7 +70,7 @@ class ThemeListByProgram(MethodView):
     @theme_router.response(200, ThemeSchema(many=True))
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def get(self, program_id):
-        return program_dao.get_by_id(program_id).themes
+        return theme_dao.get_from_program(program_id)
 
     @theme_router.arguments(ThemeSchema(many=True), location="json")
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
@@ -86,7 +86,7 @@ class ThemeListByCourse(MethodView):
     @theme_router.response(200, ThemeSchema(many=True))
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def get(self, course_id):
-        return theme_dao.get_by_course(course_id).themes
+        return theme_dao.get_from_course(course_id)
 
     @theme_router.arguments(ThemeSchema(many=True), location="json")
     @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)

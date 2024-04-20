@@ -9,18 +9,16 @@ from Data_model.models import RoleEnum
 log_controller = Blueprint('log_api', __name__, url_prefix='/log')
 
 @log_controller.route('/')
-@require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
 class LoggingList(MethodView):
-
+    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     @log_controller.response(200, AdminLogSchema(many=True))
     def get(self):
         admin = admin_dao.get_all()
         return admin
     
 @log_controller.route('/user/')
-@require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
-class LoggingList(MethodView):
-
+class LoggingListUser(MethodView):
+    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     @log_controller.response(200, UserLogSchema(many=True))
     def get(self):
         return user_dao.get_all()
