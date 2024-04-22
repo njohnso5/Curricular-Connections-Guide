@@ -209,6 +209,7 @@ class ProgramImage(MethodView):
 # Define a class for handling program images
 @program_router.route("/<int:programid>/email/")
 class SendEmail(MethodView):
+    @require_roles([RoleEnum.ADMIN, RoleEnum.CCG, RoleEnum.SUPERUSER]).require(http_exception=403)
     def post(self, programid):
         program = prog_dao.get_by_id(programid)
         title = program.title
