@@ -34,9 +34,9 @@ const NewSemesterTab: React.FC = () => {
                     setId(response.data.id);
                 }
             })
-        if(id !== null) {
-            setIsLoading(true);
-        }
+        // console.log(currentActive);
+        // console.log(id);
+        setIsLoading(true);
     }, []);
 
     const handleSemesterUpload = (semester: SemesterForm) => {
@@ -48,6 +48,7 @@ const NewSemesterTab: React.FC = () => {
     const handleClick = (id: number) => {
         // Set loading to true when a semester is clicked
         setIsLoading(true);
+        console.log(id);
         setId(id);
     };
 
