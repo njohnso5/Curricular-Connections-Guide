@@ -22,7 +22,8 @@ CREATE TABLE `Program` (
   `department` enum,
   `link` string,
   `title` string,
-  `description` string
+  `description` string,
+  `semster_id` integer
 );
 
 CREATE TABLE `Program_To_Theme` (
@@ -63,8 +64,6 @@ CREATE TABLE `Course` (
   `title_long` string,
   `description` string,
   `topic_description` string,
-  `topic_description_s` string,
-  `topic_description_f` string,
   `subject_id` integer,
   `catalog_number` integer,
   `semester_id` integer
@@ -81,9 +80,24 @@ CREATE TABLE `Faculty` (
   `email` string
 );
 
+CREATE TABLE `AdminLog` (
+  `id` integer PRIMARY KEY,
+  `unity_id` varchar(255),
+  `call` varchar(255),
+  `datetime` timestamp
+);
+
+CREATE TABLE `UserLog` (
+  `id` integer PRIMARY KEY,
+  `querySearch` varchar(255),
+  `datetime` timestamp
+);
+
 ALTER TABLE `Role` ADD FOREIGN KEY (`id`) REFERENCES `Administrator` (`role_id`);
 
 ALTER TABLE `Program` ADD FOREIGN KEY (`id`) REFERENCES `Showing` (`program_id`);
+
+ALTER TABLE `Program` ADD FOREIGN KEY (`semster_id`) REFERENCES `Semester` (`id`);
 
 ALTER TABLE `Program` ADD FOREIGN KEY (`id`) REFERENCES `Program_To_Theme` (`program_id`);
 

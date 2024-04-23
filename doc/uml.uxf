@@ -1,34 +1,34 @@
-<diagram program="umletino" version="15.1"><zoom_level>6</zoom_level><help_text>Space for diagram note</help_text><element><id>UMLPackage</id><coordinates><x>0</x><y>210</y><w>666</w><h>750</h></coordinates><panel_attributes>Controller
-group=0</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>12</x><y>384</y><w>156</w><h>138</h></coordinates><panel_attributes>administrator_controller.py
-group=0</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>24</x><y>408</y><w>132</w><h>42</h></coordinates><panel_attributes>Class
+<diagram program="umletino" version="15.1"><zoom_level>6</zoom_level><help_text>Space for diagram note</help_text><element><id>UMLPackage</id><coordinates><x>246</x><y>162</y><w>678</w><h>684</h></coordinates><panel_attributes>Controller
+group=0</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>252</x><y>408</y><w>156</w><h>138</h></coordinates><panel_attributes>administrator_controller.py
+group=0</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>264</x><y>438</y><w>132</w><h>42</h></coordinates><panel_attributes>Class
 AdministratorList
 group=0
 -
 get(): list[Administrator]
-post(str, str): AdministratorsSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>24</x><y>462</y><w>132</w><h>42</h></coordinates><panel_attributes>Class
+post(str, str): AdministratorsSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>264</x><y>486</y><w>132</w><h>42</h></coordinates><panel_attributes>Class
 AdministratorDetail
 group=0
 -
 put(int, int): AdministratorsSchema
-delete(int): JSONResponse</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>192</x><y>408</y><w>150</w><h>54</h></coordinates><panel_attributes>Class
+delete(int): JSONResponse</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>438</x><y>408</y><w>150</w><h>54</h></coordinates><panel_attributes>Class
 CourseList
 group=0
 -
 get(): list[Course]
 post(CoursePostSchema): CourseSchema
-put(CoursePostSchema): CourseSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>180</x><y>384</y><w>180</w><h>138</h></coordinates><panel_attributes>course.py
+put(CoursePostSchema): CourseSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>426</x><y>384</y><w>180</w><h>168</h></coordinates><panel_attributes>course.py
 group=0
-bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>192</x><y>474</y><w>150</w><h>36</h></coordinates><panel_attributes>Class
+bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>438</x><y>474</y><w>150</w><h>36</h></coordinates><panel_attributes>Class
 DeleteCourses
 group=0
 -
-delete(): JSONResponse</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>378</x><y>384</y><w>114</w><h>72</h></coordinates><panel_attributes>period.py
-group=0</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>390</x><y>408</y><w>90</w><h>36</h></coordinates><panel_attributes>Class
+delete(): JSONResponse</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>624</x><y>336</y><w>114</w><h>72</h></coordinates><panel_attributes>period.py
+group=0</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>630</x><y>360</y><w>90</w><h>36</h></coordinates><panel_attributes>Class
 PeriodList
 group=0
 -
-get(): list[PeriodSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>12</x><y>546</y><w>390</w><h>222</h></coordinates><panel_attributes>program.py
-group=0</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>24</x><y>570</y><w>162</w><h>66</h></coordinates><panel_attributes>Class
+get(): list[PeriodSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>258</x><y>552</y><w>390</w><h>222</h></coordinates><panel_attributes>program.py
+group=0</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>270</x><y>570</y><w>162</w><h>66</h></coordinates><panel_attributes>Class
 HandleProgram
 group=0
 bg=red
@@ -36,98 +36,91 @@ bg=red
 -
 get(): list[ProgramSchema]
 post(ProgramPostSchema): ProgramSchema
-put(ProgramPostSchema): ProgramSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>24</x><y>654</y><w>174</w><h>42</h></coordinates><panel_attributes>Class
+put(ProgramPostSchema): ProgramSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>270</x><y>654</y><w>174</w><h>42</h></coordinates><panel_attributes>Class
 GetDepartments
 group=0
 -
-get():{departments: list[DepartmentListSchema]}</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>24</x><y>714</y><w>90</w><h>42</h></coordinates><panel_attributes>Class
+get():{departments: list[DepartmentListSchema]}</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>270</x><y>714</y><w>90</w><h>42</h></coordinates><panel_attributes>Class
 HandleProgramID
 group=0
 -
 get(): ProgramSchema
-delete(): None</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>126</x><y>714</y><w>66</w><h>42</h></coordinates><panel_attributes>Class
+delete(): None</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>372</x><y>714</y><w>66</w><h>42</h></coordinates><panel_attributes>Class
 ProgramImage
 group=0
 -
-get(int): Image</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>210</x><y>582</y><w>174</w><h>42</h></coordinates><panel_attributes>Class
+get(int): Image</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>456</x><y>582</y><w>174</w><h>42</h></coordinates><panel_attributes>Class
 RelatedCourse
 group=0
+bg=red
 -
-get(int): list[CourseSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>216</x><y>648</y><w>156</w><h>48</h></coordinates><panel_attributes>self
+get(int): list[CourseSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>462</x><y>648</y><w>156</w><h>48</h></coordinates><panel_attributes>self
 group=0
 -
 filter_programs(bool): list[ProgramSchema]
 upload_file(FileStorage, str): None
-allowed_file(str): str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>522</x><y>384</y><w>114</w><h>72</h></coordinates><panel_attributes>roles_controller.py
-group=0</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>528</x><y>408</y><w>90</w><h>36</h></coordinates><panel_attributes>Class
+allowed_file(str): str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>768</x><y>336</y><w>114</w><h>72</h></coordinates><panel_attributes>roles_controller.py
+group=0</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>774</x><y>360</y><w>90</w><h>36</h></coordinates><panel_attributes>Class
 PeriodList
 group=0
 -
-get(): list[RoleSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>438</x><y>498</y><w>192</w><h>174</h></coordinates><panel_attributes>search.py
-group=0</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>444</x><y>522</y><w>180</w><h>36</h></coordinates><panel_attributes>Class
+get(): list[RoleSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>672</x><y>426</y><w>192</w><h>84</h></coordinates><panel_attributes>search.py
+group=0</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>678</x><y>450</y><w>180</w><h>36</h></coordinates><panel_attributes>Class
 ProgramSearch
 group=0
 -
-post(SearchProgramSchema): list[ProgramSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>444</x><y>570</y><w>180</w><h>36</h></coordinates><panel_attributes>Class
-SearchCoursesByManyThemes
-group=0
--
-post(ThemeSearchSchema): list[CourseSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>444</x><y>624</y><w>180</w><h>36</h></coordinates><panel_attributes>Class
-SearchCoursesByManyThemes
-group=0
--
-post(ThemeSearchSchema): list[ProgramSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>414</x><y>708</y><w>234</w><h>174</h></coordinates><panel_attributes>semester.py
+post(SearchProgramSchema): list[ProgramSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>660</x><y>528</y><w>234</w><h>288</h></coordinates><panel_attributes>semester.py
 group=01,0
-bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>420</x><y>726</y><w>162</w><h>42</h></coordinates><panel_attributes>Class
+bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>672</x><y>558</y><w>162</w><h>42</h></coordinates><panel_attributes>Class
 SemesterList
 group=0
 group=01
 -
 get(): list[SemesterSchema]
-post(SemesterPostSchema): SemesterSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>420</x><y>780</y><w>180</w><h>42</h></coordinates><panel_attributes>Class
+post(SemesterPostSchema): SemesterSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>672</x><y>612</y><w>180</w><h>42</h></coordinates><panel_attributes>Class
 SemesterDetail
 group=01
 -
 put(SemesterUpdateSchema int): SemesterSchema
-delete(int): JSONResponse</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>420</x><y>834</y><w>102</w><h>36</h></coordinates><panel_attributes>Class
+delete(int): JSONResponse</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>672</x><y>666</y><w>102</w><h>36</h></coordinates><panel_attributes>Class
 SemesterCourseList
 group=01
 -
-get(int): list[CourseSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>534</x><y>834</y><w>102</w><h>36</h></coordinates><panel_attributes>Class
+get(int): list[CourseSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>786</x><y>666</y><w>102</w><h>36</h></coordinates><panel_attributes>Class
 SemesterCoursePagination
 group=01
 -
-get(int): list[CourseSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>258</x><y>780</y><w>126</w><h>60</h></coordinates><panel_attributes>showing.py
-group=04</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>264</x><y>798</y><w>114</w><h>36</h></coordinates><panel_attributes>self
+get(int): list[CourseSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>780</x><y>246</y><w>126</w><h>60</h></coordinates><panel_attributes>showing.py
+group=04</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>786</x><y>264</y><w>114</w><h>36</h></coordinates><panel_attributes>self
 group=04
 -
 get_showings(): Response
-handle_showing(int): Response</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>18</x><y>810</y><w>162</w><h>114</h></coordinates><panel_attributes>theme.py
+handle_showing(int): Response</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>264</x><y>174</y><w>156</w><h>228</h></coordinates><panel_attributes>theme.py
 group=02
-bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>24</x><y>828</y><w>144</w><h>48</h></coordinates><panel_attributes>Class
+bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>270</x><y>198</y><w>144</w><h>48</h></coordinates><panel_attributes>Class
 ThemeList
 group=02
 -
 get(): list[ThemeSchema]
-post(ThemePostSchema): ThemeSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>24</x><y>882</y><w>120</w><h>30</h></coordinates><panel_attributes>self
+post(ThemePostSchema): ThemeSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>270</x><y>258</y><w>120</w><h>30</h></coordinates><panel_attributes>self
 group=02
 -
-handle_theme_id(int): Response</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>210</x><y>858</y><w>138</w><h>72</h></coordinates><panel_attributes>user_controller.py
-group=03</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>228</x><y>876</y><w>102</w><h>48</h></coordinates><panel_attributes>Class
+handle_theme_id(int): Response</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>432</x><y>282</y><w>138</w><h>78</h></coordinates><panel_attributes>user_controller.py
+group=03</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>450</x><y>306</y><w>102</w><h>48</h></coordinates><panel_attributes>Class
 UserDetail
 group=03
 -
-get(): AdministratorsSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>732</x><y>378</y><w>708</w><h>600</h></coordinates><panel_attributes>Data_model
-group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>756</x><y>408</y><w>192</w><h>102</h></coordinates><panel_attributes>administrator_dao.py
-group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>762</x><y>432</y><w>162</w><h>66</h></coordinates><panel_attributes>self
+get(): AdministratorsSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>972</x><y>360</y><w>708</w><h>600</h></coordinates><panel_attributes>Data_model
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>996</x><y>390</y><w>192</w><h>102</h></coordinates><panel_attributes>administrator_dao.py
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1002</x><y>414</y><w>162</w><h>66</h></coordinates><panel_attributes>self
 group=1
 -
 get_administrators(): list[Administrator]
 get_administrator(int): Administrator
 update_administrator(int, dict): Administrator
 delete_administrator(int): None
-create_administrator(dict): Administrator</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>990</x><y>408</y><w>198</w><h>120</h></coordinates><panel_attributes>course_dao
-group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>996</x><y>432</y><w>186</w><h>84</h></coordinates><panel_attributes>self
+create_administrator(dict): Administrator</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1230</x><y>390</y><w>198</w><h>120</h></coordinates><panel_attributes>course_dao.py
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1236</x><y>414</y><w>186</w><h>84</h></coordinates><panel_attributes>self
 group=1
 bg=red
 -
@@ -137,8 +130,8 @@ get_semester_courses_as_pages(int, int): list[Course]
 insert_course(Course): bool
 insert_many(list[Course]): bool
 update_course(Course): bool
-delete_course(int): bool</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>750</x><y>534</y><w>198</w><h>120</h></coordinates><panel_attributes>faculty_dao.py
-group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>756</x><y>558</y><w>186</w><h>84</h></coordinates><panel_attributes>self
+delete_course(int): bool</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>990</x><y>516</y><w>198</w><h>120</h></coordinates><panel_attributes>faculty_dao.py
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>996</x><y>540</y><w>186</w><h>84</h></coordinates><panel_attributes>self
 group=1
 -
 get_all(): list[Course]
@@ -147,24 +140,24 @@ get_semester_courses_as_pages(int, int): list[Course]
 insert_course(Course): bool
 insert_many(list[Course]): bool
 update_course(Course): bool
-delete_course(int): bool</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>990</x><y>546</y><w>198</w><h>72</h></coordinates><panel_attributes>helpers.py
-group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>996</x><y>570</y><w>186</w><h>36</h></coordinates><panel_attributes>self
+delete_course(int): bool</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1230</x><y>528</y><w>198</w><h>72</h></coordinates><panel_attributes>helpers.py
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1236</x><y>552</y><w>186</w><h>36</h></coordinates><panel_attributes>self
 group=1
 -
 get_or_create(session, model, **kwargs): session
-create(session, model, **kwargs): model</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1218</x><y>408</y><w>204</w><h>90</h></coordinates><panel_attributes>imit_db.py
-group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1230</x><y>432</y><w>168</w><h>54</h></coordinates><panel_attributes>self
+create(session, model, **kwargs): model</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1458</x><y>390</y><w>204</w><h>90</h></coordinates><panel_attributes>imit_db.py
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1470</x><y>414</y><w>168</w><h>54</h></coordinates><panel_attributes>self
 group=1
 -
 create_roles(*args, **kwargs): None
 create_admins(*args, **kwargs): None
 create_periods(*args, **kwargs): None
-create_themes(*args, **kwargs): None</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1218</x><y>516</y><w>186</w><h>72</h></coordinates><panel_attributes>permissions.py
-group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1230</x><y>540</y><w>150</w><h>36</h></coordinates><panel_attributes>self
+create_themes(*args, **kwargs): None</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1458</x><y>498</y><w>186</w><h>72</h></coordinates><panel_attributes>permissions.py
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1470</x><y>522</y><w>150</w><h>36</h></coordinates><panel_attributes>self
 group=1
 -
-require_roles(list[RoleEnum]): Permission</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1242</x><y>606</y><w>150</w><h>126</h></coordinates><panel_attributes>program_dao.py
-group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1254</x><y>630</y><w>126</w><h>96</h></coordinates><panel_attributes>self
+require_roles(list[RoleEnum]): Permission</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1482</x><y>588</y><w>150</w><h>126</h></coordinates><panel_attributes>program_dao.py
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1494</x><y>612</y><w>126</w><h>96</h></coordinates><panel_attributes>self
 group=1
 bg=red
 -
@@ -175,21 +168,23 @@ insert(Program): None
 update(dict, int): Program
 delete(int): bool
 get_departments(): list[str]
-search(**kwargs): list[Program]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1122</x><y>666</y><w>78</w><h>30</h></coordinates><panel_attributes>self
+search(**kwargs): list[Program]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1362</x><y>648</y><w>78</w><h>30</h></coordinates><panel_attributes>self
 group=1
 -
-get_roles(): list[Role]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1116</x><y>642</y><w>96</w><h>66</h></coordinates><panel_attributes>role_dao.py
-group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>756</x><y>678</y><w>180</w><h>120</h></coordinates><panel_attributes>semester_dao.py
-group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>768</x><y>702</y><w>150</w><h>78</h></coordinates><panel_attributes>self
+get_roles(): list[Role]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1356</x><y>624</y><w>96</w><h>66</h></coordinates><panel_attributes>role_dao.py
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>996</x><y>660</y><w>180</w><h>120</h></coordinates><panel_attributes>semester_dao.py
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1008</x><y>684</y><w>150</w><h>78</h></coordinates><panel_attributes>self
 group=1
+bg=red
 -
 get_all(): list[Semester] or None
 get_by_filter(bool): list[Semester] or None
 get_by_id(int): Semester or None
 insert_semester(Semester): bool
 update_semester(Semester): bool
-delete_semester(Semester): None</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>762</x><y>816</y><w>264</w><h>126</h></coordinates><panel_attributes>showing_dao.py
-group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>774</x><y>840</y><w>246</w><h>90</h></coordinates><panel_attributes>self
+delete_semester(Semester): None
+get_active(): Semester</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1002</x><y>798</y><w>264</w><h>126</h></coordinates><panel_attributes>showing_dao.py
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1014</x><y>822</y><w>246</w><h>90</h></coordinates><panel_attributes>self
 group=1
 -
 get_all(): list[Showing] or None
@@ -198,16 +193,16 @@ insert(Showing): None
 update(dict): None
 delete(int): bool
 get_showing_by_datetime_expression(BinaryExpression): list[Showing]
-add_show_to_program(Showing, int): None</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>954</x><y>720</y><w>168</w><h>96</h></coordinates><panel_attributes>subject_dao.py
-group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>966</x><y>738</y><w>144</w><h>66</h></coordinates><panel_attributes>self
+add_show_to_program(Showing, int): None</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1182</x><y>642</y><w>168</w><h>102</h></coordinates><panel_attributes>subject_dao.py
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1188</x><y>672</y><w>144</w><h>66</h></coordinates><panel_attributes>self
 group=1
 -
 get_all(): list[Subject] or None
 get_by_id(int): Subject or None
 insert(Subject): None
 delete(int): bool
-get_subject_by_name(bool): list[Subject]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1176</x><y>804</y><w>192</w><h>150</h></coordinates><panel_attributes>theme_dao.py
-group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1188</x><y>828</y><w>162</w><h>114</h></coordinates><panel_attributes>self
+get_subject_by_name(bool): list[Subject]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1284</x><y>768</y><w>192</w><h>150</h></coordinates><panel_attributes>theme_dao.py
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1290</x><y>792</y><w>162</w><h>114</h></coordinates><panel_attributes>self
 group=1
 bg=red
 -
@@ -220,33 +215,33 @@ insert(Theme): None
 insert_from_list(list[str]): None
 insert(Theme): bool
 delete(int): None
-classify_program(Program, bool): list[Theme]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>96</x><y>1026</y><w>630</w><h>672</h></coordinates><panel_attributes>schemas
-group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>120</x><y>1062</y><w>120</w><h>234</h></coordinates><panel_attributes>AdministratorsSchema.py
-group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>126</x><y>1092</y><w>90</w><h>48</h></coordinates><panel_attributes>Class
+classify_program(Program, bool): list[Theme]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>264</x><y>906</y><w>630</w><h>672</h></coordinates><panel_attributes>schemas
+group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>288</x><y>942</y><w>120</w><h>234</h></coordinates><panel_attributes>AdministratorsSchema.py
+group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>294</x><y>972</y><w>90</w><h>48</h></coordinates><panel_attributes>Class
 RoleSchema
 group=2
 -
 id: int
 role: RoleEnum
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>126</x><y>1158</y><w>96</w><h>54</h></coordinates><panel_attributes>Class
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>294</x><y>1038</y><w>96</w><h>54</h></coordinates><panel_attributes>Class
 AdministratorsSchema
 group=2
 -
 id: int
 unity_id: str
-role: RoleSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>126</x><y>1230</y><w>102</w><h>54</h></coordinates><panel_attributes>Class
+role: RoleSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>294</x><y>1110</y><w>102</w><h>54</h></coordinates><panel_attributes>Class
 AdministratorsPostSchema
 group=2
 -
 role_id: int
-unity_id: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>264</x><y>1062</y><w>132</w><h>378</h></coordinates><panel_attributes>course.py
-group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>270</x><y>1092</y><w>90</w><h>48</h></coordinates><panel_attributes>Class
+unity_id: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>432</x><y>942</y><w>132</w><h>378</h></coordinates><panel_attributes>course.py
+group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>438</x><y>972</y><w>90</w><h>48</h></coordinates><panel_attributes>Class
 SubjectSchema
 group=2
 -
 id: int
 subject: str
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>270</x><y>1158</y><w>114</w><h>138</h></coordinates><panel_attributes>Class
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>438</x><y>1038</y><w>114</w><h>138</h></coordinates><panel_attributes>Class
 CoursePostSchema
 group=2
 bg=red
@@ -262,7 +257,7 @@ emails: str
 semester_id: int
 faculty_list: list[FacultySchema]
 topics_description: str
-course_id: int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>270</x><y>1308</y><w>114</w><h>120</h></coordinates><panel_attributes>Class
+course_id: int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>438</x><y>1188</y><w>114</w><h>120</h></coordinates><panel_attributes>Class
 CourseSchema
 group=2
 bg=red
@@ -276,22 +271,22 @@ catalog_number: int
 semester_id: int
 topics_description: str
 themes: list[ThemeSchema]
-faculty: list[FacultySchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>132</x><y>1326</y><w>78</w><h>90</h></coordinates><panel_attributes>faculty.py
+faculty: list[FacultySchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>300</x><y>1206</y><w>78</w><h>90</h></coordinates><panel_attributes>faculty.py
 group=2
-bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>138</x><y>1350</y><w>60</w><h>54</h></coordinates><panel_attributes>Class
+bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>306</x><y>1230</y><w>60</w><h>54</h></coordinates><panel_attributes>Class
 FacultySchema
 group=2
 -
 id: int
 name: str
-email: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>126</x><y>1440</y><w>78</w><h>90</h></coordinates><panel_attributes>period.py
-group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>132</x><y>1464</y><w>60</w><h>54</h></coordinates><panel_attributes>Class
+email: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>294</x><y>1320</y><w>78</w><h>90</h></coordinates><panel_attributes>period.py
+group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>300</x><y>1344</y><w>60</w><h>54</h></coordinates><panel_attributes>Class
 PeriodSchema
 group=2
 -
 id: int
-period: PeriodEnum</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>420</x><y>1062</y><w>276</w><h>384</h></coordinates><panel_attributes>program.py
-group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>426</x><y>1086</y><w>114</w><h>78</h></coordinates><panel_attributes>Class
+period: PeriodEnum</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>588</x><y>942</y><w>276</w><h>396</h></coordinates><panel_attributes>program.py
+group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>594</x><y>966</y><w>114</w><h>78</h></coordinates><panel_attributes>Class
 ShowingSchema
 group=2
 -
@@ -299,7 +294,7 @@ id: int
 datetime: str
 location: str
 price: str
-program_id: int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>426</x><y>1176</y><w>114</w><h>78</h></coordinates><panel_attributes>Class
+program_id: int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>594</x><y>1056</y><w>114</w><h>78</h></coordinates><panel_attributes>Class
 ShowingPostSchema
 group=2
 -
@@ -307,7 +302,7 @@ id: int
 datetime: str
 location: str
 datetime: str
-price: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>426</x><y>1272</y><w>114</w><h>78</h></coordinates><panel_attributes>Class
+price: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>594</x><y>1152</y><w>114</w><h>78</h></coordinates><panel_attributes>Class
 ShowingPostSchema
 group=2
 -
@@ -315,7 +310,7 @@ id: int
 datetime: str
 location: str
 datetime: str
-price: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>426</x><y>1362</y><w>114</w><h>72</h></coordinates><panel_attributes>Class
+price: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>594</x><y>1242</y><w>114</w><h>72</h></coordinates><panel_attributes>Class
 ShowingPutSchema
 group=2
 -
@@ -323,14 +318,15 @@ id: int
 datetime: str
 location: str
 price: str
-state: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>564</x><y>1086</y><w>114</w><h>42</h></coordinates><panel_attributes>Class
+state: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>732</x><y>966</y><w>114</w><h>42</h></coordinates><panel_attributes>Class
 DepartmentListSchema
 group=2
 -
 departments: list[str]
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>564</x><y>1146</y><w>114</w><h>108</h></coordinates><panel_attributes>Class
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>732</x><y>1026</y><w>114</w><h>108</h></coordinates><panel_attributes>Class
 ProgramSchema
 group=2
+bg=red
 -
 id: int
 department: str
@@ -340,9 +336,10 @@ description: str
 image_filename: str
 themes: list[ThemeSchema]
 showings: list[ShowingSchema]
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>564</x><y>1266</y><w>108</w><h>84</h></coordinates><panel_attributes>Class
+semester: SemesterSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>732</x><y>1146</y><w>108</w><h>90</h></coordinates><panel_attributes>Class
 ProgramPostSchema
 group=2
+bg=red
 -
 id: int
 title: str
@@ -350,9 +347,11 @@ department: str
 description: str
 link: str
 showings: str
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>564</x><y>1356</y><w>126</w><h>84</h></coordinates><panel_attributes>Class
+semester_id: int
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>732</x><y>1242</y><w>126</w><h>90</h></coordinates><panel_attributes>Class
 ProgramPutSchema
 group=2
+bg=red
 -
 id: int
 title: str
@@ -360,9 +359,9 @@ department: str
 link: str
 description: str
 showings: list[ShowingPutSchema]
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>834</x><y>1014</y><w>240</w><h>264</h></coordinates><panel_attributes>Tagging
+semester_id: int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1074</x><y>1014</y><w>240</w><h>264</h></coordinates><panel_attributes>Tagging
 bg=red
-group=3</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>876</x><y>1062</y><w>150</w><h>138</h></coordinates><panel_attributes>Class
+group=3</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1116</x><y>1062</y><w>150</w><h>138</h></coordinates><panel_attributes>Class
 Classifier
 group=3
 -
@@ -381,9 +380,9 @@ vectorize(list[Theme], str):list[list[list[]]]
 classify(): list[Theme]
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>852</x><y>1038</y><w>192</w><h>192</h></coordinates><panel_attributes>improved_classifier.py
-group=3</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>498</x><y>0</y><w>132</w><h>144</h></coordinates><panel_attributes>app.py
-group=3</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>510</x><y>36</y><w>90</w><h>84</h></coordinates><panel_attributes>self
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1092</x><y>1038</y><w>192</w><h>192</h></coordinates><panel_attributes>improved_classifier.py
+group=3</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>738</x><y>0</y><w>132</w><h>144</h></coordinates><panel_attributes>app.py
+group=3</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>750</x><y>36</y><w>90</w><h>84</h></coordinates><panel_attributes>self
 group=3
 -
 app: Flask
@@ -393,17 +392,17 @@ get_database_url()
 load_user()
 before_request()
 create_app()
-on_identity_loaded()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>246</x><y>252</y><w>186</w><h>90</h></coordinates><panel_attributes>api_controller.py
-group=0</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>264</x><y>282</y><w>150</w><h>42</h></coordinates><panel_attributes>Class
+on_identity_loaded()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>576</x><y>234</y><w>186</w><h>90</h></coordinates><panel_attributes>api_controller.py
+group=0</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>594</x><y>264</y><w>150</w><h>42</h></coordinates><panel_attributes>Class
 self
 group=0
 -
-api: Blueprint</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>366</x><y>138</y><w>222</w><h>138</h></coordinates><panel_attributes>lt=&lt;&lt;-
-1</panel_attributes><additional_attributes>10;210;350;10</additional_attributes></element><element><id>Relation</id><coordinates><x>660</x><y>468</y><w>84</w><h>54</h></coordinates><panel_attributes>lt=&lt;&lt;-
-1</panel_attributes><additional_attributes>120;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>972</x><y>948</y><w>300</w><h>114</h></coordinates><panel_attributes>lt=&lt;&lt;-
-1</panel_attributes><additional_attributes>10;170;480;10</additional_attributes></element><element><id>Relation</id><coordinates><x>450</x><y>954</y><w>48</w><h>96</h></coordinates><panel_attributes>lt=&lt;&lt;-
-1</panel_attributes><additional_attributes>60;140;10;10</additional_attributes></element><element><id>UMLPackage</id><coordinates><x>258</x><y>1464</y><w>114</w><h>180</h></coordinates><panel_attributes>search.py
-group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>264</x><y>1488</y><w>96</w><h>78</h></coordinates><panel_attributes>Class
+api: Blueprint</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>684</x><y>138</y><w>144</w><h>138</h></coordinates><panel_attributes>lt=&lt;&lt;-
+1</panel_attributes><additional_attributes>10;210;220;10</additional_attributes></element><element><id>Relation</id><coordinates><x>918</x><y>468</y><w>66</w><h>36</h></coordinates><panel_attributes>lt=&lt;&lt;-
+1</panel_attributes><additional_attributes>90;40;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1212</x><y>912</y><w>168</w><h>150</h></coordinates><panel_attributes>lt=&lt;&lt;-
+1</panel_attributes><additional_attributes>10;230;260;10</additional_attributes></element><element><id>Relation</id><coordinates><x>648</x><y>840</y><w>66</w><h>90</h></coordinates><panel_attributes>lt=&lt;&lt;-
+1</panel_attributes><additional_attributes>10;130;90;10</additional_attributes></element><element><id>UMLPackage</id><coordinates><x>426</x><y>1344</y><w>114</w><h>180</h></coordinates><panel_attributes>search.py
+group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>432</x><y>1368</y><w>96</w><h>78</h></coordinates><panel_attributes>Class
 SearchProgramSchema
 group=2
 -
@@ -411,13 +410,13 @@ themes = list[str]
 departments = str
 title= str
 dates = list[str]
-searchByRange = bool</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>264</x><y>1572</y><w>96</w><h>60</h></coordinates><panel_attributes>Class
+searchByRange = bool</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>432</x><y>1452</y><w>96</w><h>60</h></coordinates><panel_attributes>Class
 SearchCourseSchema
 group=2
 -
 themes = list[int]
-title= str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>420</x><y>1464</y><w>114</w><h>216</h></coordinates><panel_attributes>semester.py
-group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>426</x><y>1482</y><w>102</w><h>78</h></coordinates><panel_attributes>Class
+title= str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>588</x><y>1344</y><w>114</w><h>216</h></coordinates><panel_attributes>semester.py
+group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>594</x><y>1362</y><w>102</w><h>78</h></coordinates><panel_attributes>Class
 SemesterPostSchema
 group=2
 -
@@ -425,32 +424,93 @@ id: int
 year: int
 active: bool
 period_id: int
-courses: list[CourseSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>426</x><y>1566</y><w>102</w><h>66</h></coordinates><panel_attributes>Class
+courses: list[CourseSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>594</x><y>1446</y><w>102</w><h>66</h></coordinates><panel_attributes>Class
 SemesterSchema
 group=2
 -
 id: int
 year: int
 active: bool
-period: PeriodSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>426</x><y>1638</y><w>102</w><h>36</h></coordinates><panel_attributes>Class
+period: PeriodSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>594</x><y>1518</y><w>102</w><h>36</h></coordinates><panel_attributes>Class
 SemesterUpdateSchema
 group=2
 -
-active: bool</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>564</x><y>1458</y><w>114</w><h>216</h></coordinates><panel_attributes>semester.py
-group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>570</x><y>1476</y><w>96</w><h>48</h></coordinates><panel_attributes>Class
+active: bool</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>732</x><y>1344</y><w>114</w><h>210</h></coordinates><panel_attributes>semester.py
+group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>738</x><y>1362</y><w>96</w><h>48</h></coordinates><panel_attributes>Class
 ThemeSchema
 bg=red
 group=2
 -
 id: int
-name: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>570</x><y>1536</y><w>96</w><h>48</h></coordinates><panel_attributes>Class
+name: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>738</x><y>1416</y><w>96</w><h>48</h></coordinates><panel_attributes>Class
 ThemeSearchSchema
 group=2
 -
-theme_ids: list[int]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>570</x><y>1602</y><w>96</w><h>48</h></coordinates><panel_attributes>Class
+theme_ids: list[int]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>738</x><y>1482</y><w>96</w><h>48</h></coordinates><panel_attributes>Class
 ThemePostSchema
 group=2
 bg=red
 -
 id: int
-name: str</panel_attributes><additional_attributes></additional_attributes></element></diagram>
+name: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>450</x><y>708</y><w>78</w><h>42</h></coordinates><panel_attributes>Class
+ProgramSendEmail
+bg=red
+-
+post(int): JSONResponse</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>534</x><y>708</y><w>102</w><h>42</h></coordinates><panel_attributes>Class
+HandleBySemester
+bg=red
+-
+get(int): list[ProgramSchema]
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>666</x><y>714</y><w>102</w><h>48</h></coordinates><panel_attributes>Class
+SingleSemester
+-
+get(int): list[SemesterSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>684</x><y>768</y><w>174</w><h>42</h></coordinates><panel_attributes>Class
+ActiveSemester
+-
+get(): list[SemesterSchema]
+put(SmesterUpdateSchema): SemesterSchema</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>774</x><y>720</y><w>102</w><h>30</h></coordinates><panel_attributes>self
+-
+validate_email(str):bool</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>444</x><y>516</y><w>156</w><h>30</h></coordinates><panel_attributes>self
+-
+validate_email(str):bool</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>294</x><y>1422</y><w>84</w><h>150</h></coordinates><panel_attributes>logging.py
+group=2
+bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>300</x><y>1440</y><w>66</w><h>60</h></coordinates><panel_attributes>Class
+AdminLogSchema
+group=2
+-
+id: int
+unity_id: str
+call: str
+datetime: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>300</x><y>1506</y><w>66</w><h>60</h></coordinates><panel_attributes>Class
+UserLogSchema
+group=2
+-
+id: int
+querySearch: str
+datetime: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1500</x><y>726</y><w>150</w><h>72</h></coordinates><panel_attributes>userlog_dao.py
+group=1
+bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1512</x><y>744</y><w>126</w><h>42</h></coordinates><panel_attributes>self
+-
+get_all(): list[UserLog]
+insert(UserLog): None</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1494</x><y>828</y><w>150</w><h>72</h></coordinates><panel_attributes>adminlog_dao.py
+group=1
+bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1500</x><y>846</y><w>126</w><h>42</h></coordinates><panel_attributes>self
+-
+get_all(): list[AdminLog]
+insert(AdminLog): None</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>258</x><y>780</y><w>372</w><h>60</h></coordinates><panel_attributes>logging.py
+group=0
+bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>288</x><y>798</y><w>132</w><h>36</h></coordinates><panel_attributes>Class
+LoggingList
+-
+get(): list[AdminLogSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>456</x><y>798</y><w>132</w><h>36</h></coordinates><panel_attributes>Class
+LoggingListUser
+-
+get(): list[UserLogSchema]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>270</x><y>300</y><w>144</w><h>48</h></coordinates><panel_attributes>Class
+ThemeListByCourse
+-
+get(): list[ThemeSchema]
+post(list[ThemeSchema]): JSONResponse</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>270</x><y>354</y><w>144</w><h>42</h></coordinates><panel_attributes>Class
+ThemeListByProgram
+-
+get(): list[ThemeSchema]
+post(list[ThemeSchema]): JSONResponse</panel_attributes><additional_attributes></additional_attributes></element></diagram>
