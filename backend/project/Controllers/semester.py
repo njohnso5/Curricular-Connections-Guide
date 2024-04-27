@@ -108,7 +108,7 @@ class SemesterList(MethodView):
                     if isinstance(num, float):
                         course.catalog_number = int(float(num))
                     else:
-                        course.catalog_number = int(str(df.iloc[i, 1 + 1]))
+                        course.catalog_number = str(df.iloc[i, 1 + 1])
                     # print(df.iloc[i, 1 + 1])
                     print(course.catalog_number)
                     course.title_long = df.iloc[i, 1 + 2]
